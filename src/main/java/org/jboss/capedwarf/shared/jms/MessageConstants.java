@@ -28,4 +28,9 @@ package org.jboss.capedwarf.shared.jms;
  */
 public final class MessageConstants {
     public static final String PREFIX = "org_jboss_capedwarf_jms_";
+    // msg params
+    public static final String MODULE = "module";
+    public static final String APP_ID = "appId";
+    public static final String PATH = "path";
+    public static final String FACTORY = "factory";
 }

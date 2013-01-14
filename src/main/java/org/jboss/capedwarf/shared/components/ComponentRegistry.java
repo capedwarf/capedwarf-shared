@@ -1,8 +1,33 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2013, Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.jboss.capedwarf.shared.components;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A bit hackish aka type-unsafe registry.
@@ -13,15 +38,29 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class ComponentRegistry {
     private static final ComponentRegistry INSTANCE = new ComponentRegistry();
 
+    private final ConcurrentMap<String, Lock> locks = new ConcurrentHashMap<String, Lock>();
     private final Map<Object, Object> registry = new ConcurrentHashMap<Object, Object>();
 
     public static ComponentRegistry getInstance() {
         return INSTANCE;
     }
 
+    private Lock lock(String appId) {
+        Lock lock = new ReentrantLock();
+        final Lock previous = locks.putIfAbsent(appId, lock);
+        if (previous != null)
+            lock = previous;
+        lock.lock();
+        return lock;
+    }
+
     private <T> T getValue(Map<Object, ?> map, Object slot, Class<T> type) {
-        Object value = map.get(slot);
-        return type.cast(value);
+        if (map != null) {
+            Object value = map.get(slot);
+            return type.cast(value);
+        } else {
+            return null;
+        }
     }
 
     public <T> T getComponent(Key<T> key) {
@@ -31,9 +70,12 @@ public final class ComponentRegistry {
         if (appId == null) {
             return getValue(registry, slot, type);
         } else {
-            synchronized (registry) {
+            final Lock lock = lock(appId);
+            try {
                 Map<Object, Object> map = (Map<Object, Object>) registry.get(appId);
                 return getValue(map, slot, type);
+            } finally {
+                lock.unlock();
             }
         }
     }
@@ -44,22 +86,53 @@ public final class ComponentRegistry {
         if (appId == null) {
             registry.put(slot, value);
         } else {
-            synchronized (registry) {
+            final Lock lock = lock(appId);
+            try {
                 Map<Object, Object> map = (Map<Object, Object>) registry.get(appId);
                 if (map == null) {
                     map = new HashMap<Object, Object>();
                     registry.put(appId, map);
                 }
                 map.put(slot, value);
+            } finally {
+                lock.unlock();
+            }
+        }
+    }
+
+    public <T> void removeComponent(Key<T> key) {
+        Object slot = key.getSlot();
+        String appId = key.getAppId();
+        if (appId == null) {
+            registry.remove(slot);
+        } else {
+            final Lock lock = lock(appId);
+            try {
+                Map<Object, Object> map = (Map<Object, Object>) registry.get(appId);
+                if (map != null) {
+                    map.remove(slot);
+                    if (map.isEmpty()) {
+                        registry.remove(appId);
+                    }
+                }
+            } finally {
+                lock.unlock();
             }
         }
     }
 
     public void clearComponents(String appId) {
+        // clear registry
         final Map<Object, Object> map;
-        synchronized (registry) {
+        final Lock lock = lock(appId);
+        try {
             map = (Map<Object, Object>) registry.remove(appId);
+        } finally {
+            lock.unlock();
         }
+        // clear locks
+        locks.remove(appId);
+        // shutdown components
         if (map != null) {
             for (Object value : map.values()) {
                 if (value instanceof ShutdownHook) {
