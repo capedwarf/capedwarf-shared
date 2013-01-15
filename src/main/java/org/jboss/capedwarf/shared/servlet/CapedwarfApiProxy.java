@@ -70,11 +70,7 @@ public final class CapedwarfApiProxy {
     }
 
     static void destroy(final String appId, final ServletContext context) {
-        try {
-            ComponentRegistry.getInstance().clearComponents(appId);
-        } finally {
-            classLoaders.remove(Utils.getAppClassLoader());
-        }
+        classLoaders.remove(Utils.getAppClassLoader());
     }
 
     static void setRequest(ServletRequest request) {
