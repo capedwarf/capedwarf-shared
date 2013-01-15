@@ -39,7 +39,7 @@ public final class ComponentRegistry {
     private static final ComponentRegistry INSTANCE = new ComponentRegistry();
 
     private final ConcurrentMap<String, Lock> locks = new ConcurrentHashMap<String, Lock>();
-    private final Map<Object, Object> registry = new ConcurrentHashMap<Object, Object>();
+    private final ConcurrentMap<Object, Object> registry = new ConcurrentHashMap<Object, Object>();
 
     public static ComponentRegistry getInstance() {
         return INSTANCE;
@@ -74,6 +74,35 @@ public final class ComponentRegistry {
             try {
                 Map<Object, Object> map = (Map<Object, Object>) registry.get(appId);
                 return getValue(map, slot, type);
+            } finally {
+                lock.unlock();
+            }
+        }
+    }
+
+    public <T> T putIfAbsent(Key<T> key, T value) {
+        Object slot = key.getSlot();
+        Class<T> type = key.getType();
+        String appId = key.getAppId();
+        if (appId == null) {
+            Object result = registry.putIfAbsent(slot, value);
+            return type.cast(result);
+        } else {
+            final Lock lock = lock(appId);
+            try {
+                T previous = null;
+                Map<Object, Object> map = (Map<Object, Object>) registry.get(appId);
+                if (map == null) {
+                    map = new HashMap<Object, Object>();
+                    registry.put(appId, map);
+                    map.put(slot, value);
+                } else {
+                    previous = getValue(map, slot, type);
+                    if (previous == null) {
+                        map.put(slot, value);
+                    }
+                }
+                return previous;
             } finally {
                 lock.unlock();
             }

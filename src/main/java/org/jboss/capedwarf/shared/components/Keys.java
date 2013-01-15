@@ -63,4 +63,5 @@ public final class Keys {
     public static final String CACHE_LISTENERS = "CacheListeners";
     public static final String METADATA_SCANNER = "MetaDataScanner";
     public static final String SYNC_HACK = "SyncHack";
+    public static final String SERVLET_REQUEST_CREATOR = "ServletRequestCreator";
 }
