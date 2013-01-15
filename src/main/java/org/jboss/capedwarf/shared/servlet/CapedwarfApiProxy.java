@@ -60,7 +60,7 @@ public final class CapedwarfApiProxy {
     }
 
     static void initialize(final String appId, final ServletContext context) {
-        Key<ServletContext> key = new SimpleKey<ServletContext>(ServletContext.class, appId);
+        Key<ServletContext> key = new SimpleKey<ServletContext>(appId, ServletContext.class);
         ComponentRegistry.getInstance().setComponent(key, context);
         classLoaders.put(Utils.getAppClassLoader(), appId);
     }

@@ -22,33 +22,24 @@
 
 package org.jboss.capedwarf.shared.components;
 
+import java.util.Set;
+
 /**
- * Component key.
+ * Simple component key.
  *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public abstract class AbstractKey<T> implements Key<T> {
-    private final AppIdFactory appIdFactory;
-    private final Object slot;
-
-    public AbstractKey(final String appId, Object slot) {
-        this(new AppIdFactory() {
-            public String appId() {
-                return appId;
-            }
-        }, slot);
+public class SetKey<E> extends AbstractKey<Set<E>> {
+    public SetKey(String appId, Object slot) {
+        super(appId, slot);
     }
 
-    public AbstractKey(AppIdFactory appIdFactory, Object slot) {
-        this.appIdFactory = appIdFactory;
-        this.slot = slot;
+    public SetKey(AppIdFactory appIdFactory, Object slot) {
+        super(appIdFactory, slot);
     }
 
-    public String getAppId() {
-        return appIdFactory.appId();
-    }
-
-    public Object getSlot() {
-        return slot;
+    @SuppressWarnings("unchecked")
+    public Class getType() {
+        return Set.class;
     }
 }

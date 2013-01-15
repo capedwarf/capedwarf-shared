@@ -29,6 +29,6 @@ package org.jboss.capedwarf.shared.components;
  */
 public final class GlobalKey<T> extends SimpleKey<T> {
     public GlobalKey(Class<T> type) {
-        super(type, null);
+        super((String) null, type);
     }
 }

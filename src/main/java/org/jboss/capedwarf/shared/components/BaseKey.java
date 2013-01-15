@@ -27,15 +27,23 @@ package org.jboss.capedwarf.shared.components;
  *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public abstract class BaseKey<T> extends AbstractKey<T> {
-    private String appId;
+public class BaseKey<T> extends AbstractKey<T> {
+    private final Class<T> type;
 
-    public BaseKey(Class<T> type, String appId) {
-        super(type);
-        this.appId = appId;
+    public BaseKey(final String appId, Object slot, Class<T> type) {
+        this(new AppIdFactory() {
+            public String appId() {
+                return appId;
+            }
+        }, slot, type);
     }
 
-    public String getAppId() {
-        return appId;
+    public BaseKey(AppIdFactory appIdFactory, Object slot, Class<T> type) {
+        super(appIdFactory, slot);
+        this.type = type;
+    }
+
+    public Class<T> getType() {
+        return type;
     }
 }

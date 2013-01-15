@@ -28,11 +28,11 @@ package org.jboss.capedwarf.shared.components;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class SimpleKey<T> extends BaseKey<T> {
-    public SimpleKey(Class<T> type, String appId) {
-        super(type, appId);
+    public SimpleKey(String appId, Class<T> type) {
+        super(appId, type.getName(), type);
     }
 
-    public Object getSlot() {
-        return getType();
+    public SimpleKey(AppIdFactory appIdFactory, Class<T> type) {
+        super(appIdFactory, type.getName(), type);
     }
 }
