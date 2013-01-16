@@ -31,11 +31,8 @@ public class BaseKey<T> extends AbstractKey<T> {
     private final Class<T> type;
 
     public BaseKey(final String appId, Object slot, Class<T> type) {
-        this(new AppIdFactory() {
-            public String appId() {
-                return appId;
-            }
-        }, slot, type);
+        super(appId, slot);
+        this.type = type;
     }
 
     public BaseKey(AppIdFactory appIdFactory, Object slot, Class<T> type) {
