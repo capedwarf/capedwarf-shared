@@ -57,11 +57,4 @@ public final class Keys {
     public static final Key<ConnectionFactory> CONNECTION_FACTORY = new GlobalKey<ConnectionFactory>(ConnectionFactory.class);
     // Mail
     public static final Key<Session> MAIL_SESSION = new GlobalKey<Session>(Session.class);
-
-    // Collections slots
-    public static final String ALLOCATIONS_MAP = "AllocationsMap";
-    public static final String CACHE_LISTENERS = "CacheListeners";
-    public static final String METADATA_SCANNER = "MetaDataScanner";
-    public static final String SYNC_HACK = "SyncHack";
-    public static final String SERVLET_REQUEST_CREATOR = "ServletRequestCreator";
 }
