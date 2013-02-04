@@ -31,6 +31,7 @@ import javax.mail.Session;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
+import org.apache.http.client.HttpClient;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.jgroups.JChannel;
 
@@ -57,4 +58,6 @@ public final class Keys {
     public static final Key<ConnectionFactory> CONNECTION_FACTORY = new GlobalKey<ConnectionFactory>(ConnectionFactory.class);
     // Mail
     public static final Key<Session> MAIL_SESSION = new GlobalKey<Session>(Session.class);
+    // HttpClient
+    public static final Key<HttpClient> HTTP_CLIENT = new GlobalKey<HttpClient>(HttpClient.class);
 }
