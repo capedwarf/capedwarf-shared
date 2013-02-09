@@ -64,7 +64,7 @@
 
         <!-- JBoss AS -->
         <version.org.jboss.modules.jboss-modules>1.1.3.GA</version.org.jboss.modules.jboss-modules>
-        <version.org.infinispan>5.2.0.CR1</version.org.infinispan>
+        <version.org.infinispan>5.2.1.Final</version.org.infinispan>
         <version.org.jboss.web>7.2.0.Beta1</version.org.jboss.web>
         <version.com.google.guava>11.0.2</version.com.google.guava>
         <!-- Spec -->
