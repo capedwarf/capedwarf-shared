@@ -92,7 +92,7 @@
                     <configuration>
                         <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         <includes>
-                            <include>org/jboss/test/**/*TestCase.java</include>
+                            <include>org/jboss/test/**/*Test.java</include>
                         </includes>
                     </configuration>
                 </plugin>

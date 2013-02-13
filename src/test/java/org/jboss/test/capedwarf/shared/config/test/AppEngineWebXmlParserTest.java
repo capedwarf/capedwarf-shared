@@ -37,7 +37,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author <a href="mailto:marko.luksa@gmail.com">Marko Luksa</a>
  */
-public class AppEngineWebXmlParserTestCase {
+public class AppEngineWebXmlParserTest {
 
     @Test
     public void testParse() throws Exception {

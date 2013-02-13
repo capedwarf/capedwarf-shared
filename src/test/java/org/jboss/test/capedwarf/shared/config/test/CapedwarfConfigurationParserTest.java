@@ -39,7 +39,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author <a href="mailto:marko.luksa@gmail.com">Marko Luksa</a>
  */
-public class CapedwarfConfigurationParserTestCase {
+public class CapedwarfConfigurationParserTest {
 
     @Test
     public void testParseSingleAdmin() throws Exception {

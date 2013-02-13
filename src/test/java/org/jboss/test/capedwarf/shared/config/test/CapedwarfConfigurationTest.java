@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author <a href="mailto:marko.luksa@gmail.com">Marko Luksa</a>
  */
-public class CapedwarfConfigurationTestCase {
+public class CapedwarfConfigurationTest {
 
     private CapedwarfConfiguration config;
 
