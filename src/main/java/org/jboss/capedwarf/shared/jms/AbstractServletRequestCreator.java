@@ -22,38 +22,17 @@
 
 package org.jboss.capedwarf.shared.jms;
 
-import javax.jms.Message;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * Create ServletRequest.
  *
- * Note: instances of this class are cached, hence no stateless.
- *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public interface ServletRequestCreator {
-    /**
-     * Create mock http servlet request, for async tasks.
-     *
-     * @param context the servlet context
-     * @param message the message
-     * @return new http servlet request
-     * @throws Exception for any error
-     */
-    HttpServletRequest createServletRequest(ServletContext context, Message message) throws Exception;
+public abstract class AbstractServletRequestCreator implements ServletRequestCreator {
+    public void prepare(HttpServletRequest request, String appId) {
+    }
 
-    /**
-     * Prepare, before dispatch.
-     *
-     * @param request the request
-     * @param appId the app Id
-     */
-    void prepare(HttpServletRequest request, String appId);
-
-    /**
-     * Finish, after dispatch.
-     */
-    void finish();
+    public void finish() {
+    }
 }
