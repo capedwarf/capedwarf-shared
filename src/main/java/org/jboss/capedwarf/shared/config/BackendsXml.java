@@ -31,8 +31,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Function;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
+import com.google.common.collect.Maps;
 
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
@@ -48,10 +47,10 @@ public final class BackendsXml implements Serializable, Iterable<BackendsXml.Bac
     }
 
     @SuppressWarnings("unchecked")
-    public synchronized Map<String, String> getAddresses(Function<String, String> fn) {
+    public synchronized Map<String, String> getAddresses(Function<Backend, String> fn) {
         if (addresses == null) {
-            CacheBuilder builder = CacheBuilder.newBuilder();
-            addresses = builder.build(CacheLoader.from(fn)).asMap();
+            Map<String, String> map = Maps.transformValues(backends, fn);
+            addresses = Collections.unmodifiableMap(map);
         }
         return addresses;
     }
