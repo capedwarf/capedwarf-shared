@@ -30,6 +30,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Function;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
@@ -37,9 +41,19 @@ public final class BackendsXml implements Serializable, Iterable<BackendsXml.Bac
     private static final long serialVersionUID = 1L;
 
     private Map<String, Backend> backends = new LinkedHashMap<String, Backend>();
+    private Map<String, String> addresses;
 
     public Backend getBackend(String name) {
         return backends.get(name);
+    }
+
+    @SuppressWarnings("unchecked")
+    public synchronized Map<String, String> getAddresses(Function<String, String> fn) {
+        if (addresses == null) {
+            CacheBuilder builder = CacheBuilder.newBuilder();
+            addresses = builder.build(CacheLoader.from(fn)).asMap();
+        }
+        return addresses;
     }
 
     public Iterator<Backend> iterator() {
