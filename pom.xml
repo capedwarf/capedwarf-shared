@@ -67,6 +67,9 @@
         <version.org.infinispan>5.2.1.Final</version.org.infinispan>
         <version.org.jboss.web>7.2.0.Beta1</version.org.jboss.web>
         <version.com.google.guava>11.0.2</version.com.google.guava>
+        <!-- GAE tools -->
+        <version.com.google.gae.api>1.7.5</version.com.google.gae.api>
+
         <!-- Spec -->
         <version.javax.mail>1.4.4</version.javax.mail>
         <version.javax.activation>1.1.1</version.javax.activation>
@@ -83,60 +86,57 @@
     </properties>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${version.surefire.plugin}</version>
-                    <configuration>
-                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                        <includes>
-                            <include>org/jboss/test/**/*Test.java</include>
-                        </includes>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>${version.jar.plugin}</version>
-                    <configuration>
-                        <archive>
-                            <manifestEntries>
-                                <Scm-Url>${jboss.capedwarf.scm.url}</Scm-Url>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
-                </plugin>
-
-                <!-- Checkstyle -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>${version.checkstyle.plugin}</version>
-                    <configuration>
-                        <configLocation>jboss-as-checkstyle/checkstyle.xml</configLocation>
-                        <consoleOutput>true</consoleOutput>
-                        <failsOnError>true</failsOnError>
-                        <useFile/>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>check-style</id>
-                            <phase>compile</phase>
-                            <goals>
-                                <goal>checkstyle</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${version.surefire.plugin}</version>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <includes>
+                        <include>org/jboss/test/**/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.google.appengine:appengine-tools-sdk</include>
+                                </includes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>com.google.appengine:appengine-tools-sdk</artifact>
+                                    <includes>
+                                        <include>com/google/apphosting/runtime/security/WhiteList.class</include>
+                                    </includes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <dependencyManagement>
         <dependencies>
             <!-- External Dependencies -->
+            <dependency>
+                <groupId>com.google.appengine</groupId>
+                <artifactId>appengine-tools-sdk</artifactId>
+                <version>${version.com.google.gae.api}</version>
+                <optional>true</optional>
+            </dependency>
 
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -239,6 +239,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-tools-sdk</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
