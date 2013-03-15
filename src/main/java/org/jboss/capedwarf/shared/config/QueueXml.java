@@ -42,7 +42,7 @@ public class QueueXml implements Serializable {
         queues.put("default", DEFAULT);
     }
 
-    public void addQueue(String name, Mode mode) {
+    void addQueue(String name, Mode mode) {
         queues.put(name, new Queue(name, mode));
     }
 

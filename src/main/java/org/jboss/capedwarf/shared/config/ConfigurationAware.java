@@ -30,6 +30,7 @@ public abstract class ConfigurationAware {
     protected CapedwarfConfiguration capedwarfConfiguration;
     protected QueueXml queueXml;
     protected BackendsXml backendsXml;
+    protected IndexesXml indexesXml;
 
     // hack around passing config instances
 
@@ -37,15 +38,17 @@ public abstract class ConfigurationAware {
     protected static final ThreadLocal<CapedwarfConfiguration> capedwarfConfigurationTL = new ThreadLocal<CapedwarfConfiguration>();
     protected static final ThreadLocal<QueueXml> queueXmlTL = new ThreadLocal<QueueXml>();
     protected static final ThreadLocal<BackendsXml> backendsTL = new ThreadLocal<BackendsXml>();
+    protected static final ThreadLocal<IndexesXml> indexesTL = new ThreadLocal<IndexesXml>();
 
     protected ConfigurationAware() {
     }
 
-    protected ConfigurationAware(AppEngineWebXml appEngineWebXml, CapedwarfConfiguration capedwarfConfiguration, QueueXml queueXml, BackendsXml backendsXml) {
+    protected ConfigurationAware(AppEngineWebXml appEngineWebXml, CapedwarfConfiguration capedwarfConfiguration, QueueXml queueXml, BackendsXml backendsXml, IndexesXml indexesXml) {
         this.appEngineWebXml = appEngineWebXml;
         this.capedwarfConfiguration = capedwarfConfiguration;
         this.queueXml = queueXml;
         this.backendsXml = backendsXml;
+        this.indexesXml = indexesXml;
     }
 
     protected void initialize() {
@@ -53,6 +56,7 @@ public abstract class ConfigurationAware {
         capedwarfConfiguration = capedwarfConfigurationTL.get();
         queueXml = queueXmlTL.get();
         backendsXml = backendsTL.get();
+        indexesXml = indexesTL.get();
     }
 
     public static void setAppEngineWebXml(AppEngineWebXml appEngineWebXml) {
@@ -81,5 +85,12 @@ public abstract class ConfigurationAware {
             backendsTL.set(backends);
         else
             backendsTL.remove();
+    }
+
+    public static void setIndexesXml(IndexesXml indexes) {
+        if (indexes != null)
+            indexesTL.set(indexes);
+        else
+            indexesTL.remove();
     }
 }
