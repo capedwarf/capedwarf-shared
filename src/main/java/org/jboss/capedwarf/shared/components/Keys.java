@@ -22,6 +22,7 @@
 
 package org.jboss.capedwarf.shared.components;
 
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
 
@@ -60,4 +61,6 @@ public final class Keys {
     public static final Key<Session> MAIL_SESSION = new GlobalKey<Session>(Session.class);
     // HttpClient
     public static final Key<HttpClient> HTTP_CLIENT = new GlobalKey<HttpClient>(HttpClient.class);
+    // Configuration
+    public static final Key<Properties> CONFIGURATION = new GlobalKey<Properties>(Properties.class);
 }
