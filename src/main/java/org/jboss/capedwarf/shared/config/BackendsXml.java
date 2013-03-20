@@ -50,7 +50,7 @@ public final class BackendsXml implements Serializable, Iterable<BackendsXml.Bac
     public synchronized Map<String, String> getAddresses(Function<Backend, String> fn) {
         if (addresses == null) {
             Map<String, String> map = Maps.transformValues(backends, fn);
-            addresses = Collections.unmodifiableMap(map);
+            addresses = Collections.unmodifiableMap(Maps.newHashMap(map));
         }
         return addresses;
     }
