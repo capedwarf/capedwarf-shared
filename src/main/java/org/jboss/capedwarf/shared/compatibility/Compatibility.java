@@ -43,6 +43,8 @@ import org.jboss.capedwarf.shared.components.Keys;
  */
 @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
 public class Compatibility {
+    public static final String FILENAME = "capedwarf-compatibility.properties";
+
     public static enum Feature {
         ENABLE_ALL("enable.all"),
         DISABLE_ENTITY_GROUPS("disable.entity.groups"),
@@ -53,7 +55,8 @@ public class Compatibility {
         ENABLE_EAGER_DATASTORE_STATS("enable.eager.datastore.stats", new RegexpValue("(sync|async)")),
         ENABLE_GLOBAL_TIME_LIMIT("enable.globalTimeLimit"),
         DISABLE_BLACK_LIST("disable.blacklist"),
-        DISABLE_METADATA("disable.metadata");
+        DISABLE_METADATA("disable.metadata"),
+        ENABLED_SUBSYSTEMS("enabled.subsystems", new CSV());
 
         private String key;
         private Value value;
@@ -130,12 +133,21 @@ public class Compatibility {
             throw new IllegalArgumentException("Null classloader!");
         }
 
+        return readCompatibility(cl.getResourceAsStream(FILENAME));
+    }
+
+    /**
+     * Read Compatibility, not cached!
+     *
+     * @param is the input stream
+     * @return compatibility
+     */
+    public static Compatibility readCompatibility(InputStream is) {
         final Properties properties = new Properties();
         properties.putAll(System.getProperties());
         properties.putAll(ComponentRegistry.getInstance().getComponent(Keys.CONFIGURATION));
 
         try {
-            final InputStream is = cl.getResourceAsStream("capedwarf-compatibility.properties");
             if (is != null) {
                 try {
                     properties.load(is);
@@ -234,6 +246,12 @@ public class Compatibility {
 
         public String toString() {
             return pattern.toString();
+        }
+    }
+
+    private static class CSV implements Value {
+        public boolean match(String value) {
+            return (value != null && value.length() > 0);
         }
     }
 }
