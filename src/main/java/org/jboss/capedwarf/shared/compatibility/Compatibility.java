@@ -56,7 +56,8 @@ public class Compatibility {
         ENABLE_GLOBAL_TIME_LIMIT("enable.globalTimeLimit"),
         DISABLE_BLACK_LIST("disable.blacklist"),
         DISABLE_METADATA("disable.metadata"),
-        ENABLED_SUBSYSTEMS("enabled.subsystems", new CSV());
+        ENABLED_SUBSYSTEMS("enabled.subsystems", new CSV()),
+        FORCE_ASYNC_DATASTORE("force.async.datastore");
 
         private String key;
         private Value value;
@@ -99,27 +100,16 @@ public class Compatibility {
     /**
      * Get instance per key.
      *
-     * @param cl the classloader
      * @param key the key
      * @return compatibility instance
      */
-    public static Compatibility getInstance(ClassLoader cl, Key<Compatibility> key) {
-        if (cl == null) {
-            throw new IllegalArgumentException("Null classloader!");
-        }
+    public static Compatibility getInstance(Key<Compatibility> key) {
         if (key == null) {
             throw new IllegalArgumentException("Null key!");
         }
 
-        synchronized (Compatibility.class) {
-            ComponentRegistry registry = ComponentRegistry.getInstance();
-            Compatibility compatibility = registry.getComponent(key);
-            if (compatibility == null) {
-                compatibility = Compatibility.readCompatibility(cl);
-                registry.setComponent(key, compatibility);
-            }
-            return compatibility;
-        }
+        ComponentRegistry registry = ComponentRegistry.getInstance();
+        return registry.getComponent(key);
     }
 
     /**
