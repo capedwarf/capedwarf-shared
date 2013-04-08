@@ -56,8 +56,9 @@ public class Compatibility {
         ENABLE_GLOBAL_TIME_LIMIT("enable.globalTimeLimit"),
         DISABLE_BLACK_LIST("disable.blacklist"),
         DISABLE_METADATA("disable.metadata"),
-        ENABLED_SUBSYSTEMS("enabled.subsystems", new CSV()),
-        FORCE_ASYNC_DATASTORE("force.async.datastore");
+        ENABLED_SUBSYSTEMS("enabled.subsystems", new NotEmpty()),
+        FORCE_ASYNC_DATASTORE("force.async.datastore"),
+        LOG_TO_FILE("log.to.file", new NotEmpty()); // TODO -- better Value; e.g. FileName
 
         private String key;
         private Value value;
@@ -239,7 +240,7 @@ public class Compatibility {
         }
     }
 
-    private static class CSV implements Value {
+    private static class NotEmpty implements Value {
         public boolean match(String value) {
             return (value != null && value.length() > 0);
         }
