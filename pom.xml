@@ -54,14 +54,6 @@
     </scm>
 
     <properties>
-        <!-- Release Info -->
-        <jboss.capedwarf.scm.url>https://github.com/capedwarf/capedwarf-shared</jboss.capedwarf.scm.url>
-        <jboss.capedwarf.scm.connection>git@github.com:capedwarf/capedwarf-shared.git</jboss.capedwarf.scm.connection>
-
-        <!-- Build configuration -->
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
-
         <!-- JBoss AS -->
         <version.org.jboss.modules.jboss-modules>1.1.3.GA</version.org.jboss.modules.jboss-modules>
         <version.org.infinispan>5.2.1.Final</version.org.infinispan>
@@ -83,10 +75,30 @@
         <!-- Testing -->
         <version.junit>4.10</version.junit>
 
+        <!-- Compiler configuration -->
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+
+        <!-- Release Info -->
+        <jboss.capedwarf.scm.url>https://github.com/capedwarf/capedwarf-shared</jboss.capedwarf.scm.url>
+        <jboss.capedwarf.scm.connection>git@github.com:capedwarf/capedwarf-shared.git</jboss.capedwarf.scm.connection>
     </properties>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <encoding>UTF8</encoding>
+                    <compilerArguments>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                    </compilerArguments>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
