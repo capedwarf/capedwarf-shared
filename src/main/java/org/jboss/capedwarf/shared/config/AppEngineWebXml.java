@@ -25,6 +25,8 @@
 package org.jboss.capedwarf.shared.config;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:marko.luksa@gmail.com">Marko Luksa</a>
@@ -35,9 +37,14 @@ public class AppEngineWebXml implements Serializable {
     private String application;
     private String version;
 
+    private List<StaticFileInclude> staticFileIncludes;
+    private List<FilePattern> staticFileExcludes;
+
     public AppEngineWebXml(String application, String version) {
         this.application = application;
         this.version = version;
+        this.staticFileIncludes = new ArrayList<StaticFileInclude>();
+        this.staticFileExcludes = new ArrayList<FilePattern>();
     }
 
     public String getApplication() {
@@ -46,5 +53,13 @@ public class AppEngineWebXml implements Serializable {
 
     public String getVersion() {
         return version;
+    }
+
+    public List<StaticFileInclude> getStaticFileIncludes() {
+        return staticFileIncludes;
+    }
+
+    public List<FilePattern> getStaticFileExcludes() {
+        return staticFileExcludes;
     }
 }
