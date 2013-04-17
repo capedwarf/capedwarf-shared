@@ -66,9 +66,27 @@ public class AppEngineWebXmlParser {
             }
         }
 
-        return new AppEngineWebXml(
-                XmlUtils.getChildElementBody(documentElement, "application"),
-                XmlUtils.getChildElementBody(documentElement, "version"));
+        AppEngineWebXml appEngineWebXml = new AppEngineWebXml(
+            XmlUtils.getChildElementBody(documentElement, "application"),
+            XmlUtils.getChildElementBody(documentElement, "version"));
+
+        Element staticFilesElement = XmlUtils.getChildElement(documentElement, "static-files");
+        if (staticFilesElement != null) {
+            for (Element includeElement : XmlUtils.getChildren(staticFilesElement, "include")) {
+                StaticFileInclude staticFileInclude = new StaticFileInclude(includeElement.getAttribute("path"));
+                for (Element headerElement : XmlUtils.getChildren(includeElement, "http-header")) {
+                    staticFileInclude.addHeader(new StaticFileHttpHeader(headerElement.getAttribute("name"), headerElement.getAttribute("value")));
+                }
+                appEngineWebXml.getStaticFileIncludes().add(staticFileInclude);
+            }
+
+            for (Element excludeElement : XmlUtils.getChildren(staticFilesElement, "exclude")) {
+                FilePattern exclude = new FilePattern(excludeElement.getAttribute("path"));
+                appEngineWebXml.getStaticFileExcludes().add(exclude);
+            }
+        }
+
+        return appEngineWebXml;
     }
 
 }
