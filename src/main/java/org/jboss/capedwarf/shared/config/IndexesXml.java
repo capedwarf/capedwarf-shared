@@ -67,7 +67,9 @@ public class IndexesXml implements Serializable {
         }
 
         void addProperty(Property property) {
-            properties.add(property);
+            if (!properties.contains(property)) {
+                properties.add(property);
+            }
         }
 
         public String getKind() {
@@ -84,6 +86,23 @@ public class IndexesXml implements Serializable {
 
         public List<Property> getProperties() {
             return Collections.unmodifiableList(properties);
+        }
+
+        public List<String> getPropertyNames() {
+            List<String> list = new ArrayList<>();
+            for (IndexesXml.Property property : properties) {
+                list.add(property.getName());
+            }
+            return list;
+        }
+
+        public String getName() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(kind);
+            for (IndexesXml.Property property : properties) {
+                sb.append(",").append(property.getName());
+            }
+            return sb.toString();
         }
     }
 
@@ -104,6 +123,26 @@ public class IndexesXml implements Serializable {
 
         public String getDirection() {
             return direction;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Property property = (Property) o;
+
+            if (!direction.equals(property.direction)) return false;
+            if (!name.equals(property.name)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = name.hashCode();
+            result = 31 * result + direction.hashCode();
+            return result;
         }
     }
 }
