@@ -60,7 +60,7 @@
         <version.org.jboss.web>7.2.0.Final</version.org.jboss.web>
         <version.com.google.guava>14.0.1</version.com.google.guava>
         <!-- GAE tools -->
-        <version.com.google.gae.api>1.8.0</version.com.google.gae.api>
+        <version.com.google.gae.api>1.8.1</version.com.google.gae.api>
 
         <!-- Spec -->
         <version.javax.mail>1.4.4</version.javax.mail>
