@@ -55,6 +55,7 @@
 
     <properties>
         <!-- JBoss AS -->
+        <version.io.undertow>1.0.0.Beta3</version.io.undertow>
         <version.org.jboss.modules.jboss-modules>1.2.2.Final</version.org.jboss.modules.jboss-modules>
         <version.org.infinispan>5.3.0.Final</version.org.infinispan>
         <version.org.jboss.web>7.2.0.Final</version.org.jboss.web>
@@ -77,6 +78,7 @@
         <version.org.jboss.spec.javax.servlet.jboss-servlet-api_3.0_spec>1.0.2.Final</version.org.jboss.spec.javax.servlet.jboss-servlet-api_3.0_spec>
         <!-- Ext modules -->
         <version.org.apache.httpcomponents>4.2.1</version.org.apache.httpcomponents>
+        <version.metainf>1.1</version.metainf>
         <!-- Testing -->
         <version.junit>4.10</version.junit>
 
@@ -238,6 +240,12 @@
             </dependency>
 
             <dependency>
+                <groupId>io.undertow</groupId>
+                <artifactId>undertow-servlet</artifactId>
+                <version>${version.io.undertow}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.jboss.modules</groupId>
                 <artifactId>jboss-modules</artifactId>
                 <version>${version.org.jboss.modules.jboss-modules}</version>
@@ -256,21 +264,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-search-engine</artifactId>
-                <version>${version.org.hibernate.search}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate-search-analyzers</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-core</artifactId>
-                <version>${version.org.apache.lucene}</version>
+                <groupId>org.kohsuke.metainf-services</groupId>
+                <artifactId>metainf-services</artifactId>
+                <version>${version.metainf}</version>
             </dependency>
 
             <dependency>
@@ -359,6 +355,11 @@
         </dependency>
 
         <dependency>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-servlet</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.jboss.modules</groupId>
             <artifactId>jboss-modules</artifactId>
         </dependency>
@@ -375,19 +376,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-search-engine</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-search-analyzers</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
