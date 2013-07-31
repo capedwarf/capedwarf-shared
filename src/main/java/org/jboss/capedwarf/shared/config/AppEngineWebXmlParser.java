@@ -26,7 +26,9 @@ package org.jboss.capedwarf.shared.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -45,9 +47,7 @@ public class AppEngineWebXmlParser {
     public static AppEngineWebXml parse(InputStream inputStream) throws IOException {
         try {
             return tryParse(inputStream);
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        } catch (SAXException e) {
+        } catch (ParserConfigurationException | SAXException e) {
             throw new RuntimeException(e);
         }
     }
@@ -56,7 +56,7 @@ public class AppEngineWebXmlParser {
         Document doc = XmlUtils.parseXml(inputStream);
         Element documentElement = doc.getDocumentElement();
 
-        Element systemPropertiesElement = XmlUtils.getChildElement(documentElement, "system-properties");
+        Element systemPropertiesElement = XmlUtils.getChildElement(documentElement, "system-properties", false);
         if (systemPropertiesElement != null) {
             List<Element> propertyElements = XmlUtils.getChildren(systemPropertiesElement, "property");
             for (Element propertyElement : propertyElements) {
@@ -66,23 +66,57 @@ public class AppEngineWebXmlParser {
             }
         }
 
-        AppEngineWebXml appEngineWebXml = new AppEngineWebXml(
-            XmlUtils.getChildElementBody(documentElement, "application"),
-            XmlUtils.getChildElementBody(documentElement, "version"));
+        AppEngineWebXml appEngineWebXml = new AppEngineWebXml();
 
-        Element staticFilesElement = XmlUtils.getChildElement(documentElement, "static-files");
+        appEngineWebXml.setApplication(XmlUtils.getChildElementBody(documentElement, "application"));
+        appEngineWebXml.setVersion(XmlUtils.getChildElementBody(documentElement, "version"));
+        appEngineWebXml.setThreadsafe(Boolean.parseBoolean(XmlUtils.getChildElementBody(documentElement, "threadsafe", false)));
+        appEngineWebXml.setModule(XmlUtils.getChildElementBody(documentElement, "module", false));
+        appEngineWebXml.setInstanceClass(XmlUtils.getChildElementBody(documentElement, "instance-class", false));
+
+        final Set<Scaling> scalings = new HashSet<>();
+        Element manualScaling = XmlUtils.getChildElement(documentElement, "manual-scaling");
+        if (manualScaling != null) {
+            ManualScaling scaling = new ManualScaling();
+            scaling.setInstances(Integer.parseInt(XmlUtils.getChildElementBody(manualScaling, "instances")));
+            appEngineWebXml.setScaling(scaling);
+            scalings.add(scaling);
+        }
+        Element basicScaling = XmlUtils.getChildElement(documentElement, "basic-scaling");
+        if (basicScaling != null) {
+            BasicScaling scaling = new BasicScaling();
+            scaling.setMaxInstances(Integer.parseInt(XmlUtils.getChildElementBody(basicScaling, "max-instances")));
+            scaling.setIdleTimeout(XmlUtils.getChildElementBody(basicScaling, "idle-timeout"));
+            appEngineWebXml.setScaling(scaling);
+            scalings.add(scaling);
+        }
+        Element autoScaling = XmlUtils.getChildElement(documentElement, "automatic-scaling");
+        if (autoScaling != null) {
+            AutomaticScaling scaling = new AutomaticScaling();
+            scaling.setMinIdleInstances(XmlUtils.getChildElementBody(autoScaling, "min-idle-instances"));
+            scaling.setMaxIdleInstances(XmlUtils.getChildElementBody(autoScaling, "max-idle-instances"));
+            scaling.setMinPendingLatency(XmlUtils.getChildElementBody(autoScaling, "min-pending-latency"));
+            scaling.setMaxPendingLatency(XmlUtils.getChildElementBody(autoScaling, "max-pending-latency"));
+            appEngineWebXml.setScaling(scaling);
+            scalings.add(scaling);
+        }
+        if (scalings.size() > 1) {
+            throw new IllegalArgumentException("Multiple scaling types configured: " + scalings);
+        }
+
+        Element staticFilesElement = XmlUtils.getChildElement(documentElement, "static-files", false);
         if (staticFilesElement != null) {
             for (Element includeElement : XmlUtils.getChildren(staticFilesElement, "include")) {
                 StaticFileInclude staticFileInclude = new StaticFileInclude(includeElement.getAttribute("path"));
                 for (Element headerElement : XmlUtils.getChildren(includeElement, "http-header")) {
                     staticFileInclude.addHeader(new StaticFileHttpHeader(headerElement.getAttribute("name"), headerElement.getAttribute("value")));
                 }
-                appEngineWebXml.getStaticFileIncludes().add(staticFileInclude);
+                appEngineWebXml.addStaticFileInclude(staticFileInclude);
             }
 
             for (Element excludeElement : XmlUtils.getChildren(staticFilesElement, "exclude")) {
                 FilePattern exclude = new FilePattern(excludeElement.getAttribute("path"));
-                appEngineWebXml.getStaticFileExcludes().add(exclude);
+                appEngineWebXml.addStaticFileExclude(exclude);
             }
         }
 

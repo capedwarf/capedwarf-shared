@@ -20,38 +20,48 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.capedwarf.shared.util;
+package org.jboss.capedwarf.shared.modules;
 
-import org.jboss.modules.ModuleClassLoader;
+import java.io.Serializable;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.jboss.capedwarf.shared.config.AppEngineWebXml;
 
 /**
- * Simple utils.
- *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public final class Utils {
-    public static ClassLoader getAppClassLoader() {
-        final ClassLoader tccl = SecurityActions.getTCCL();
-        // unwrap -- might be WebEnvCL
-        ClassLoader cl = tccl;
-        while (cl != null && (cl instanceof ModuleClassLoader == false)) {
-            cl = cl.getParent();
-        }
-        if (cl == null)
-            throw new IllegalArgumentException("No ModuleClassLoader in hierarchy?! - " + tccl);
-        return cl;
+public class ModuleInfo implements Serializable {
+    public static final String DEFAULT_MODULE_NAME = "default";
+
+    private AppEngineWebXml config;
+    private List<InstanceInfo> instances;
+
+    public ModuleInfo() {
+        // serialization only
     }
 
-    public static <T> T newInstance(Class<T> expectedType, String className) {
-        return newInstance(expectedType, getAppClassLoader(), className);
+    public ModuleInfo(AppEngineWebXml config) {
+        this.config = config;
+        this.instances = new CopyOnWriteArrayList<>();
     }
 
-    public static <T> T newInstance(Class<T> expectedType, ClassLoader cl, String className) {
-        try {
-            Object instance = cl.loadClass(className).newInstance();
-            return expectedType.cast(instance);
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+    public void addInstance(InstanceInfo instance) {
+        instances.add(instance);
+    }
+
+    public void removeInstance(InstanceInfo instance) {
+        instances.remove(instance);
+    }
+
+    public AppEngineWebXml getConfig() {
+        return config;
+    }
+
+    public InstanceInfo getInstance(int i) {
+        if (i < 0 || i >= instances.size()) {
+            throw new IllegalArgumentException("No such instance: " + i);
         }
+        return instances.get(i);
     }
 }

@@ -37,14 +37,23 @@ import com.google.common.collect.ListMultimap;
 public class IndexesXml implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private boolean autoGenerate = true;
     private ListMultimap<String, Index> indexes;
 
     public IndexesXml() {
         indexes = ArrayListMultimap.create();
     }
 
+    void setAutoGenerate(boolean autoGenerate) {
+        this.autoGenerate = autoGenerate;
+    }
+
     void addIndex(Index index) {
         indexes.put(index.getKind(), index);
+    }
+
+    public boolean isAutoGenerate() {
+        return autoGenerate;
     }
 
     public ListMultimap<String, Index> getIndexes() {
@@ -63,7 +72,7 @@ public class IndexesXml implements Serializable {
             this.kind = kind;
             this.ancestor = ancestor;
             this.source = source;
-            this.properties = new ArrayList<Property>();
+            this.properties = new ArrayList<>();
         }
 
         void addProperty(Property property) {

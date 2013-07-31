@@ -26,9 +26,16 @@ package org.jboss.test.capedwarf.shared.config.test;
 
 
 import java.io.ByteArrayInputStream;
+import java.util.List;
 
 import org.jboss.capedwarf.shared.config.AppEngineWebXml;
 import org.jboss.capedwarf.shared.config.AppEngineWebXmlParser;
+import org.jboss.capedwarf.shared.config.AutomaticScaling;
+import org.jboss.capedwarf.shared.config.BasicScaling;
+import org.jboss.capedwarf.shared.config.FilePattern;
+import org.jboss.capedwarf.shared.config.ManualScaling;
+import org.jboss.capedwarf.shared.config.Scaling;
+import org.jboss.capedwarf.shared.config.StaticFileInclude;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -36,36 +43,134 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * @author <a href="mailto:marko.luksa@gmail.com">Marko Luksa</a>
+ * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class AppEngineWebXmlParserTest {
 
     @Test
     public void testParse() throws Exception {
         String xml = "<appengine-web-app>" +
-                "    <application>appName</application>" +
-                "    <version>2</version>" +
-                "</appengine-web-app>";
+            "    <application>appName</application>" +
+            "    <version>2</version>" +
+            "    <threadsafe>true</threadsafe>" +
+            "    <module>somemodule</module>" +
+            "    <instance-class>B8</instance-class>" +
+            "</appengine-web-app>";
 
-        AppEngineWebXml appEngineWebXml = AppEngineWebXmlParser.parse(new ByteArrayInputStream(xml.getBytes()));
+        AppEngineWebXml appEngineWebXml = parse(xml);
 
         Assert.assertEquals("appName", appEngineWebXml.getApplication());
         Assert.assertEquals("2", appEngineWebXml.getVersion());
+        Assert.assertTrue(appEngineWebXml.isThreadsafe());
+        Assert.assertEquals("somemodule", appEngineWebXml.getModule());
+        Assert.assertEquals("B8", appEngineWebXml.getInstanceClass());
+    }
+
+    @Test
+    public void testManualScaling() throws Exception {
+        String xml = "<appengine-web-app xmlns=\"http://appengine.google.com/ns/1.0\">\n" +
+            "  <application>simple-app</application>\n" +
+            "  <module>default</module>\n" +
+            "  <version>uno</version>\n" +
+            "  <instance-class>B8</instance-class>\n" +
+            "  <manual-scaling>\n" +
+            "    <instances>5</instances>\n" +
+            "  </manual-scaling>\n" +
+            "</appengine-web-app>";
+        AppEngineWebXml appEngineWebXml = parse(xml);
+
+        Scaling s = appEngineWebXml.getScaling();
+        Assert.assertNotNull(s);
+        Assert.assertSame(Scaling.Type.MANUAL, s.getType());
+        Assert.assertEquals(5, s.narrow(ManualScaling.class).getInstances());
+    }
+
+    @Test
+    public void testBasicScaling() throws Exception {
+        String xml = "<appengine-web-app xmlns=\"http://appengine.google.com/ns/1.0\">\n" +
+            "  <application>simple-app</application>\n" +
+            "  <module>default</module>\n" +
+            "  <version>uno</version>\n" +
+            "  <instance-class>B8</instance-class>\n" +
+            "  <basic-scaling>\n" +
+            "    <max-instances>11</max-instances>\n" +
+            "    <idle-timeout>10m</idle-timeout>\n" +
+            "  </basic-scaling>\n" +
+            "</appengine-web-app>";
+        AppEngineWebXml appEngineWebXml = parse(xml);
+
+        Scaling s = appEngineWebXml.getScaling();
+        Assert.assertNotNull(s);
+        Assert.assertSame(Scaling.Type.BASIC, s.getType());
+        BasicScaling scaling = s.narrow(BasicScaling.class);
+        Assert.assertEquals(11, scaling.getMaxInstances());
+        Assert.assertEquals("10m", scaling.getIdleTimeout());
+    }
+
+    @Test
+    public void testAutoScaling() throws Exception {
+        String xml = "<appengine-web-app xmlns=\"http://appengine.google.com/ns/1.0\">\n" +
+            "  <application>simple-app</application>\n" +
+            "  <module>default</module>\n" +
+            "  <version>uno</version>\n" +
+            "  <instance-class>F2</instance-class>\n" +
+            "  <automatic-scaling>\n" +
+            "    <min-idle-instances>5</min-idle-instances>\n" +
+            "    <!-- ‘automatic’ is the default value. -->\n" +
+            "    <max-idle-instances>automatic</max-idle-instances>\n" +
+            "    <!-- ‘automatic’ is the default value. -->\n" +
+            "    <min-pending-latency>automatic</min-pending-latency>\n" +
+            "    <max-pending-latency>30ms</max-pending-latency>\n" +
+            "  </automatic-scaling>\n" +
+            "</appengine-web-app>";
+        AppEngineWebXml appEngineWebXml = parse(xml);
+
+        Scaling s = appEngineWebXml.getScaling();
+        Assert.assertNotNull(s);
+        Assert.assertSame(Scaling.Type.AUTOMATIC, s.getType());
+        AutomaticScaling scaling = s.narrow(AutomaticScaling.class);
+        Assert.assertEquals("5", scaling.getMinIdleInstances());
+        Assert.assertEquals("automatic", scaling.getMaxIdleInstances());
+        Assert.assertEquals("automatic", scaling.getMinPendingLatency());
+        Assert.assertEquals("30ms", scaling.getMaxPendingLatency());
+    }
+
+    @Test
+    public void testStaticFiles() throws Exception {
+        String xml = "<appengine-web-app xmlns=\"http://appengine.google.com/ns/1.0\">\n" +
+            "    <application>capedwarf-test</application>\n" +
+            "    <version>1</version>\n" +
+            "    <threadsafe>true</threadsafe>\n" +
+            "    <static-files>\n" +
+            "        <include path=\"/**.png\" />\n" +
+            "        <include path=\"/**.jpg\" />\n" +
+            "        <exclude path=\"/**.jpg\" />\n" +
+            "    </static-files>\n" +
+            "</appengine-web-app>\n";
+        AppEngineWebXml appEngineWebXml = parse(xml);
+
+        List<StaticFileInclude> includes = appEngineWebXml.getStaticFileIncludes();
+        Assert.assertEquals(2, includes.size());
+        List<FilePattern> excludes = appEngineWebXml.getStaticFileExcludes();
+        Assert.assertEquals(1, excludes.size());
     }
 
     @Test
     public void testSystemProperties() throws Exception {
         String xml = "<appengine-web-app>" +
-                "    <application>appName</application>" +
-                "    <version>2</version>" +
-                "    <system-properties>" +
-                "        <property name=\"foo\" value=\"bar\"/>" +
-                "    </system-properties>" +
-                "</appengine-web-app>";
+            "    <application>appName</application>" +
+            "    <version>2</version>" +
+            "    <system-properties>" +
+            "        <property name=\"foo\" value=\"bar\"/>" +
+            "    </system-properties>" +
+            "</appengine-web-app>";
 
-        AppEngineWebXmlParser.parse(new ByteArrayInputStream(xml.getBytes()));
+        parse(xml);
 
         assertEquals("bar", System.getProperty("foo"));
     }
 
-
+    private static AppEngineWebXml parse(String xml) throws Exception {
+        return AppEngineWebXmlParser.parse(new ByteArrayInputStream(xml.getBytes()));
+    }
 }

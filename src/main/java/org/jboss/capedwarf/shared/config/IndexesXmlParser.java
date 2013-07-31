@@ -50,18 +50,26 @@ public class IndexesXmlParser {
     private static final String DIRECTION = "direction";
 
     public static IndexesXml parse(InputStream is) {
+        final IndexesXml indexesXml = new IndexesXml();
+
         if (is == null) {
-            return new IndexesXml();
+            return indexesXml;
         }
 
-        IndexesXml indexesXml = new IndexesXml();
         try {
             Document doc = XmlUtils.parseXml(is);
 
-            if (DATASTORE_INDEXES.equals(doc.getDocumentElement().getTagName()) == false) {
+            Element root = doc.getDocumentElement();
+            if (DATASTORE_INDEXES.equals(root.getTagName()) == false) {
                 throw new CapedwarfConfigException("datastore-indexes.xml does not contain <datastore-indexes>");
             }
-            NodeList list = doc.getDocumentElement().getChildNodes();
+
+            String autoGenerate = root.getAttribute("autoGenerate");
+            if (autoGenerate != null) {
+                indexesXml.setAutoGenerate(Boolean.parseBoolean(autoGenerate));
+            }
+
+            NodeList list = root.getChildNodes();
             for (int i = 0; i < list.getLength(); i++) {
                 Node node = list.item(i);
                 if (node instanceof Element) {
@@ -72,11 +80,7 @@ public class IndexesXmlParser {
                 }
             }
             return indexesXml;
-        } catch (ParserConfigurationException e) {
-            throw new CapedwarfConfigException("Could not parse WEB-INF/datastore-indexes.xml", e);
-        } catch (SAXException e) {
-            throw new CapedwarfConfigException("Could not parse WEB-INF/datastore-indexes.xml", e);
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new CapedwarfConfigException("Could not parse WEB-INF/datastore-indexes.xml", e);
         }
     }

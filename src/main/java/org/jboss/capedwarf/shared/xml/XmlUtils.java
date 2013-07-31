@@ -40,6 +40,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:marko.luksa@gmail.com">Marko Luksa</a>
+ * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class XmlUtils {
     public static Document parseXml(InputStream inputStream) throws ParserConfigurationException, SAXException, IOException {
@@ -51,12 +52,28 @@ public class XmlUtils {
     }
 
     public static String getChildElementBody(Element element, String tagName) {
-        Element applicationElement = getChildElement(element, tagName);
-        return getBody(applicationElement);
+        return getChildElementBody(element, tagName, true);
+    }
+
+    public static String getChildElementBody(Element element, String tagName, boolean required) {
+        Element elt = getChildElement(element, tagName, required);
+        return (elt != null) ? getBody(elt) : null;
     }
 
     public static Element getChildElement(Element parent, String tagName) {
-        return (Element) parent.getElementsByTagName(tagName).item(0);
+        return getChildElement(parent, tagName, false);
+    }
+
+    public static Element getChildElement(Element parent, String tagName, boolean required) {
+        NodeList nodes = parent.getElementsByTagName(tagName);
+        if (nodes == null || nodes.getLength() == 0) {
+            if (required) {
+                throw new IllegalStateException(String.format("Missing tag %s in element %s.", tagName, parent));
+            } else {
+                return null;
+            }
+        }
+        return (Element) nodes.item(0);
     }
 
     public static String getBody(Element element) {
@@ -74,7 +91,7 @@ public class XmlUtils {
     public static List<Element> getChildren(Element element, String tagName) {
         NodeList nodes = element.getElementsByTagName(tagName);
 
-        List<Element> elements = new ArrayList<Element>(nodes.getLength());
+        List<Element> elements = new ArrayList<>(nodes.getLength());
         for (int i = 0; i < nodes.getLength(); i++) {
             elements.add((Element) nodes.item(i));
         }

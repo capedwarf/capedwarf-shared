@@ -26,40 +26,101 @@ package org.jboss.capedwarf.shared.config;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import org.jboss.capedwarf.shared.modules.ModuleInfo;
 
 /**
  * @author <a href="mailto:marko.luksa@gmail.com">Marko Luksa</a>
+ * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class AppEngineWebXml implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String application;
     private String version;
+    private boolean threadsafe;
+    private String module = ModuleInfo.DEFAULT_MODULE_NAME;
+    private String instanceClass;
+    private Scaling scaling;
 
     private List<StaticFileInclude> staticFileIncludes;
     private List<FilePattern> staticFileExcludes;
 
-    public AppEngineWebXml(String application, String version) {
-        this.application = application;
-        this.version = version;
-        this.staticFileIncludes = new ArrayList<StaticFileInclude>();
-        this.staticFileExcludes = new ArrayList<FilePattern>();
+    public AppEngineWebXml() {
+        this.staticFileIncludes = new ArrayList<>();
+        this.staticFileExcludes = new ArrayList<>();
+    }
+
+    public static AppEngineWebXml override(AppEngineWebXml original, String application) {
+        original.setApplication(application);
+        return original;
     }
 
     public String getApplication() {
         return application;
     }
 
+    void setApplication(String application) {
+        this.application = application;
+    }
+
     public String getVersion() {
         return version;
     }
 
+    void setVersion(String version) {
+        this.version = version;
+    }
+
+    public boolean isThreadsafe() {
+        return threadsafe;
+    }
+
+    void setThreadsafe(boolean threadsafe) {
+        this.threadsafe = threadsafe;
+    }
+
+    public String getModule() {
+        return module;
+    }
+
+    void setModule(String module) {
+        if (module != null) {
+            this.module = module;
+        }
+    }
+
+    public String getInstanceClass() {
+        return instanceClass;
+    }
+
+    void setInstanceClass(String instanceClass) {
+        this.instanceClass = instanceClass;
+    }
+
+    public Scaling getScaling() {
+        return scaling;
+    }
+
+    void setScaling(Scaling scaling) {
+        this.scaling = scaling;
+    }
+
     public List<StaticFileInclude> getStaticFileIncludes() {
-        return staticFileIncludes;
+        return Collections.unmodifiableList(staticFileIncludes);
+    }
+
+    void addStaticFileInclude(StaticFileInclude include) {
+        staticFileIncludes.add(include);
     }
 
     public List<FilePattern> getStaticFileExcludes() {
-        return staticFileExcludes;
+        return Collections.unmodifiableList(staticFileExcludes);
+    }
+
+    void addStaticFileExclude(FilePattern exclude) {
+        staticFileExcludes.add(exclude);
     }
 }
