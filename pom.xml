@@ -60,7 +60,7 @@
         <version.org.jboss.web>7.2.0.Final</version.org.jboss.web>
         <version.com.google.guava>14.0.1</version.com.google.guava>
         <!-- GAE tools -->
-        <version.com.google.gae.api>1.8.2</version.com.google.gae.api>
+        <version.com.google.gae.api>1.8.3</version.com.google.gae.api>
         <!-- Hibernate Search -->
         <version.org.hibernate.search>4.3.0.Final</version.org.hibernate.search>
         <version.org.apache.lucene>3.6.2</version.org.apache.lucene>
