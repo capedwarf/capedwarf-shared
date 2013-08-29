@@ -58,7 +58,8 @@ public class Compatibility {
         DISABLE_METADATA("disable.metadata"),
         ENABLED_SUBSYSTEMS("enabled.subsystems", new NotEmpty()),
         FORCE_ASYNC_DATASTORE("force.async.datastore"),
-        LOG_TO_FILE("log.to.file", new NotEmpty()); // TODO -- better Value; e.g. FileName
+        LOG_TO_FILE("log.to.file", new NotEmpty()),  // TODO -- better Value; e.g. FileName
+        ENABLE_SOCKET_OPTIONS("enable.socket.options");
 
         private String key;
         private Value value;
@@ -89,10 +90,10 @@ public class Compatibility {
         }
     }
 
-    private static final ThreadLocal<Set<Feature>> temps = new ThreadLocal<Set<Feature>>();
+    private static final ThreadLocal<Set<Feature>> temps = new ThreadLocal<>();
 
     private final Properties properties;
-    private final Map<Feature, Boolean> values = new ConcurrentHashMap<Feature, Boolean>();
+    private final Map<Feature, Boolean> values = new ConcurrentHashMap<>();
 
     private Compatibility(Properties properties) {
         this.properties = properties;
@@ -183,7 +184,7 @@ public class Compatibility {
     public static void enable(Feature feature) {
         Set<Feature> features = temps.get();
         if (features == null) {
-            features = new HashSet<Feature>();
+            features = new HashSet<>();
             temps.set(features);
         }
         features.add(feature);
