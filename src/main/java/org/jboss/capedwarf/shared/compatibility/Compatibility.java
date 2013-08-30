@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import org.jboss.capedwarf.shared.components.ComponentRegistry;
 import org.jboss.capedwarf.shared.components.Key;
 import org.jboss.capedwarf.shared.components.Keys;
+import org.jboss.capedwarf.shared.components.SimpleKey;
 
 /**
  * Allow for custom extensions to GAE API, impl, behavior, etc.
@@ -97,6 +98,16 @@ public class Compatibility {
 
     private Compatibility(Properties properties) {
         this.properties = properties;
+    }
+
+    /**
+     * Get instance per key.
+     *
+     * @param key the key
+     * @return compatibility instance
+     */
+    public static Compatibility getInstance() {
+        return getInstance(new SimpleKey<>(Compatibility.class));
     }
 
     /**

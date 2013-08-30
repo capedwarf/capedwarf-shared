@@ -35,6 +35,8 @@ import java.net.SocketOptions;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jboss.capedwarf.shared.compatibility.Compatibility;
+
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
@@ -130,9 +132,14 @@ class CapedwarfSocket extends SocketImpl {
     }
 
     public void setOption(int optID, Object value) throws SocketException {
-        CapedwarfSocketOptions.Option option = CapedwarfSocketOptions.getOptionById(optID);
-        if (option != null) {
-            option.validateAndApply(this, value);
+        final Compatibility compatibility = Compatibility.getInstance();
+        if (compatibility.isEnabled(Compatibility.Feature.ENABLE_SOCKET_OPTIONS)) {
+            setOptionInternal(optID, value);
+        } else {
+            CapedwarfSocketOptions.Option option = CapedwarfSocketOptions.getOptionById(optID);
+            if (option != null) {
+                option.validateAndApply(this, value);
+            }
         }
     }
 
@@ -149,8 +156,13 @@ class CapedwarfSocket extends SocketImpl {
     }
 
     public Object getOption(int optID) throws SocketException {
-        CapedwarfSocketOptions.Option option = CapedwarfSocketOptions.getOptionById(optID);
-        return (option != null) ? option.getOption(this) : null;
+        final Compatibility compatibility = Compatibility.getInstance();
+        if (compatibility.isEnabled(Compatibility.Feature.ENABLE_SOCKET_OPTIONS)) {
+            return getOptionInternal(optID);
+        } else {
+            CapedwarfSocketOptions.Option option = CapedwarfSocketOptions.getOptionById(optID);
+            return (option != null) ? option.getOption(this) : null;
+        }
     }
 
     protected Object getOptionInternal(int optID) throws SocketException {

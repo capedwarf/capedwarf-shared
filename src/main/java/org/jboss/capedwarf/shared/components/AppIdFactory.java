@@ -27,6 +27,24 @@ package org.jboss.capedwarf.shared.components;
  *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public interface AppIdFactory {
-    String appId();
+public abstract class AppIdFactory {
+    private static final ThreadLocal<AppIdFactory> holder = new ThreadLocal<>();
+
+    public static void setCurrentFactory(AppIdFactory factory) {
+        holder.set(factory);
+    }
+
+    public static String getAppId() {
+        final AppIdFactory factory = holder.get();
+        if (factory == null) {
+            throw new IllegalStateException("Missing current AppIdFactory!");
+        }
+        return factory.appId();
+    }
+
+    public static void resetCurrentFactory() {
+        holder.remove();
+    }
+
+    public abstract String appId();
 }
