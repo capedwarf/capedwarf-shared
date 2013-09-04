@@ -24,6 +24,8 @@ package org.jboss.capedwarf.shared.socket;
 
 import java.net.SocketException;
 import java.net.SocketOptions;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Modeled after AppEngineSocketOptions.
@@ -31,6 +33,8 @@ import java.net.SocketOptions;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 class CapedwarfSocketOptions {
+    private static final Set<Integer> ENABLED_OPTIONS = Collections.emptySet(); // atm all are disabled
+
     private abstract static class CheckFunction<T> {
         abstract Class<T> equivalenceClass();
 
@@ -39,7 +43,7 @@ class CapedwarfSocketOptions {
         }
 
         void apply(Option option, CapedwarfSocket socketImpl, T value) throws SocketException {
-            socketImpl.setOptionInternal(option.getOpt(), value);
+            option.setOption(socketImpl, value);
         }
     }
 
@@ -93,14 +97,14 @@ class CapedwarfSocketOptions {
     /**
      * Enumeration of all available socket options.
      */
-    public static enum Option {
+    static enum Option {
         SO_LINGER_OPT(
             SocketOptions.SO_LINGER,
             INTEGER_CHECK,
             new BooleanCheckFunction() {
                 @Override
                 void apply(Option option, CapedwarfSocket socketImpl, Boolean val) throws SocketException {
-                    socketImpl.setOptionInternal(option.getOpt(), false);
+                    super.apply(option, socketImpl, false);
                 }
             },
             ONLY_ALLOWED_FOR_TCP),
@@ -150,9 +154,6 @@ class CapedwarfSocketOptions {
             this.checkFuncs = checkFuncs;
         }
 
-        /**
-         * Return the string form of the option's name.
-         */
         String optionName() {
             return name().substring(0, name().length() - "_OPT".length());
         }
@@ -160,7 +161,7 @@ class CapedwarfSocketOptions {
         /**
          * Perform validation for this option and apply the set option changes.
          *
-         * @throws SocketException
+         * @throws SocketException for any error
          */
         @SuppressWarnings("unchecked")
         private void validateAndApply(CapedwarfSocket socketImpl, Object val, boolean isDatagramSocket) throws SocketException {
@@ -188,15 +189,22 @@ class CapedwarfSocketOptions {
             validateAndApply(socketImpl, val, false);
         }
 
-        /**
-         * @return the SocketOptions integer value of the option or null if not specified.
-         */
-        public Integer getOpt() {
+        Integer getOpt() {
             return opt;
         }
 
-        public Object getOption(CapedwarfSocket socketImpl) throws SocketException {
-            return (opt != null) ? socketImpl.getOptionInternal(opt) : null;
+        Object getOption(CapedwarfSocket socketImpl) throws SocketException {
+            return (isEnabled()) ? socketImpl.getOptionInternal(opt) : null;
+        }
+
+        void setOption(CapedwarfSocket socketImpl, Object value) throws SocketException {
+            if (isEnabled()) {
+                socketImpl.setOptionInternal(getOpt(), value);
+            }
+        }
+
+        private boolean isEnabled() {
+            return (opt != null && ENABLED_OPTIONS.contains(opt));
         }
     }
 
