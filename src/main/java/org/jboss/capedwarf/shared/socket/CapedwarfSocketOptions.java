@@ -25,6 +25,7 @@ package org.jboss.capedwarf.shared.socket;
 import java.net.SocketException;
 import java.net.SocketOptions;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -33,7 +34,21 @@ import java.util.Set;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 class CapedwarfSocketOptions {
-    private static final Set<Integer> ENABLED_OPTIONS = Collections.emptySet(); // atm all are disabled
+    private static final Set<Integer> SET_OPTIONS = Collections.emptySet(); // atm all are disabled
+    private static final Set<Integer> GET_OPTIONS;
+
+    static {
+        GET_OPTIONS = new HashSet<>();
+        GET_OPTIONS.add(SocketOptions.SO_KEEPALIVE);
+        // GET_OPTIONS.add(SocketOptions.SO_DEBUG); // doesn't exist
+        GET_OPTIONS.add(SocketOptions.TCP_NODELAY);
+        GET_OPTIONS.add(SocketOptions.SO_LINGER);
+        GET_OPTIONS.add(SocketOptions.SO_OOBINLINE);
+        GET_OPTIONS.add(SocketOptions.SO_SNDBUF);
+        GET_OPTIONS.add(SocketOptions.SO_RCVBUF);
+        GET_OPTIONS.add(SocketOptions.SO_REUSEADDR);
+        GET_OPTIONS.add(SocketOptions.SO_TIMEOUT); // extra?
+    }
 
     private abstract static class CheckFunction<T> {
         abstract Class<T> equivalenceClass();
@@ -194,17 +209,21 @@ class CapedwarfSocketOptions {
         }
 
         Object getOption(CapedwarfSocket socketImpl) throws SocketException {
-            return (isEnabled()) ? socketImpl.getOptionInternal(opt) : null;
+            return (isGetEnabled()) ? socketImpl.getOptionInternal(opt) : null;
         }
 
         void setOption(CapedwarfSocket socketImpl, Object value) throws SocketException {
-            if (isEnabled()) {
+            if (isSetEnabled()) {
                 socketImpl.setOptionInternal(getOpt(), value);
             }
         }
 
-        private boolean isEnabled() {
-            return (opt != null && ENABLED_OPTIONS.contains(opt));
+        private boolean isGetEnabled() {
+            return (opt != null && GET_OPTIONS.contains(opt));
+        }
+
+        private boolean isSetEnabled() {
+            return (opt != null && SET_OPTIONS.contains(opt));
         }
     }
 
