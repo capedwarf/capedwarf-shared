@@ -64,6 +64,8 @@
         <!-- Hibernate Search -->
         <version.org.hibernate.search>4.3.0.Final</version.org.hibernate.search>
         <version.org.apache.lucene>3.6.2</version.org.apache.lucene>
+        <!-- Utils -->
+        <version.javassist>3.18.1-GA</version.javassist>
 
         <!-- Spec -->
         <version.javax.mail>1.4.4</version.javax.mail>
@@ -273,6 +275,12 @@
                 <version>${version.org.apache.lucene}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${version.javassist}</version>
+            </dependency>
+
         </dependencies>
 
     </dependencyManagement>
@@ -387,6 +395,11 @@
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
         </dependency>
 
     </dependencies>
