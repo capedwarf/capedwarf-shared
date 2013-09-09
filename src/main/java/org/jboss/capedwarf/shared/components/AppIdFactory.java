@@ -34,6 +34,10 @@ public abstract class AppIdFactory {
         holder.set(factory);
     }
 
+    public static boolean hasAppId() {
+        return (holder.get() != null);
+    }
+
     public static String getAppId() {
         final AppIdFactory factory = holder.get();
         if (factory == null) {

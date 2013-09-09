@@ -25,10 +25,9 @@ package org.jboss.capedwarf.shared.socket;
 import java.lang.reflect.Constructor;
 import java.net.SocketImpl;
 import java.net.SocketImplFactory;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import org.jboss.capedwarf.shared.util.Utils;
+import org.jboss.capedwarf.shared.compatibility.Compatibility;
+import org.jboss.capedwarf.shared.components.AppIdFactory;
 
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
@@ -36,18 +35,7 @@ import org.jboss.capedwarf.shared.util.Utils;
 public class CapedwarfSocketFactory implements SocketImplFactory {
     public static final CapedwarfSocketFactory INSTANCE = new CapedwarfSocketFactory();
 
-    private final Map<ClassLoader, Object> classloaders;
-
     private CapedwarfSocketFactory() {
-        classloaders = new ConcurrentHashMap<>();
-    }
-
-    public void addClassLoader(ClassLoader cl) {
-        classloaders.put(cl, 0);
-    }
-
-    public void removeClassLoader(ClassLoader cl) {
-        classloaders.remove(cl);
     }
 
     SocketImpl createDelegate() {
@@ -64,11 +52,14 @@ public class CapedwarfSocketFactory implements SocketImplFactory {
     public SocketImpl createSocketImpl() {
         final SocketImpl delegate = createDelegate();
 
-        final ClassLoader tccl = Utils.getAppClassLoader();
-        if (tccl != null && classloaders.containsKey(tccl)) {
-            return new CapedwarfSocket(delegate);
-        } else {
+        if (AppIdFactory.hasAppId() == false) {
             return delegate;
         }
+
+        if (Compatibility.getInstance().isEnabled(Compatibility.Feature.IGNORE_CAPEDWARF_SOCKETS)) {
+            return delegate;
+        }
+
+        return new CapedwarfSocket(delegate);
     }
 }

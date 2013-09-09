@@ -60,7 +60,8 @@ public class Compatibility {
         ENABLED_SUBSYSTEMS("enabled.subsystems", new NotEmpty()),
         FORCE_ASYNC_DATASTORE("force.async.datastore"),
         LOG_TO_FILE("log.to.file", new NotEmpty()),  // TODO -- better Value; e.g. FileName
-        ENABLE_SOCKET_OPTIONS("enable.socket.options");
+        ENABLE_SOCKET_OPTIONS("enable.socket.options"),
+        IGNORE_CAPEDWARF_SOCKETS("ignore.capedwarf.sockets");
 
         private String key;
         private Value value;
