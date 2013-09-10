@@ -74,6 +74,16 @@ public class AppEngineWebXmlParser {
         appEngineWebXml.setModule(XmlUtils.getChildElementBody(documentElement, "module", false));
         appEngineWebXml.setInstanceClass(XmlUtils.getChildElementBody(documentElement, "instance-class", false));
 
+        Element inboundServices = XmlUtils.getChildElement(documentElement, "inbound-services");
+        if (inboundServices != null) {
+            InboundServices is = new InboundServices();
+            List<Element> services = XmlUtils.getChildren(inboundServices, "service");
+            for (Element service : services) {
+                is.addService(XmlUtils.getBody(service));
+            }
+            appEngineWebXml.setInboundServices(is);
+        }
+
         final Set<Scaling> scalings = new HashSet<>();
         Element manualScaling = XmlUtils.getChildElement(documentElement, "manual-scaling");
         if (manualScaling != null) {

@@ -33,6 +33,7 @@ import org.jboss.capedwarf.shared.config.AppEngineWebXmlParser;
 import org.jboss.capedwarf.shared.config.AutomaticScaling;
 import org.jboss.capedwarf.shared.config.BasicScaling;
 import org.jboss.capedwarf.shared.config.FilePattern;
+import org.jboss.capedwarf.shared.config.InboundServices;
 import org.jboss.capedwarf.shared.config.ManualScaling;
 import org.jboss.capedwarf.shared.config.Scaling;
 import org.jboss.capedwarf.shared.config.StaticFileInclude;
@@ -40,6 +41,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author <a href="mailto:marko.luksa@gmail.com">Marko Luksa</a>
@@ -168,6 +170,24 @@ public class AppEngineWebXmlParserTest {
         parse(xml);
 
         assertEquals("bar", System.getProperty("foo"));
+    }
+
+    @Test
+    public void testInboundServices() throws Exception {
+        String xml = "<appengine-web-app>" +
+            "    <application>appName</application>" +
+            "    <version>2</version>" +
+            "    <inbound-services>" +
+            "        <service>mail</service>" +
+            "    </inbound-services>" +
+            "</appengine-web-app>";
+
+        AppEngineWebXml aewx = parse(xml);
+
+        assertNotNull(aewx.getInboundServices());
+        assertNotNull(aewx.getInboundServices().getServices());
+        assertEquals(1, aewx.getInboundServices().getServices().size());
+        assertEquals(InboundServices.Service.mail, aewx.getInboundServices().getServices().iterator().next());
     }
 
     private static AppEngineWebXml parse(String xml) throws Exception {

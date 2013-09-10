@@ -42,6 +42,7 @@ public class AppEngineWebXml implements Serializable {
     private String version;
     private boolean threadsafe;
     private String module = ModuleInfo.DEFAULT_MODULE_NAME;
+    private InboundServices inboundServices;
     private String instanceClass;
     private Scaling scaling;
 
@@ -90,6 +91,14 @@ public class AppEngineWebXml implements Serializable {
         if (module != null) {
             this.module = module;
         }
+    }
+
+    public InboundServices getInboundServices() {
+        return inboundServices;
+    }
+
+    void setInboundServices(InboundServices inboundServices) {
+        this.inboundServices = inboundServices;
     }
 
     public String getInstanceClass() {
