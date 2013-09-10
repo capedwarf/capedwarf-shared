@@ -27,14 +27,18 @@ package org.jboss.capedwarf.shared.config;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class InboundServices implements Serializable {
+    private static final Logger log = Logger.getLogger(InboundServices.class.getName());
+
     public static enum Service {
         channel_presence,
         mail,
+        mail_bounce,
         xmpp_message,
         xmpp_presence,
         xmpp_subscribe,
@@ -54,6 +58,6 @@ public class InboundServices implements Serializable {
                 return;
             }
         }
-        throw new IllegalArgumentException(String.format("No such inboud-service: %s", value));
+        log.warning(String.format("Unknown inboud-service: %s", value));
     }
 }
