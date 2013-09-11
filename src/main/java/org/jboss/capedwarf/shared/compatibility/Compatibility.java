@@ -24,10 +24,9 @@ package org.jboss.capedwarf.shared.compatibility;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
@@ -92,7 +91,7 @@ public class Compatibility {
         }
     }
 
-    private static final ThreadLocal<Set<Feature>> temps = new ThreadLocal<>();
+    private static final ThreadLocal<Map<Feature, Integer>> temps = new ThreadLocal<>();
 
     private final Properties properties;
     private final Map<Feature, Boolean> values = new ConcurrentHashMap<>();
@@ -104,7 +103,6 @@ public class Compatibility {
     /**
      * Get instance per key.
      *
-     * @param key the key
      * @return compatibility instance
      */
     public static Compatibility getInstance() {
@@ -184,8 +182,8 @@ public class Compatibility {
     }
 
     private static boolean isTempEnabled(Feature feature) {
-        Set<Feature> features = temps.get();
-        return features != null && features.contains(feature);
+        Map<Feature, Integer> features = temps.get();
+        return features != null && features.containsKey(feature);
     }
 
     /**
@@ -194,12 +192,17 @@ public class Compatibility {
      * @param feature the feature
      */
     public static void enable(Feature feature) {
-        Set<Feature> features = temps.get();
+        int count;
+        Map<Feature, Integer> features = temps.get();
         if (features == null) {
-            features = new HashSet<>();
+            features = new HashMap<>();
             temps.set(features);
+            count = 1;
+        } else {
+            Integer x = features.get(feature);
+            count = (x == null) ? 1 : (x + 1);
         }
-        features.add(feature);
+        features.put(feature, count);
     }
 
     /**
@@ -208,11 +211,18 @@ public class Compatibility {
      * @param feature the feature
      */
     public static void disable(Feature feature) {
-        Set<Feature> features = temps.get();
+        Map<Feature, Integer> features = temps.get();
         if (features != null) {
-            features.remove(feature);
-            if (features.isEmpty()) {
-                temps.remove();
+            Integer x = features.get(feature);
+            if (x != null) {
+                if (x == 1) {
+                    features.remove(feature);
+                    if (features.isEmpty()) {
+                        temps.remove();
+                    }
+                } else {
+                    features.put(feature, x - 1);
+                }
             }
         }
     }
