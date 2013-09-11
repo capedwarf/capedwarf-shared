@@ -118,9 +118,7 @@ public class AppEngineWebXmlParserTest {
             "  <instance-class>F2</instance-class>\n" +
             "  <automatic-scaling>\n" +
             "    <min-idle-instances>5</min-idle-instances>\n" +
-            "    <!-- ‘automatic’ is the default value. -->\n" +
             "    <max-idle-instances>automatic</max-idle-instances>\n" +
-            "    <!-- ‘automatic’ is the default value. -->\n" +
             "    <min-pending-latency>automatic</min-pending-latency>\n" +
             "    <max-pending-latency>30ms</max-pending-latency>\n" +
             "  </automatic-scaling>\n" +
