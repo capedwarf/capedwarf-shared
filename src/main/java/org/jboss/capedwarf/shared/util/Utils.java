@@ -22,6 +22,7 @@
 
 package org.jboss.capedwarf.shared.util;
 
+import org.jboss.modules.Module;
 import org.jboss.modules.ModuleClassLoader;
 
 /**
@@ -30,16 +31,29 @@ import org.jboss.modules.ModuleClassLoader;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public final class Utils {
-    public static ClassLoader getAppClassLoader() {
-        final ClassLoader tccl = SecurityActions.getTCCL();
-        // unwrap -- might be WebEnvCL
-        ClassLoader cl = tccl;
+    protected static ModuleClassLoader unwrap(final ClassLoader input) {
+        ClassLoader cl = input;
         while (cl != null && (cl instanceof ModuleClassLoader == false)) {
             cl = cl.getParent();
         }
-        if (cl == null)
-            throw new IllegalArgumentException("No ModuleClassLoader in hierarchy?! - " + tccl);
-        return cl;
+        if (cl == null) {
+            throw new IllegalArgumentException("No ModuleClassLoader in hierarchy?! - " + input);
+        }
+
+        return ModuleClassLoader.class.cast(cl);
+    }
+
+    public static ClassLoader getTCCL() {
+        return SecurityActions.getTCCL();
+    }
+
+    public static ClassLoader setTCCL(ClassLoader cl) {
+        return SecurityActions.setTCCL(cl);
+    }
+
+    public static ModuleClassLoader getAppClassLoader() {
+        // unwrap -- might be WebEnvCL
+        return unwrap(getTCCL());
     }
 
     public static <T> T newInstance(Class<T> expectedType, String className) {
@@ -53,5 +67,13 @@ public final class Utils {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public static Module toModule(ClassLoader cl) {
+        return unwrap(cl).getModule();
+    }
+
+    public static Module toModule() {
+        return getAppClassLoader().getModule();
     }
 }

@@ -60,7 +60,11 @@ public class CapedwarfIndexShardingStrategy implements IndexShardingStrategy {
 
     @Override
     public IndexManager[] getIndexManagersForDeletion(Class<?> entity, Serializable id, String idInString) {
-        return new IndexManager[] {getIndexManager(extractIndexName(idInString))};
+        if (idInString == null) {
+            return indexManagers;
+        } else {
+            return new IndexManager[] {getIndexManager(extractIndexName(idInString))};
+        }
     }
 
     @Override
@@ -88,6 +92,9 @@ public class CapedwarfIndexShardingStrategy implements IndexShardingStrategy {
     }
 
     private String extractIndexName(String idInString) {
+        if (idInString == null) {
+            return null;
+        }
         int index = idInString.lastIndexOf(DatastoreConstants.SEPARATOR);
         if (index == -1) {
             return null;

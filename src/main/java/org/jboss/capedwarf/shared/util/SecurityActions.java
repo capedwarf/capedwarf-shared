@@ -43,4 +43,37 @@ final class SecurityActions {
             });
         }
     }
+
+    static ClassLoader setTCCL(final ClassLoader cl) {
+        if (System.getSecurityManager() == null) {
+            return SetThreadContextClassLoaderAction.NON_PRIVILEGED.setThreadContextClassLoader(cl);
+        } else {
+            return SetThreadContextClassLoaderAction.PRIVILEGED.setThreadContextClassLoader(cl);
+        }
+    }
+
+    private interface SetThreadContextClassLoaderAction {
+
+        ClassLoader setThreadContextClassLoader(ClassLoader cl);
+
+        SetThreadContextClassLoaderAction NON_PRIVILEGED = new SetThreadContextClassLoaderAction() {
+            public ClassLoader setThreadContextClassLoader(ClassLoader cl) {
+                ClassLoader old = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(cl);
+                return old;
+            }
+        };
+
+        SetThreadContextClassLoaderAction PRIVILEGED = new SetThreadContextClassLoaderAction() {
+            public ClassLoader setThreadContextClassLoader(final ClassLoader cl) {
+                return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+                    public ClassLoader run() {
+                        ClassLoader old = Thread.currentThread().getContextClassLoader();
+                        Thread.currentThread().setContextClassLoader(cl);
+                        return old;
+                    }
+                });
+            }
+        };
+    }
 }

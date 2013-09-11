@@ -34,6 +34,7 @@ import javax.transaction.UserTransaction;
 
 import org.apache.http.client.HttpClient;
 import org.infinispan.manager.EmbeddedCacheManager;
+import org.jboss.modules.ModuleLoader;
 import org.jgroups.JChannel;
 
 /**
@@ -63,4 +64,6 @@ public final class Keys {
     public static final Key<HttpClient> HTTP_CLIENT = new GlobalKey<HttpClient>(HttpClient.class);
     // Configuration
     public static final Key<Properties> CONFIGURATION = new GlobalKey<Properties>(Properties.class);
+    // ModuleLoader
+    public static final Key<ModuleLoader> MODULE_LOADER = new GlobalKey<ModuleLoader>(ModuleLoader.class);
 }
