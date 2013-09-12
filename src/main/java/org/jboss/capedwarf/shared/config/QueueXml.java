@@ -33,13 +33,19 @@ import java.util.Map;
  */
 public class QueueXml implements Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Queue DEFAULT = new Queue("default", Mode.PUSH);
+
+    public static final String INTERNAL = "CAPEDWARF-INTERNAL";
+    public static final String DEFAULT = "default";
+
+    private static final Queue INTERNAL_QUEUE = new Queue(INTERNAL, Mode.PUSH);
+    private static final Queue DEFAULT_QUEUE = new Queue(DEFAULT, Mode.PUSH);
 
     private Map<String, Queue> queues;
 
     public QueueXml() {
-        queues = new HashMap<String, Queue>();
-        queues.put("default", DEFAULT);
+        queues = new HashMap<>();
+        queues.put(INTERNAL, INTERNAL_QUEUE);
+        queues.put(DEFAULT, DEFAULT_QUEUE);
     }
 
     void addQueue(String name, Mode mode) {

@@ -24,7 +24,6 @@ package org.jboss.capedwarf.shared.compatibility;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,6 +33,7 @@ import org.jboss.capedwarf.shared.components.ComponentRegistry;
 import org.jboss.capedwarf.shared.components.Key;
 import org.jboss.capedwarf.shared.components.Keys;
 import org.jboss.capedwarf.shared.components.SimpleKey;
+import org.jboss.capedwarf.shared.util.CountingThreadLocal;
 
 /**
  * Allow for custom extensions to GAE API, impl, behavior, etc.
@@ -91,7 +91,7 @@ public class Compatibility {
         }
     }
 
-    private static final ThreadLocal<Map<Feature, Integer>> temps = new ThreadLocal<>();
+    private static final CountingThreadLocal<Feature> temps = new CountingThreadLocal<>();
 
     private final Properties properties;
     private final Map<Feature, Boolean> values = new ConcurrentHashMap<>();
@@ -164,7 +164,7 @@ public class Compatibility {
     }
 
     public boolean isEnabled(Feature feature) {
-        return isTempEnabled(feature) || isEnabledInternal(Feature.ENABLE_ALL) || isEnabledInternal(feature);
+        return temps.hasValue(feature) || isEnabledInternal(Feature.ENABLE_ALL) || isEnabledInternal(feature);
     }
 
     public String getValue(Feature feature) {
@@ -181,28 +181,13 @@ public class Compatibility {
         return result;
     }
 
-    private static boolean isTempEnabled(Feature feature) {
-        Map<Feature, Integer> features = temps.get();
-        return features != null && features.containsKey(feature);
-    }
-
     /**
      * Temp enable feature.
      *
      * @param feature the feature
      */
     public static void enable(Feature feature) {
-        int count;
-        Map<Feature, Integer> features = temps.get();
-        if (features == null) {
-            features = new HashMap<>();
-            temps.set(features);
-            count = 1;
-        } else {
-            Integer x = features.get(feature);
-            count = (x == null) ? 1 : (x + 1);
-        }
-        features.put(feature, count);
+        temps.add(feature);
     }
 
     /**
@@ -211,20 +196,7 @@ public class Compatibility {
      * @param feature the feature
      */
     public static void disable(Feature feature) {
-        Map<Feature, Integer> features = temps.get();
-        if (features != null) {
-            Integer x = features.get(feature);
-            if (x != null) {
-                if (x == 1) {
-                    features.remove(feature);
-                    if (features.isEmpty()) {
-                        temps.remove();
-                    }
-                } else {
-                    features.put(feature, x - 1);
-                }
-            }
-        }
+        temps.remove(feature);
     }
 
     private static interface Value {
