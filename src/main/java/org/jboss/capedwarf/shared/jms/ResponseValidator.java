@@ -22,38 +22,22 @@
 
 package org.jboss.capedwarf.shared.jms;
 
-import javax.jms.Message;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * Create ServletRequest.
- *
- * Note: instances of this class are cached, hence not stateless.
+ * Validate response.
  *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public interface ServletRequestCreator extends ResponseValidator {
+public interface ResponseValidator {
     /**
-     * Create mock http servlet request, for async tasks.
+     * Is the reponse valid.
+     * e.g. it can be 404 for Channel notifications
      *
-     * @param context the servlet context
-     * @param message the message
-     * @return new http servlet request
-     * @throws Exception for any error
+     * @param request current request
+     * @param response the response
+     * @return true if valid, false otherwise
      */
-    HttpServletRequest createServletRequest(ServletContext context, Message message) throws Exception;
-
-    /**
-     * Prepare, before dispatch.
-     *
-     * @param request the request
-     * @param appId the app Id
-     */
-    void prepare(HttpServletRequest request, String appId);
-
-    /**
-     * Finish, after dispatch.
-     */
-    void finish();
+    boolean isValid(HttpServletRequest request, HttpServletResponse response);
 }

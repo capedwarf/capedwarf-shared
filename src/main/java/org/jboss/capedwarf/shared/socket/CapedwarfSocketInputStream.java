@@ -36,12 +36,7 @@ class CapedwarfSocketInputStream extends InputStream {
     }
 
     public int read() throws IOException {
-        byte buff[] = new byte[1];
-        int count = read(buff, 0, 1);
-        if (count <= 0) {
-            return -1;
-        }
-        return buff[0] & 0xff;
+        return delegate.read();
     }
 
     @Override

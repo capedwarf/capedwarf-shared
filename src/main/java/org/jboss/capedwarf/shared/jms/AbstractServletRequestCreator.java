@@ -23,6 +23,7 @@
 package org.jboss.capedwarf.shared.jms;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Create ServletRequest.
@@ -34,5 +35,17 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
     }
 
     public void finish() {
+    }
+
+    public boolean isValid(HttpServletRequest request, HttpServletResponse response) {
+        return isStatus2xx(response);
+    }
+
+    protected static boolean isStatus2xx(HttpServletResponse response) {
+        return isStatusInRange(response, 200, 299);
+    }
+
+    protected static boolean isStatusInRange(HttpServletResponse response, int minIncluded, int maxInclued) {
+        return minIncluded <= response.getStatus() && response.getStatus() <= maxInclued;
     }
 }

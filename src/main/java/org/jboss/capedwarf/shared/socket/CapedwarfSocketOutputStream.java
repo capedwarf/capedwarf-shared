@@ -36,8 +36,7 @@ class CapedwarfSocketOutputStream extends OutputStream {
     }
 
     public void write(int b) throws IOException {
-        byte buf[] = {(byte) b};
-        write(buf, 0, 1);
+        delegate.write(b);
     }
 
     @Override
