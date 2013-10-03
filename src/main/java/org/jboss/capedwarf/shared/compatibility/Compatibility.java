@@ -60,7 +60,8 @@ public class Compatibility {
         FORCE_ASYNC_DATASTORE("force.async.datastore"),
         LOG_TO_FILE("log.to.file", new NotEmpty()),  // TODO -- better Value; e.g. FileName
         ENABLE_SOCKET_OPTIONS("enable.socket.options"),
-        IGNORE_CAPEDWARF_SOCKETS("ignore.capedwarf.sockets");
+        IGNORE_CAPEDWARF_SOCKETS("ignore.capedwarf.sockets"),
+        CHANNEL_DEFAULT_DURATION_MINUTES("channel.default.duration.minutes", new IntegerValue(2 * 60));
 
         private String key;
         private Value value;
@@ -171,6 +172,11 @@ public class Compatibility {
         return properties.getProperty(feature.key);
     }
 
+    public Object toObject(Feature feature) {
+        final String string = getValue(feature);
+        return feature.value.transform(string);
+    }
+
     protected boolean isEnabledInternal(Feature feature) {
         Boolean result = values.get(feature);
         if (result == null) {
@@ -201,9 +207,16 @@ public class Compatibility {
 
     private static interface Value {
         boolean match(String value);
+        Object transform(String value);
     }
 
-    private static class DefaultValue implements Value {
+    private static abstract class AbstractValue implements Value {
+        public Object transform(String value) {
+            return value;
+        }
+    }
+
+    private static class DefaultValue extends AbstractValue {
         private String value;
 
         private DefaultValue(String value) {
@@ -219,7 +232,7 @@ public class Compatibility {
         }
     }
 
-    private static class RegexpValue implements Value {
+    private static class RegexpValue extends AbstractValue {
         private Pattern pattern;
 
         private RegexpValue(String value) {
@@ -235,9 +248,34 @@ public class Compatibility {
         }
     }
 
-    private static class NotEmpty implements Value {
+    private static class NotEmpty extends AbstractValue {
         public boolean match(String value) {
             return (value != null && value.length() > 0);
+        }
+    }
+
+    private static class IntegerValue extends AbstractValue {
+        private int defaultValue;
+
+        private IntegerValue(int defaultValue) {
+            this.defaultValue = defaultValue;
+        }
+
+        public boolean match(String value) {
+            try {
+                Integer.parseInt(value);
+                return true;
+            } catch (Exception e) {
+                return  false;
+            }
+        }
+
+        public Object transform(String string) {
+            return (string != null) ? Integer.parseInt(string) : defaultValue;
+        }
+
+        public String toString() {
+            return String.valueOf(defaultValue);
         }
     }
 }
