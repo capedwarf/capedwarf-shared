@@ -61,6 +61,7 @@ public class Compatibility {
         LOG_TO_FILE("log.to.file", new NotEmpty()),  // TODO -- better Value; e.g. FileName
         ENABLE_SOCKET_OPTIONS("enable.socket.options"),
         IGNORE_CAPEDWARF_SOCKETS("ignore.capedwarf.sockets"),
+        IGNORE_CAPEDWARF_URL_STREAM_HANDLER("ignore.capedwarf.url.stream.handler"),
         CHANNEL_DEFAULT_DURATION_MINUTES("channel.default.duration.minutes", new IntegerValue(2 * 60));
 
         private String key;
