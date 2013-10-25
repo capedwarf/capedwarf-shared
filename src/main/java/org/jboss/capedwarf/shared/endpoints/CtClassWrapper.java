@@ -23,6 +23,7 @@
 package org.jboss.capedwarf.shared.endpoints;
 
 import javassist.CtClass;
+import javassist.NotFoundException;
 
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
@@ -44,6 +45,18 @@ class CtClassWrapper {
 
     Class<?> toClass() throws ClassNotFoundException {
         return getClassLoader().loadClass(ctClass.getName());
+    }
+
+    CtClassWrapper getSuperClass() {
+        try {
+            final CtClass superClass = ctClass.getSuperclass();
+            if (superClass == null) {
+                return null;
+            }
+            return new CtClassWrapper(superClass);
+        } catch (NotFoundException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override

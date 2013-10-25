@@ -183,14 +183,22 @@ public class Converters implements ShutdownHook {
         return (endpoints == null) ? Collections.<String>emptySet() : Collections.unmodifiableSet(endpoints);
     }
 
-    public synchronized void addResultType(String className) {
+    public void addResultType(String className) {
+        addResultType(fromClassName(className));
+    }
+
+    private synchronized void addResultType(CtClassWrapper clazz) {
+        if (clazz == null) {
+            return;
+        }
         if (results == null) {
             results = new CopyOnWriteArraySet<>();
         }
-        results.add(fromClassName(className));
+        results.add(clazz);
+        addResultType(clazz.getSuperClass());
     }
 
-    public synchronized boolean checkForConverters(CtClass clazz) {
+    public synchronized boolean isResultType(CtClass clazz) {
         return (results != null && results.contains(new CtClassWrapper(clazz)));
     }
 
@@ -234,11 +242,15 @@ public class Converters implements ShutdownHook {
         toFrom.put(to, new FromConverter(tClass));
     }
 
+    public synchronized boolean hasConverter(CtClass clazz) {
+        return (types != null && types.containsKey(new CtClassWrapper(clazz)));
+    }
+
     public Class<?> traverse(Class<?> start) {
         return traverse(fromClass(start));
     }
 
-    public Class<?> traverse(CtClassWrapper start) {
+    private Class<?> traverse(CtClassWrapper start) {
         return toClass(traverseInternal(start));
     }
 
