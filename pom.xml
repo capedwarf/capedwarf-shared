@@ -60,7 +60,7 @@
         <version.org.jboss.web>7.2.0.Final</version.org.jboss.web>
         <version.com.google.guava>14.0.1</version.com.google.guava>
         <!-- GAE tools -->
-        <version.com.google.gae.tools>1.8.5</version.com.google.gae.tools>
+        <version.com.google.gae.tools>1.8.6</version.com.google.gae.tools>
         <!-- Hibernate Search -->
         <version.org.hibernate.search>4.3.0.Final</version.org.hibernate.search>
         <version.org.apache.lucene>3.6.2</version.org.apache.lucene>
@@ -83,6 +83,9 @@
         <!-- Compiler configuration -->
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+
+        <version.shade.plugin>2.1</version.shade.plugin>
+        <version.surefire.plugin>2.12.4</version.surefire.plugin>
 
         <!-- Release Info -->
         <jboss.capedwarf.scm.url>https://github.com/capedwarf/capedwarf-shared</jboss.capedwarf.scm.url>
@@ -118,6 +121,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <version>${version.shade.plugin}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
