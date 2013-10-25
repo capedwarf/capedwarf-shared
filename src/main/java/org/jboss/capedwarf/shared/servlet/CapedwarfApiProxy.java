@@ -43,34 +43,45 @@ public final class CapedwarfApiProxy {
     private static final Map<ClassLoader, String> classLoaders = new ConcurrentHashMap<ClassLoader, String>();
     private static final ThreadLocal<ServletRequest> requests = new ThreadLocal<ServletRequest>();
 
-    public static boolean isCapedwarfApp(ClassLoader classLoader) {
-        return classLoaders.containsKey(classLoader);
-    }
-
     public static boolean isCapedwarfApp() {
         return isCapedwarfApp(Utils.getAppClassLoader());
     }
 
+    public static boolean isCapedwarfApp(ClassLoader classLoader) {
+        return classLoaders.containsKey(classLoader);
+    }
+
     public static String getAppId() {
-        return classLoaders.get(Utils.getAppClassLoader());
+        return getAppId(Utils.getAppClassLoader());
+    }
+
+    public static String getAppId(ClassLoader cl) {
+        return classLoaders.get(cl);
     }
 
     public static ServletRequest getRequest() {
         return requests.get();
     }
 
+    public static void initialize(final ClassLoader cl, final String appId) {
+        classLoaders.put(cl, appId);
+    }
+
     static void initialize(final String appId, final ServletContext context) {
         Key<ServletContext> key = new SimpleKey<ServletContext>(appId, ServletContext.class);
         ComponentRegistry.getInstance().setComponent(key, context);
-        classLoaders.put(Utils.getAppClassLoader(), appId);
     }
 
     static void initialize(final String appId, final EmbeddedCacheManager manager) {
         // do nothing atm
     }
 
+    public static void destroy(final ClassLoader cl) {
+        classLoaders.remove(cl);
+    }
+
     static void destroy(final String appId, final ServletContext context) {
-        classLoaders.remove(Utils.getAppClassLoader());
+        // do nothing atm
     }
 
     static void setRequest(ServletRequest request) {

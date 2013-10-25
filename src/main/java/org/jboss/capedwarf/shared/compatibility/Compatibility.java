@@ -57,6 +57,7 @@ public class Compatibility {
         DISABLE_BLACK_LIST("disable.blacklist"),
         DISABLE_METADATA("disable.metadata"),
         ENABLED_SUBSYSTEMS("enabled.subsystems", new NotEmpty()),
+        DISABLED_SUBSYSTEMS("disabled.subsystems", new NotEmpty()),
         FORCE_ASYNC_DATASTORE("force.async.datastore"),
         LOG_TO_FILE("log.to.file", new NotEmpty()),  // TODO -- better Value; e.g. FileName
         ENABLE_SOCKET_OPTIONS("enable.socket.options"),
