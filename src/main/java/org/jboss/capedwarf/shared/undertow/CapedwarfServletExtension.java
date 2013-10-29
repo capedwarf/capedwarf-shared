@@ -22,9 +22,10 @@
 
 package org.jboss.capedwarf.shared.undertow;
 
+import javax.servlet.ServletContext;
+
 import io.undertow.servlet.ServletExtension;
 import io.undertow.servlet.api.DeploymentInfo;
-import io.undertow.servlet.spec.ServletContextImpl;
 import org.kohsuke.MetaInfServices;
 
 /**
@@ -32,7 +33,7 @@ import org.kohsuke.MetaInfServices;
  */
 @MetaInfServices
 public class CapedwarfServletExtension implements ServletExtension {
-    public void handleDeployment(DeploymentInfo deploymentInfo, ServletContextImpl servletContext) {
+    public void handleDeployment(DeploymentInfo deploymentInfo, ServletContext servletContext) {
         deploymentInfo.setAllowNonStandardWrappers(true);
     }
 }
