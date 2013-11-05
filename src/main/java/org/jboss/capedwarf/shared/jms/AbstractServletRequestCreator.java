@@ -29,12 +29,16 @@ import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jboss.capedwarf.shared.servlet.AbstractHttpServletRequest;
+
 /**
  * Create ServletRequest.
  *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public abstract class AbstractServletRequestCreator implements ServletRequestCreator {
+    private static final String DEFAULT = "default";
+
     public void prepare(HttpServletRequest request, String appId) {
     }
 
@@ -43,6 +47,24 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
 
     public boolean isValid(HttpServletRequest request, HttpServletResponse response) {
         return isStatus2xx(response);
+    }
+
+    protected static String fixSlash(String path) {
+        if (path.startsWith("/") == false) {
+            path = "/" + path;
+        }
+        return path;
+    }
+
+    protected void applyPaths(ServletContext context, AbstractHttpServletRequest request, String path) {
+        request.setPath(path);
+        String servletPath = getServletPath(context, path);
+        request.setServletPath(servletPath);
+        int p = path.indexOf("?");
+        String pathInfo = (p < 0) ? path.substring(servletPath.length()) : path.substring(servletPath.length(), p);
+        request.setPathInfo(fixSlash(pathInfo));
+        String queryString = (p < 0) ? null : path.substring(p + 1);
+        request.setQueryString(queryString);
     }
 
     /**
@@ -57,8 +79,11 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
 
     protected String getServletPath(ServletContext context, String path) {
         Map<String, ? extends ServletRegistration> map = context.getServletRegistrations();
-        for (ServletRegistration sr : map.values()) {
-            for (String mapping : sr.getMappings()) {
+        for (Map.Entry<String, ? extends ServletRegistration> entry : map.entrySet()) {
+            if (DEFAULT.equalsIgnoreCase(entry.getKey())) {
+                continue;
+            }
+            for (String mapping : entry.getValue().getMappings()) {
                 if (match(mapping, path)) {
                     return mapping;
                 }
