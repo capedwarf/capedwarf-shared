@@ -2,7 +2,6 @@ package org.jboss.capedwarf.shared.servlet;
 
 import java.io.IOException;
 
-import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 
 /**
@@ -25,7 +24,7 @@ class NoopServletInputStream extends ServletInputStream {
     public boolean isReady() {
         return true;
     }
-
-    public void setReadListener(ReadListener readListener) {
-    }
+//
+//    public void setReadListener(ReadListener readListener) {
+//    }
 }
