@@ -22,6 +22,10 @@
 
 package org.jboss.capedwarf.shared.jms;
 
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -39,6 +43,28 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
 
     public boolean isValid(HttpServletRequest request, HttpServletResponse response) {
         return isStatus2xx(response);
+    }
+
+    /**
+     * Very simple matching, TODO fix.
+     */
+    protected boolean match(String mapping, String path) {
+        while(mapping.endsWith("*")) {
+            mapping = mapping.substring(0, mapping.length() - 1);
+        }
+        return path.startsWith(mapping);
+    }
+
+    protected String getServletPath(ServletContext context, String path) {
+        Map<String, ? extends ServletRegistration> map = context.getServletRegistrations();
+        for (ServletRegistration sr : map.values()) {
+            for (String mapping : sr.getMappings()) {
+                if (match(mapping, path)) {
+                    return mapping;
+                }
+            }
+        }
+        throw new IllegalArgumentException("Could not find a match for path: " + path);
     }
 
     protected static boolean isStatus2xx(HttpServletResponse response) {
