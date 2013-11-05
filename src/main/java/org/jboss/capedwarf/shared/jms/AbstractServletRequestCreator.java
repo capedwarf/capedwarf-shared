@@ -22,7 +22,10 @@
 
 package org.jboss.capedwarf.shared.jms;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
@@ -51,12 +54,18 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
 
     protected void applyPaths(ServletContext context, AbstractHttpServletRequest request, String path) {
         request.setPath(path);
+
         String servletPath = getServletPath(context, path);
         request.setServletPath(removeEndSlash(servletPath));
-        int p = path.indexOf("?");
+
+        final int p = path.indexOf("?");
+
         String pathInfo = (p < 0) ? path.substring(servletPath.length()) : path.substring(servletPath.length(), p);
-        request.setPathInfo(addStartSlash(pathInfo));
-        String queryString = (p < 0) ? null : path.substring(p + 1);
+        if ((pathInfo.length() == 0 || (pathInfo.length() == 1 && pathInfo.charAt(0) == '/')) == false) {
+            request.setPathInfo(addStartSlash(pathInfo));
+        }
+
+        String queryString = ((p < 0) || (p == path.length() - 1)) ? null : path.substring(p + 1);
         request.setQueryString(queryString);
     }
 
@@ -72,6 +81,7 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
 
     protected String getServletPath(ServletContext context, String path) {
         Map<String, ? extends ServletRegistration> map = context.getServletRegistrations();
+        Set<String> longestMatch = new TreeSet<>(Collections.reverseOrder());
         for (Map.Entry<String, ? extends ServletRegistration> entry : map.entrySet()) {
             if (DEFAULT.equalsIgnoreCase(entry.getKey())) {
                 continue;
@@ -79,11 +89,15 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
             for (String mapping : entry.getValue().getMappings()) {
                 final String sp = match(mapping, path);
                 if (sp != null) {
-                    return sp;
+                    longestMatch.add(sp);
                 }
             }
         }
-        throw new IllegalArgumentException("Could not find a match for path: " + path);
+        if (longestMatch.isEmpty()) {
+            throw new IllegalArgumentException("Could not find a match for path: " + path);
+        } else {
+            return longestMatch.iterator().next();
+        }
     }
 
     protected static boolean isStatus2xx(HttpServletResponse response) {
