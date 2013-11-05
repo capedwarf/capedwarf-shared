@@ -19,6 +19,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
 /**
@@ -223,12 +224,12 @@ public abstract class AbstractHttpServletRequest extends AbstractServletRequest 
     public String changeSessionId() {
         return null;
     }
-//
-//    public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) throws IOException, ServletException {
-//        return null;
-//    }
-//
-//    public long getContentLengthLong() {
-//        return (long) getContentLength();
-//    }
+
+    public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) throws IOException, ServletException {
+        return null;
+    }
+
+    public long getContentLengthLong() {
+        return (long) getContentLength();
+    }
 }
