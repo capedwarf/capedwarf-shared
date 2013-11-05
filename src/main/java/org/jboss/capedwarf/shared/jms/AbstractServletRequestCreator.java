@@ -49,20 +49,13 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
         return isStatus2xx(response);
     }
 
-    protected static String fixSlash(String path) {
-        if (path.startsWith("/") == false) {
-            path = "/" + path;
-        }
-        return path;
-    }
-
     protected void applyPaths(ServletContext context, AbstractHttpServletRequest request, String path) {
         request.setPath(path);
         String servletPath = getServletPath(context, path);
-        request.setServletPath(servletPath);
+        request.setServletPath(removeEndSlash(servletPath));
         int p = path.indexOf("?");
         String pathInfo = (p < 0) ? path.substring(servletPath.length()) : path.substring(servletPath.length(), p);
-        request.setPathInfo(fixSlash(pathInfo));
+        request.setPathInfo(addStartSlash(pathInfo));
         String queryString = (p < 0) ? null : path.substring(p + 1);
         request.setQueryString(queryString);
     }
@@ -70,11 +63,11 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
     /**
      * Very simple matching, TODO fix.
      */
-    protected boolean match(String mapping, String path) {
+    protected String match(String mapping, String path) {
         while(mapping.endsWith("*")) {
             mapping = mapping.substring(0, mapping.length() - 1);
         }
-        return path.startsWith(mapping);
+        return (path.startsWith(mapping) ? mapping : null);
     }
 
     protected String getServletPath(ServletContext context, String path) {
@@ -84,8 +77,9 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
                 continue;
             }
             for (String mapping : entry.getValue().getMappings()) {
-                if (match(mapping, path)) {
-                    return mapping;
+                final String sp = match(mapping, path);
+                if (sp != null) {
+                    return sp;
                 }
             }
         }
@@ -98,5 +92,19 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
 
     protected static boolean isStatusInRange(HttpServletResponse response, int minIncluded, int maxInclued) {
         return minIncluded <= response.getStatus() && response.getStatus() <= maxInclued;
+    }
+
+    protected static String addStartSlash(String path) {
+        if (path.startsWith("/") == false) {
+            path = "/" + path;
+        }
+        return path;
+    }
+
+    protected static String removeEndSlash(String path) {
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+        return path;
     }
 }
