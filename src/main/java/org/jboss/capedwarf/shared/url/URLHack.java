@@ -33,13 +33,13 @@ import java.util.concurrent.Callable;
  */
 @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
 public final class URLHack {
-    private static final Field hadlers;
+    private static final Field handlers;
     private static final Field streamHandlerLock;
 
     static {
         try {
-            hadlers = URL.class.getDeclaredField("handlers");
-            hadlers.setAccessible(true);
+            handlers = URL.class.getDeclaredField("handlers");
+            handlers.setAccessible(true);
 
             streamHandlerLock = URL.class.getDeclaredField("streamHandlerLock");
             streamHandlerLock.setAccessible(true);
@@ -67,7 +67,7 @@ public final class URLHack {
     @SuppressWarnings({"unchecked"})
     public static URLStreamHandler removeHandlerNoLock(String protocol) {
         try {
-            Map<String, URLStreamHandler> map = (Map<String, URLStreamHandler>) hadlers.get(null);
+            Map<String, URLStreamHandler> map = (Map<String, URLStreamHandler>) handlers.get(null);
             return map.remove(protocol);
         } catch (RuntimeException re) {
             throw re;
