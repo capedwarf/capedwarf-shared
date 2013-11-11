@@ -22,6 +22,7 @@
 
 package org.jboss.capedwarf.shared.socket;
 
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,10 +44,17 @@ import org.jboss.capedwarf.shared.compatibility.Compatibility;
 class CapedwarfSocket extends SocketImpl {
     private static final Map<String, Method> methods = new ConcurrentHashMap<>();
 
+    private static final Class[] EMPTY_CLASS_ARRAY = new Class[0];
+    private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+
     private final SocketImpl delegate;
 
     CapedwarfSocket(SocketImpl delegate) {
         this.delegate = delegate;
+    }
+
+    protected <T> T invoke(String method) throws IOException {
+        return invoke(method, EMPTY_CLASS_ARRAY, EMPTY_OBJECT_ARRAY);
     }
 
     protected <T> T invoke(String method, Class[] types, Object[] args) throws IOException {
@@ -174,6 +182,70 @@ class CapedwarfSocket extends SocketImpl {
             } else {
                 throw new SocketException(e.getMessage());
             }
+        }
+    }
+
+    @Override
+    protected void shutdownInput() throws IOException {
+        invoke("shutdownInput");
+    }
+
+    @Override
+    protected void shutdownOutput() throws IOException {
+        invoke("shutdownOutput");
+    }
+
+    @Override
+    protected FileDescriptor getFileDescriptor() {
+        try {
+            return invoke("getFileDescriptor");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected InetAddress getInetAddress() {
+        try {
+            return invoke("getInetAddress");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected int getPort() {
+        try {
+            return invoke("getPort");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected boolean supportsUrgentData() {
+        try {
+            return invoke("supportsUrgentData");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected int getLocalPort() {
+        try {
+            return invoke("getLocalPort");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected void setPerformancePreferences(int connectionTime, int latency, int bandwidth) {
+        try {
+            invoke("setPerformancePreferences", new Class[] {Integer.TYPE, Integer.TYPE, Integer.TYPE}, new Object[] {connectionTime, latency, bandwidth});
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
