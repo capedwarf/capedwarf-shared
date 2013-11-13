@@ -26,26 +26,19 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketImpl;
 import java.net.SocketOptions;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.capedwarf.shared.compatibility.Compatibility;
 
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-class CapedwarfSocket extends SocketImpl {
-    private static final Map<String, Method> methods = new ConcurrentHashMap<>();
-
-    private static final Class[] EMPTY_CLASS_ARRAY = new Class[0];
-    private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+class CapedwarfSocket extends SocketImpl implements SocketOptionsInternal {
+    private static final AbstractSocketHelper helper = new CapedwarfSocketHelper();
 
     private final SocketImpl delegate;
 
@@ -53,70 +46,36 @@ class CapedwarfSocket extends SocketImpl {
         this.delegate = delegate;
     }
 
-    protected <T> T invoke(String method) throws IOException {
-        return invoke(method, EMPTY_CLASS_ARRAY, EMPTY_OBJECT_ARRAY);
-    }
-
-    protected <T> T invoke(String method, Class[] types, Object[] args) throws IOException {
-        return invoke(method, method, types, args);
-    }
-
-    protected <T> T invoke(Class<?> clazz, String method, Class[] types, Object[] args) throws IOException {
-        return invoke(clazz, method, method, types, args);
-    }
-
-    protected <T> T invoke(String key, String method, Class[] types, Object[] args) throws IOException {
-        return invoke(SocketImpl.class, key, method, types, args);
-    }
-
-    protected <T> T invoke(Class<?> clazz, String key, String method, Class[] types, Object[] args) throws IOException {
-        try {
-            Method m = methods.get(key);
-            if (m == null) {
-                m = clazz.getDeclaredMethod(method, types);
-                m.setAccessible(true);
-                methods.put(key, m);
-            }
-            //noinspection unchecked
-            return (T) m.invoke(delegate, args);
-        } catch (NoSuchMethodException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        } catch (InvocationTargetException e) {
-            Throwable t = e.getTargetException();
-            if (t instanceof IOException) {
-                throw IOException.class.cast(t);
-            } else {
-                throw new IllegalStateException(t);
-            }
-        }
+    Object invoke(String method) throws IOException {
+        return helper.invoke(delegate, method);
     }
 
     protected void create(boolean stream) throws IOException {
-        invoke("create", new Class[]{Boolean.TYPE}, new Object[]{stream});
+        helper.invoke(delegate, "create", new Class[]{Boolean.TYPE}, new Object[]{stream});
     }
 
     protected void connect(String host, int port) throws IOException {
-        invoke("connect1", "connect", new Class[]{String.class, Integer.TYPE}, new Object[]{host, port});
+        helper.invoke(delegate, "connect1", "connect", new Class[]{String.class, Integer.TYPE}, new Object[]{host, port});
     }
 
     protected void connect(InetAddress address, int port) throws IOException {
-        invoke("connect2", "connect", new Class[]{InetAddress.class, Integer.TYPE}, new Object[]{address, port});
+        helper.invoke(delegate, "connect2", "connect", new Class[]{InetAddress.class, Integer.TYPE}, new Object[]{address, port});
     }
 
     protected void connect(SocketAddress address, int timeout) throws IOException {
-        invoke("connect3", "connect", new Class[]{SocketAddress.class, Integer.TYPE}, new Object[]{address, timeout});
+        helper.invoke(delegate, "connect3", "connect", new Class[]{SocketAddress.class, Integer.TYPE}, new Object[]{address, timeout});
     }
 
     protected void bind(InetAddress host, int port) throws IOException {
-        invoke("bind", new Class[]{InetAddress.class, Integer.TYPE}, new Object[]{host, port});
+        helper.invoke(delegate, "bind", new Class[]{InetAddress.class, Integer.TYPE}, new Object[]{host, port});
     }
 
     protected void listen(int backlog) throws IOException {
-        invoke("listen", new Class[]{Integer.TYPE}, new Object[]{backlog});
+        helper.invoke(delegate, "listen", new Class[]{Integer.TYPE}, new Object[]{backlog});
     }
 
     protected void accept(SocketImpl s) throws IOException {
-        invoke("accept", new Class[]{SocketImpl.class}, new Object[]{s});
+        helper.invoke(delegate, "accept", new Class[]{SocketImpl.class}, new Object[]{s});
     }
 
     protected InputStream getInputStream() throws IOException {
@@ -128,124 +87,78 @@ class CapedwarfSocket extends SocketImpl {
     }
 
     protected int available() throws IOException {
-        return invoke("available", new Class[0], new Object[0]);
+        return helper.invoke(delegate, "available", new Class[0], new Object[0]);
     }
 
     protected void close() throws IOException {
-        invoke("close", new Class[0], new Object[0]);
+        helper.invoke(delegate, "close", new Class[0], new Object[0]);
     }
 
     protected void sendUrgentData(int data) throws IOException {
-        invoke("sendUrgentData", new Class[]{Integer.TYPE}, new Object[]{data});
-    }
-
-    public void setOption(int optID, Object value) throws SocketException {
-        final Compatibility compatibility = Compatibility.getInstance();
-        if (compatibility.isEnabled(Compatibility.Feature.ENABLE_SOCKET_OPTIONS)) {
-            setOptionInternal(optID, value);
-        } else {
-            CapedwarfSocketOptions.Option option = CapedwarfSocketOptions.getOptionById(optID);
-            if (option != null) {
-                option.validateAndApply(this, value);
-            }
-        }
-    }
-
-    protected void setOptionInternal(int optID, Object value) throws SocketException {
-        try {
-            invoke(SocketOptions.class, "setOption", new Class[]{Integer.TYPE, Object.class}, new Object[]{optID, value});
-        } catch (IOException e) {
-            if (e instanceof SocketException) {
-                throw SocketException.class.cast(e);
-            } else {
-                throw new SocketException(e.getMessage());
-            }
-        }
-    }
-
-    public Object getOption(int optID) throws SocketException {
-        final Compatibility compatibility = Compatibility.getInstance();
-        if (compatibility.isEnabled(Compatibility.Feature.ENABLE_SOCKET_OPTIONS)) {
-            return getOptionInternal(optID);
-        } else {
-            CapedwarfSocketOptions.Option option = CapedwarfSocketOptions.getOptionById(optID);
-            return (option != null) ? option.getOption(this) : null;
-        }
-    }
-
-    protected Object getOptionInternal(int optID) throws SocketException {
-        try {
-            return invoke(SocketOptions.class, "getOption", new Class[]{Integer.TYPE}, new Object[]{optID});
-        } catch (IOException e) {
-            if (e instanceof SocketException) {
-                throw SocketException.class.cast(e);
-            } else {
-                throw new SocketException(e.getMessage());
-            }
-        }
+        helper.invoke(delegate, "sendUrgentData", new Class[]{Integer.TYPE}, new Object[]{data});
     }
 
     @Override
     protected void shutdownInput() throws IOException {
-        invoke("shutdownInput");
+        helper.invoke(delegate, "shutdownInput");
     }
 
     @Override
     protected void shutdownOutput() throws IOException {
-        invoke("shutdownOutput");
+        helper.invoke(delegate, "shutdownOutput");
     }
 
     @Override
     protected FileDescriptor getFileDescriptor() {
-        try {
-            return invoke("getFileDescriptor");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return helper.invokeQuiet(delegate, "getFileDescriptor");
     }
 
     @Override
     protected InetAddress getInetAddress() {
-        try {
-            return invoke("getInetAddress");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return helper.invokeQuiet(delegate, "getInetAddress");
     }
 
     @Override
     protected int getPort() {
-        try {
-            return invoke("getPort");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return helper.invokeQuiet(delegate, "getPort");
     }
 
     @Override
     protected boolean supportsUrgentData() {
-        try {
-            return invoke("supportsUrgentData");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return helper.invokeQuiet(delegate, "supportsUrgentData");
     }
 
     @Override
     protected int getLocalPort() {
-        try {
-            return invoke("getLocalPort");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return helper.invokeQuiet(delegate, "getLocalPort");
     }
 
     @Override
     protected void setPerformancePreferences(int connectionTime, int latency, int bandwidth) {
         try {
-            invoke("setPerformancePreferences", new Class[] {Integer.TYPE, Integer.TYPE, Integer.TYPE}, new Object[] {connectionTime, latency, bandwidth});
+            helper.invoke(delegate, "setPerformancePreferences", new Class[]{Integer.TYPE, Integer.TYPE, Integer.TYPE}, new Object[]{connectionTime, latency, bandwidth});
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setOption(int optID, Object value) throws SocketException {
+        helper.setOption(this, optID, value);
+    }
+
+    public Object getOption(int optID) throws SocketException {
+        return helper.getOption(this, optID);
+    }
+
+    public Object getDelegate() {
+        return delegate;
+    }
+
+    public void setOptionInternal(int optID, Object value) throws SocketException {
+        helper.setOptionInternal(this, optID, value);
+    }
+
+    public Object getOptionInternal(int optID) throws SocketException {
+        return helper.getOptionInternal(this, optID);
     }
 }

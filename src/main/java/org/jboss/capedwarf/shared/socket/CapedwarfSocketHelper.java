@@ -23,54 +23,13 @@
 package org.jboss.capedwarf.shared.socket;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.SocketImpl;
 
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-class CapedwarfSocketInputStream extends InputStream {
-    private final InputStream delegate;
-
-    CapedwarfSocketInputStream(CapedwarfSocket socket) throws IOException {
-        this.delegate = (InputStream) socket.invoke("getInputStream");
-    }
-
-    public int read() throws IOException {
-        return delegate.read();
-    }
-
-    @Override
-    public int read(byte b[], int off, int len) throws IOException {
-        return delegate.read(b, off, len);
-    }
-
-    @Override
-    public int available() throws IOException {
-        return delegate.available();
-    }
-
-    @Override
-    public long skip(long n) throws IOException {
-        return delegate.skip(n);
-    }
-
-    @Override
-    public synchronized void mark(int readlimit) {
-        delegate.mark(readlimit);
-    }
-
-    @Override
-    public synchronized void reset() throws IOException {
-        delegate.reset();
-    }
-
-    @Override
-    public boolean markSupported() {
-        return delegate.markSupported();
-    }
-
-    @Override
-    public void close() throws IOException {
-        delegate.close();
+class CapedwarfSocketHelper extends AbstractSocketHelper {
+    protected <T> T invoke(Object target, String key, String method, Class[] types, Object[] args) throws IOException {
+        return invoke(target, SocketImpl.class, key, method, types, args);
     }
 }

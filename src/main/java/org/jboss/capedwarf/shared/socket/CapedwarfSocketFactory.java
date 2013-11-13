@@ -23,6 +23,8 @@
 package org.jboss.capedwarf.shared.socket;
 
 import java.lang.reflect.Constructor;
+import java.net.DatagramSocketImpl;
+import java.net.DatagramSocketImplFactory;
 import java.net.SocketImpl;
 import java.net.SocketImplFactory;
 
@@ -32,7 +34,7 @@ import org.jboss.capedwarf.shared.components.AppIdFactory;
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public class CapedwarfSocketFactory implements SocketImplFactory {
+public class CapedwarfSocketFactory implements SocketImplFactory, DatagramSocketImplFactory {
     public static final CapedwarfSocketFactory INSTANCE = new CapedwarfSocketFactory();
 
     private CapedwarfSocketFactory() {
@@ -49,17 +51,38 @@ public class CapedwarfSocketFactory implements SocketImplFactory {
         }
     }
 
+    DatagramSocketImpl createDatagramDelegate() {
+        try {
+            Class<?> clazz = getClass().getClassLoader().loadClass("java.net.PlainDatagramSocketImpl");
+            Constructor<?> ctor = clazz.getDeclaredConstructor();
+            ctor.setAccessible(true);
+            return (DatagramSocketImpl) ctor.newInstance();
+        } catch (Throwable t) {
+            throw new IllegalStateException(t);
+        }
+    }
+
+    private static boolean isIgnoreCapedwarfSockets() {
+        return (AppIdFactory.hasAppId() == false || Compatibility.getInstance().isEnabled(Compatibility.Feature.IGNORE_CAPEDWARF_SOCKETS));
+    }
+
     public SocketImpl createSocketImpl() {
         final SocketImpl delegate = createDelegate();
 
-        if (AppIdFactory.hasAppId() == false) {
-            return delegate;
-        }
-
-        if (Compatibility.getInstance().isEnabled(Compatibility.Feature.IGNORE_CAPEDWARF_SOCKETS)) {
+        if (isIgnoreCapedwarfSockets()) {
             return delegate;
         }
 
         return new CapedwarfSocket(delegate);
+    }
+
+    public DatagramSocketImpl createDatagramSocketImpl() {
+        final DatagramSocketImpl delegate = createDatagramDelegate();
+
+        if (isIgnoreCapedwarfSockets()) {
+            return delegate;
+        }
+
+        return new CapedwarfDatagramSocket(delegate);
     }
 }

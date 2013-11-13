@@ -32,7 +32,7 @@ class CapedwarfSocketOutputStream extends OutputStream {
     private final OutputStream delegate;
 
     CapedwarfSocketOutputStream(CapedwarfSocket socket) throws IOException {
-        this.delegate = socket.invoke("getOutputStream", new Class[0], new Object[0]);
+        this.delegate = (OutputStream) socket.invoke("getOutputStream");
     }
 
     public void write(int b) throws IOException {

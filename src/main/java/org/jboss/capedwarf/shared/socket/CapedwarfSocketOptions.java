@@ -34,20 +34,24 @@ import java.util.Set;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 class CapedwarfSocketOptions {
-    private static final Set<Integer> SET_OPTIONS = Collections.emptySet(); // atm all are disabled
+    private static final Set<Integer> SET_OPTIONS;
     private static final Set<Integer> GET_OPTIONS;
 
     static {
+        SET_OPTIONS = Collections.emptySet(); // atm all are disabled
+
         GET_OPTIONS = new HashSet<>();
+        GET_OPTIONS.add(SocketOptions.IP_TOS);
+        GET_OPTIONS.add(SocketOptions.SO_BINDADDR); // OK?
         GET_OPTIONS.add(SocketOptions.SO_KEEPALIVE);
         // GET_OPTIONS.add(SocketOptions.SO_DEBUG); // doesn't exist
-        GET_OPTIONS.add(SocketOptions.TCP_NODELAY);
         GET_OPTIONS.add(SocketOptions.SO_LINGER);
         GET_OPTIONS.add(SocketOptions.SO_OOBINLINE);
-        GET_OPTIONS.add(SocketOptions.SO_SNDBUF);
         GET_OPTIONS.add(SocketOptions.SO_RCVBUF);
         GET_OPTIONS.add(SocketOptions.SO_REUSEADDR);
+        GET_OPTIONS.add(SocketOptions.SO_SNDBUF);
         GET_OPTIONS.add(SocketOptions.SO_TIMEOUT); // extra?
+        GET_OPTIONS.add(SocketOptions.TCP_NODELAY);
     }
 
     private abstract static class CheckFunction<T> {
@@ -57,7 +61,7 @@ class CapedwarfSocketOptions {
         void check(Option opt, T value, boolean isDatagramSocket) throws SocketException {
         }
 
-        void apply(Option option, CapedwarfSocket socketImpl, T value) throws SocketException {
+        void apply(Option option, SocketOptionsInternal socketImpl, T value) throws SocketException {
             option.setOption(socketImpl, value);
         }
     }
@@ -118,7 +122,7 @@ class CapedwarfSocketOptions {
             INTEGER_CHECK,
             new BooleanCheckFunction() {
                 @Override
-                void apply(Option option, CapedwarfSocket socketImpl, Boolean val) throws SocketException {
+                void apply(Option option, SocketOptionsInternal socketImpl, Boolean val) throws SocketException {
                     super.apply(option, socketImpl, false);
                 }
             },
@@ -133,7 +137,7 @@ class CapedwarfSocketOptions {
                     }
                 }
             }),
-        IP_TOS_OPT(SocketOptions.IP_TOS, INTEGER_CHECK),
+        IP_TOS_OPT(SocketOptions.IP_TOS, INTEGER_CHECK, UNIMPLIMENTED_CHECK),
         SO_BINDADDR_OPT(SocketOptions.SO_BINDADDR, UNIMPLIMENTED_CHECK),
         TCP_NODELAY_OPT(SocketOptions.TCP_NODELAY, BOOLEAN_CHECK, ONLY_ALLOWED_FOR_TCP),
         SO_SNDBUF_OPT(SocketOptions.SO_SNDBUF, INTEGER_GT0_CHECK),
@@ -179,7 +183,7 @@ class CapedwarfSocketOptions {
          * @throws SocketException for any error
          */
         @SuppressWarnings("unchecked")
-        private void validateAndApply(CapedwarfSocket socketImpl, Object val, boolean isDatagramSocket) throws SocketException {
+        private void validateAndApply(SocketOptionsInternal socketImpl, Object val, boolean isDatagramSocket) throws SocketException {
             if (val == null) {
                 throw new SocketException("Bad value 'null' for option " + optionName());
             }
@@ -200,7 +204,7 @@ class CapedwarfSocketOptions {
             throw new SocketException("Bad parameter type of '" + val.getClass().getName() + "' for option " + optionName());
         }
 
-        void validateAndApply(CapedwarfSocket socketImpl, Object val) throws SocketException {
+        void validateAndApply(SocketOptionsInternal socketImpl, Object val) throws SocketException {
             validateAndApply(socketImpl, val, false);
         }
 
@@ -208,11 +212,11 @@ class CapedwarfSocketOptions {
             return opt;
         }
 
-        Object getOption(CapedwarfSocket socketImpl) throws SocketException {
+        Object getOption(SocketOptionsInternal socketImpl) throws SocketException {
             return (isGetEnabled()) ? socketImpl.getOptionInternal(opt) : null;
         }
 
-        void setOption(CapedwarfSocket socketImpl, Object value) throws SocketException {
+        void setOption(SocketOptionsInternal socketImpl, Object value) throws SocketException {
             if (isSetEnabled()) {
                 socketImpl.setOptionInternal(getOpt(), value);
             }
