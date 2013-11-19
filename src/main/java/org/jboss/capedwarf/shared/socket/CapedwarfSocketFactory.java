@@ -23,8 +23,10 @@
 package org.jboss.capedwarf.shared.socket;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.net.DatagramSocketImpl;
 import java.net.DatagramSocketImplFactory;
+import java.net.MulticastSocket;
 import java.net.SocketImpl;
 import java.net.SocketImplFactory;
 
@@ -53,13 +55,22 @@ public class CapedwarfSocketFactory implements SocketImplFactory, DatagramSocket
 
     DatagramSocketImpl createDatagramDelegate() {
         try {
-            Class<?> clazz = getClass().getClassLoader().loadClass("java.net.PlainDatagramSocketImpl");
-            Constructor<?> ctor = clazz.getDeclaredConstructor();
-            ctor.setAccessible(true);
-            return (DatagramSocketImpl) ctor.newInstance();
+            Class<?> clazz = getClass().getClassLoader().loadClass("java.net.DefaultDatagramSocketImplFactory");
+            Method method = clazz.getDeclaredMethod("createDatagramSocketImpl", Boolean.TYPE);
+            method.setAccessible(true);
+            return (DatagramSocketImpl) method.invoke(null, isInvokedFromMulticastSocket());
         } catch (Throwable t) {
             throw new IllegalStateException(t);
         }
+    }
+
+    private static boolean isInvokedFromMulticastSocket() {
+        for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
+            if (element.getClassName().equals(MulticastSocket.class.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isIgnoreCapedwarfSockets() {
