@@ -23,6 +23,7 @@
 package org.jboss.capedwarf.shared.socket;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.net.DatagramSocketImpl;
 import java.net.DatagramSocketImplFactory;
 import java.net.SocketImpl;
@@ -52,11 +53,12 @@ public class CapedwarfSocketFactory implements SocketImplFactory, DatagramSocket
     }
 
     DatagramSocketImpl createDatagramDelegate() {
+        boolean isMulticast = false;    // TODO: is there any way to know this?
         try {
-            Class<?> clazz = getClass().getClassLoader().loadClass("java.net.PlainDatagramSocketImpl");
-            Constructor<?> ctor = clazz.getDeclaredConstructor();
-            ctor.setAccessible(true);
-            return (DatagramSocketImpl) ctor.newInstance();
+            Class<?> clazz = getClass().getClassLoader().loadClass("java.net.DefaultDatagramSocketImplFactory");
+            Method method = clazz.getDeclaredMethod("createDatagramSocketImpl", Boolean.TYPE);
+            method.setAccessible(true);
+            return (DatagramSocketImpl) method.invoke(null, isMulticast);
         } catch (Throwable t) {
             throw new IllegalStateException(t);
         }
