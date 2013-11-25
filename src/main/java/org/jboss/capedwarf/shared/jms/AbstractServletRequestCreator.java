@@ -56,7 +56,7 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
         request.setPath(path);
 
         String servletPath = getServletPath(context, path);
-        request.setServletPath(removeEndSlash(servletPath));
+        request.setServletPath(servletPath);
 
         final int p = path.indexOf("?");
 
