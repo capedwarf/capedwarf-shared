@@ -64,7 +64,8 @@ public class Compatibility {
         IGNORE_CAPEDWARF_SOCKETS("ignore.capedwarf.sockets"),
         IGNORE_CAPEDWARF_URL_STREAM_HANDLER("ignore.capedwarf.url.stream.handler"),
         CHANNEL_DEFAULT_DURATION_MINUTES("channel.default.duration.minutes", new IntegerValue(2 * 60)),
-        DEFAULT_GCS_BUCKET_NAME("default.gcs.bucket.name", new NotEmpty());
+        DEFAULT_GCS_BUCKET_NAME("default.gcs.bucket.name", new NotEmpty()),
+        DISABLE_WEB_SOCKETS_CHANNEL("disable.websockets.channel");
 
         private String key;
         private Value value;
