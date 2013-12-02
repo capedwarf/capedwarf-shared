@@ -22,6 +22,8 @@
 
 package org.jboss.capedwarf.shared.util;
 
+import java.util.concurrent.Future;
+
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleClassLoader;
 
@@ -75,5 +77,41 @@ public final class Utils {
 
     public static Module toModule() {
         return getAppClassLoader().getModule();
+    }
+
+    /**
+     * To RuntimeException.
+     *
+     * @param t exception
+     * @return t if t is RuntimeException already, else wrap t into RuntimeException
+     */
+    public static RuntimeException toRuntimeException(Throwable t) {
+        return (t instanceof RuntimeException) ? (RuntimeException) t : new RuntimeException(t);
+    }
+
+    /**
+     * Check value for null, return default if true.
+     *
+     * @param value the value to check
+     * @param defaultValue the default value
+     * @return value if not null, default otherwise
+     */
+    public static <T> T defaultIfNull(T value, T defaultValue) {
+        return (value != null) ? value : defaultValue;
+    }
+
+    /**
+     * Quiet future get.
+     * Wrap exception into runtime exception.
+     *
+     * @param future the future
+     * @return future's get result
+     */
+    public static <R> R quietGet(Future<R> future) {
+        try {
+            return future.get();
+        } catch (Exception e) {
+            throw toRuntimeException(e);
+        }
     }
 }

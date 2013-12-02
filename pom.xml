@@ -66,6 +66,8 @@
         <version.org.apache.lucene>3.6.2</version.org.apache.lucene>
         <!-- Utils -->
         <version.javassist>3.18.1-GA</version.javassist>
+        <!-- META-INF services -->
+        <version.metainf>1.1</version.metainf>
 
         <!-- Spec -->
         <version.javax.mail>1.4.4</version.javax.mail>
@@ -285,6 +287,12 @@
                 <version>${version.javassist}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.kohsuke.metainf-services</groupId>
+                <artifactId>metainf-services</artifactId>
+                <version>${version.metainf}</version>
+            </dependency>
+
         </dependencies>
 
     </dependencyManagement>
@@ -404,6 +412,11 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
         </dependency>
 
     </dependencies>

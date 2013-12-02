@@ -25,24 +25,36 @@ package org.jboss.capedwarf.shared.url;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLStreamHandler;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 import java.util.Map;
 import java.util.concurrent.Callable;
+
+import org.jboss.modules.Module;
+import org.jboss.modules.ModuleIdentifier;
+import org.jboss.modules.ModuleLoader;
 
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
 public final class URLHack {
-    private static final Field handlers;
-    private static final Field streamHandlerLock;
+    private static Field handlers;
+    private static Field streamHandlerLock;
 
     static {
         try {
-            handlers = URL.class.getDeclaredField("handlers");
-            handlers.setAccessible(true);
+            AccessController.doPrivileged(new PrivilegedExceptionAction<Void>() {
+                public Void run() throws Exception {
+                    handlers = URL.class.getDeclaredField("handlers");
+                    handlers.setAccessible(true);
 
-            streamHandlerLock = URL.class.getDeclaredField("streamHandlerLock");
-            streamHandlerLock.setAccessible(true);
+                    streamHandlerLock = URL.class.getDeclaredField("streamHandlerLock");
+                    streamHandlerLock.setAccessible(true);
+
+                    return null;
+                }
+            });
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
@@ -51,7 +63,22 @@ public final class URLHack {
     private URLHack() {
     }
 
-    public static URLStreamHandler removeHandler(String protocol) {
+    public static void setupHandler() {
+        inLock(new Callable<Void>() {
+            public Void call() throws Exception {
+                // make sure we clear these protocols
+                removeHandlerNoLock("http");
+                removeHandlerNoLock("https");
+                // register our custom url stream handler factory
+                ModuleLoader loader = Module.getBootModuleLoader();
+                Module capedwarf = loader.loadModule(ModuleIdentifier.create("org.jboss.capedwarf.shared"));
+                Module.registerURLStreamHandlerFactoryModule(capedwarf);
+                return null;
+            }
+        });
+    }
+
+    static URLStreamHandler removeHandler(String protocol) {
         try {
             final Object lock = streamHandlerLock.get(null);
             synchronized (lock) {
@@ -65,7 +92,7 @@ public final class URLHack {
     }
 
     @SuppressWarnings({"unchecked"})
-    public static URLStreamHandler removeHandlerNoLock(String protocol) {
+    static URLStreamHandler removeHandlerNoLock(String protocol) {
         try {
             Map<String, URLStreamHandler> map = (Map<String, URLStreamHandler>) handlers.get(null);
             return map.remove(protocol);
@@ -76,7 +103,7 @@ public final class URLHack {
         }
     }
 
-    public static <T> T inLock(Callable<T> callable) {
+    static <T> T inLock(Callable<T> callable) {
         try {
             final Object lock = streamHandlerLock.get(null);
             synchronized (lock) {
