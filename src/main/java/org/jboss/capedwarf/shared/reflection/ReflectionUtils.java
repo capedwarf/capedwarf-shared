@@ -100,18 +100,14 @@ public final class ReflectionUtils {
 
     @SuppressWarnings("unchecked")
     public static <T> T newInstance(String className, Class[] types, Object[] args) {
-        try {
-            Class<?> clazz = Utils.getAppClassLoader().loadClass(className);
-            return (T) newInstance(clazz, types, args);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        Class<?> clazz = loadClass(className);
+        return (T) newInstance(clazz, types, args);
     }
 
     /**
      * Get real method.
      *
-     * @param clazz the class
+     * @param clazz    the class
      * @param original the original method
      * @return real method
      */
@@ -219,13 +215,13 @@ public final class ReflectionUtils {
      */
     public static <T> TargetInvocation<T> cacheInvocation(Class<?> clazz, String methodName, Class[] types, Object[] args) {
         final Method m = findMethod(clazz, methodName, types);
-        return new TargetInvocation<T>(m, args);
+        return new TargetInvocation<>(m, args);
     }
 
     /**
      * Cache method.
      *
-     * @param target the target
+     * @param target     the target
      * @param methodName the method name
      * @return cached target invocation
      */
@@ -236,7 +232,7 @@ public final class ReflectionUtils {
     /**
      * Cache method.
      *
-     * @param target the target
+     * @param target     the target
      * @param methodName the method name
      * @param types      the types
      * @return cached target invocation
@@ -246,13 +242,13 @@ public final class ReflectionUtils {
             throw new IllegalArgumentException("Null target");
 
         final Method m = findMethod(target.getClass(), methodName, types);
-        return new MethodInvocation<T>(target, m);
+        return new MethodInvocation<>(target, m);
     }
 
     /**
      * Cache method.
      *
-     * @param clazz the class
+     * @param clazz      the class
      * @param methodName the method name
      * @return cached target invocation
      */
@@ -263,7 +259,7 @@ public final class ReflectionUtils {
     /**
      * Cache method.
      *
-     * @param clazz the class
+     * @param clazz      the class
      * @param methodName the method name
      * @param types      the types
      * @return cached target invocation
@@ -273,13 +269,13 @@ public final class ReflectionUtils {
             throw new IllegalArgumentException("Null class");
 
         final Method m = findMethod(clazz, methodName, types);
-        return new MethodInvocation<T>(m);
+        return new MethodInvocation<>(m);
     }
 
     /**
      * Optional method.
      *
-     * @param clazz the class
+     * @param clazz      the class
      * @param methodName the method name
      * @param types      the types
      * @return optional target invocation
@@ -290,16 +286,16 @@ public final class ReflectionUtils {
 
         try {
             Method m = findMethod(clazz, methodName, types);
-            return new MethodInvocation<T>(m);
+            return new MethodInvocation<>(m);
         } catch (IllegalStateException ignored) {
-            return new NoopMethodInvocation<T>();
+            return new NoopMethodInvocation<>();
         }
     }
 
     /**
      * Get field value.
      *
-     * @param target the target
+     * @param target    the target
      * @param fieldName the field name
      * @return field's value
      */
@@ -314,11 +310,11 @@ public final class ReflectionUtils {
             throw new RuntimeException(e);
         }
     }
-    
+
     /**
      * Get static field value.
      *
-     * @param clazz the class
+     * @param clazz     the class
      * @param fieldName the field name
      * @return field's value
      */
@@ -333,10 +329,10 @@ public final class ReflectionUtils {
 
     /**
      * Set field value.
-     * 
-     * @param target the target
+     *
+     * @param target    the target
      * @param fieldName the field name
-     * @param value the value
+     * @param value     the value
      */
     public static void setFieldValue(Object target, String fieldName, Object value) {
         if (target == null)
@@ -352,10 +348,10 @@ public final class ReflectionUtils {
 
     /**
      * Set static field value.
-     * 
-     * @param clazz the class
+     *
+     * @param clazz     the class
      * @param fieldName the field name
-     * @param value the value
+     * @param value     the value
      */
     public static void setFieldValue(Class<?> clazz, String fieldName, Object value) {
         final Field field = findField(clazz, fieldName);
@@ -369,12 +365,12 @@ public final class ReflectionUtils {
     /**
      * Cache field invocation.
      *
-     * @param clazz the class
+     * @param clazz     the class
      * @param fieldName the field name
      * @return field invocation
      */
     public static <T> FieldInvocation<T> cacheField(Class<?> clazz, String fieldName) {
-        return new FieldInvocation<T>(findField(clazz, fieldName));
+        return new FieldInvocation<>(findField(clazz, fieldName));
     }
 
     /**
@@ -385,13 +381,13 @@ public final class ReflectionUtils {
      * @return field invocation
      */
     public static <T> FieldInvocation<T> cacheField(String classname, String fieldName) {
-        return new FieldInvocation<T>(findField(loadClass(classname), fieldName));
+        return new FieldInvocation<>(findField(loadClass(classname), fieldName));
     }
 
     /**
      * Try loading the class.
      *
-     * @param cl the classloader
+     * @param cl        the classloader
      * @param className the classname
      * @return loaded class or null
      */
@@ -456,7 +452,7 @@ public final class ReflectionUtils {
     /**
      * Find field.
      *
-     * @param clazz the class
+     * @param clazz     the class
      * @param fieldName the field name
      * @return field instance
      */
