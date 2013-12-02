@@ -101,7 +101,7 @@ public final class ReflectionUtils {
     @SuppressWarnings("unchecked")
     public static <T> T newInstance(String className, Class[] types, Object[] args) {
         try {
-            Class<?> clazz = Class.forName(className);
+            Class<?> clazz = Utils.getAppClassLoader().loadClass(className);
             return (T) newInstance(clazz, types, args);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
