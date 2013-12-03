@@ -22,7 +22,7 @@
 
 package org.jboss.capedwarf.shared.bytecode;
 
-import java.lang.Class;import java.lang.ClassLoader;import java.lang.Exception;import java.lang.IllegalArgumentException;import java.lang.Object;import java.lang.Override;import java.lang.RuntimeException;import java.lang.SecurityManager;import java.lang.System;import java.lang.reflect.Constructor;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -31,7 +31,6 @@ import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
-import org.jboss.capedwarf.shared.util.Utils;
 
 /**
  * Bytecode hacks.
@@ -67,7 +66,7 @@ public final class BytecodeUtils {
         if (handler == null)
             throw new IllegalArgumentException("Null method handler!");
 
-        final ProxyFactory factory = new InternalProxyFactory(Utils.getAppClassLoader());
+        final ProxyFactory factory = new InternalProxyFactory(expected.getClassLoader());
         factory.setFilter(BytecodeUtils.FINALIZE_FILTER);
         if (interfaces != null && interfaces.length > 0) {
             factory.setInterfaces(interfaces);
@@ -119,6 +118,10 @@ public final class BytecodeUtils {
         private final ClassLoader classLoader;
 
         private InternalProxyFactory(ClassLoader classLoader) {
+            if (classLoader == null) {
+                // it's system classloader, so Shared should be fine
+                classLoader = getClass().getClassLoader();
+            }
             this.classLoader = classLoader;
         }
 
