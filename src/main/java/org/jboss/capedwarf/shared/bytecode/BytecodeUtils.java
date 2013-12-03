@@ -31,6 +31,7 @@ import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
+import org.jboss.capedwarf.shared.util.Utils;
 
 /**
  * Bytecode hacks.
@@ -66,7 +67,7 @@ public final class BytecodeUtils {
         if (handler == null)
             throw new IllegalArgumentException("Null method handler!");
 
-        final ProxyFactory factory = new InternalProxyFactory(expected.getClassLoader());
+        final ProxyFactory factory = new InternalProxyFactory(Utils.getAppClassLoader());
         factory.setFilter(BytecodeUtils.FINALIZE_FILTER);
         if (interfaces != null && interfaces.length > 0) {
             factory.setInterfaces(interfaces);
