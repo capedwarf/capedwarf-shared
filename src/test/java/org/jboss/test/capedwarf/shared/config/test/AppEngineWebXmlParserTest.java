@@ -41,7 +41,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author <a href="mailto:marko.luksa@gmail.com">Marko Luksa</a>
@@ -186,6 +188,8 @@ public class AppEngineWebXmlParserTest {
         assertNotNull(aewx.getInboundServices().getServices());
         assertEquals(1, aewx.getInboundServices().getServices().size());
         assertEquals(InboundServices.Service.mail, aewx.getInboundServices().getServices().iterator().next());
+        assertTrue(aewx.isInboundServiceEnabled(InboundServices.Service.mail));
+        assertFalse(aewx.isInboundServiceEnabled(InboundServices.Service.channel_presence));
     }
 
     private static AppEngineWebXml parse(String xml) throws Exception {
