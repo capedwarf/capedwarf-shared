@@ -101,6 +101,10 @@ public class AppEngineWebXml implements Serializable {
         this.inboundServices = inboundServices;
     }
 
+    public boolean isInboundServiceEnabled(InboundServices.Service service) {
+        return (inboundServices != null && inboundServices.getServices().contains(service));
+    }
+
     public String getInstanceClass() {
         return instanceClass;
     }
