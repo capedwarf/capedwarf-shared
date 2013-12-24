@@ -1,4 +1,4 @@
 capedwarf-shared
 ================
 
-Shared code between CapeDwarf' AS integration layer and Blue GAE API implementation.
+Shared code between [CapeDwarf' WildFly integration](https://github.com/capedwarf/capedwarf-jboss-as) layer and [Blue](https://github.com/capedwarf/capedwarf-blue) GAE API implementation.
