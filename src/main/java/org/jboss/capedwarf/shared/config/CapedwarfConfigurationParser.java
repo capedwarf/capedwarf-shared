@@ -26,6 +26,7 @@ package org.jboss.capedwarf.shared.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -70,6 +71,15 @@ public class CapedwarfConfigurationParser {
             xmppConfig.setPort(Integer.parseInt(XmlUtils.getChildElementBody(xmppElem, "port")));
             xmppConfig.setUsername(XmlUtils.getChildElementBody(xmppElem, "username"));
             xmppConfig.setPassword(XmlUtils.getChildElementBody(xmppElem, "password"));
+        }
+
+        for (Element inboundMailElem : XmlUtils.getChildren(documentElement, "inbound-mail")) {
+            config.addInboundMailAccount(new InboundMailAccount(
+                XmlUtils.getChildElementBody(inboundMailElem, "host"),
+                XmlUtils.getChildElementBody(inboundMailElem, "user"),
+                XmlUtils.getChildElementBody(inboundMailElem, "password"),
+                XmlUtils.getChildElementBody(inboundMailElem, "folder")
+            ));
         }
 
         return config;
