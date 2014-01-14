@@ -34,6 +34,7 @@ import javax.transaction.UserTransaction;
 
 import org.apache.http.client.HttpClient;
 import org.infinispan.manager.EmbeddedCacheManager;
+import org.jboss.capedwarf.shared.config.ApplicationConfiguration;
 import org.jboss.modules.ModuleLoader;
 import org.jgroups.JChannel;
 
@@ -44,6 +45,8 @@ import org.jgroups.JChannel;
  */
 public final class Keys {
     // Global keys
+
+    public static final Key<ApplicationConfiguration> APPLICATION_CONFIGURATION = new GlobalKey<>(ApplicationConfiguration.class);
 
     // Tx
     public static final Key<TransactionManager> TM = new GlobalKey<TransactionManager>(TransactionManager.class);

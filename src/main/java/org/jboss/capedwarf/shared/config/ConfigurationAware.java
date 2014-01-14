@@ -26,71 +26,28 @@ package org.jboss.capedwarf.shared.config;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public abstract class ConfigurationAware {
-    protected AppEngineWebXml appEngineWebXml;
-    protected CapedwarfConfiguration capedwarfConfiguration;
-    protected QueueXml queueXml;
-    protected BackendsXml backendsXml;
-    protected IndexesXml indexesXml;
+
+    protected ApplicationConfiguration applicationConfiguration;
 
     // hack around passing config instances
-
-    protected static final ThreadLocal<AppEngineWebXml> appEngineWebXmlTL = new ThreadLocal<AppEngineWebXml>();
-    protected static final ThreadLocal<CapedwarfConfiguration> capedwarfConfigurationTL = new ThreadLocal<CapedwarfConfiguration>();
-    protected static final ThreadLocal<QueueXml> queueXmlTL = new ThreadLocal<QueueXml>();
-    protected static final ThreadLocal<BackendsXml> backendsTL = new ThreadLocal<BackendsXml>();
-    protected static final ThreadLocal<IndexesXml> indexesTL = new ThreadLocal<IndexesXml>();
+    protected static final ThreadLocal<ApplicationConfiguration> applicationConfigurationTL = new ThreadLocal<>();
 
     protected ConfigurationAware() {
     }
 
-    protected ConfigurationAware(AppEngineWebXml appEngineWebXml, CapedwarfConfiguration capedwarfConfiguration, QueueXml queueXml, BackendsXml backendsXml, IndexesXml indexesXml) {
-        this.appEngineWebXml = appEngineWebXml;
-        this.capedwarfConfiguration = capedwarfConfiguration;
-        this.queueXml = queueXml;
-        this.backendsXml = backendsXml;
-        this.indexesXml = indexesXml;
+    protected ConfigurationAware(ApplicationConfiguration applicationConfiguration) {
+        this.applicationConfiguration = applicationConfiguration;
     }
 
     protected void initialize() {
-        appEngineWebXml = appEngineWebXmlTL.get();
-        capedwarfConfiguration = capedwarfConfigurationTL.get();
-        queueXml = queueXmlTL.get();
-        backendsXml = backendsTL.get();
-        indexesXml = indexesTL.get();
+        applicationConfiguration = applicationConfigurationTL.get();
     }
 
-    public static void setAppEngineWebXml(AppEngineWebXml appEngineWebXml) {
-        if (appEngineWebXml != null)
-            appEngineWebXmlTL.set(appEngineWebXml);
+    public static void setApplicationConfiguration(ApplicationConfiguration applicationConfiguration) {
+        if (applicationConfiguration != null)
+            applicationConfigurationTL.set(applicationConfiguration);
         else
-            appEngineWebXmlTL.remove();
+            applicationConfigurationTL.remove();
     }
 
-    public static void setCapedwarfConfiguration(CapedwarfConfiguration capedwarfConfiguration) {
-        if (capedwarfConfiguration != null)
-            capedwarfConfigurationTL.set(capedwarfConfiguration);
-        else
-            capedwarfConfigurationTL.remove();
-    }
-
-    public static void setQueueXml(QueueXml queueXml) {
-        if (queueXml != null)
-            queueXmlTL.set(queueXml);
-        else
-            queueXmlTL.remove();
-    }
-
-    public static void setBackendsXml(BackendsXml backends) {
-        if (backends != null)
-            backendsTL.set(backends);
-        else
-            backendsTL.remove();
-    }
-
-    public static void setIndexesXml(IndexesXml indexes) {
-        if (indexes != null)
-            indexesTL.set(indexes);
-        else
-            indexesTL.remove();
-    }
 }
