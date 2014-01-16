@@ -26,7 +26,6 @@ package org.jboss.capedwarf.shared.config;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -74,14 +73,21 @@ public class CapedwarfConfigurationParser {
         }
 
         for (Element inboundMailElem : XmlUtils.getChildren(documentElement, "inbound-mail")) {
-            config.addInboundMailAccount(new InboundMailAccount(
-                XmlUtils.getChildElementBody(inboundMailElem, "host", true),
-                XmlUtils.getChildElementBody(inboundMailElem, "user", true),
-                XmlUtils.getChildElementBody(inboundMailElem, "password", true),
-                XmlUtils.getChildElementBody(inboundMailElem, "folder", true)
-            ));
+            config.addInboundMailAccount(getInboundMailAccount(inboundMailElem));
         }
 
         return config;
+    }
+
+    private static InboundMailAccount getInboundMailAccount(Element elem) {
+        String pollingInterval = XmlUtils.getChildElementBody(elem, "pollingInterval", false);
+        return new InboundMailAccount(
+            XmlUtils.getChildElementBody(elem, "protocol", true),
+            XmlUtils.getChildElementBody(elem, "host", true),
+            XmlUtils.getChildElementBody(elem, "user", true),
+            XmlUtils.getChildElementBody(elem, "password", true),
+            XmlUtils.getChildElementBody(elem, "folder", true),
+            pollingInterval == null ? null : Long.valueOf(pollingInterval)
+        );
     }
 }

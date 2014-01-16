@@ -5,17 +5,27 @@ package org.jboss.capedwarf.shared.config;
  */
 public class InboundMailAccount {
 
+    private static final long DEFAULT_POLLING_INTERVAL = 60000;
+
+    private String protocol;
     private String host;
     private String user;
     private String password;
 
     private String folder;
+    private long pollingInterval;
 
-    public InboundMailAccount(String host, String user, String password, String folder) {
+    public InboundMailAccount(String protocol, String host, String user, String password, String folder, Long pollingInterval) {
+        this.protocol = protocol;
         this.host = host;
         this.user = user;
         this.password = password;
         this.folder = folder;
+        this.pollingInterval = pollingInterval == null ? DEFAULT_POLLING_INTERVAL : pollingInterval;
+    }
+
+    public String getProtocol() {
+        return protocol;
     }
 
     public String getHost() {
@@ -32,5 +42,9 @@ public class InboundMailAccount {
 
     public String getFolder() {
         return folder;
+    }
+
+    public long getPollingInterval() {
+        return pollingInterval;
     }
 }
