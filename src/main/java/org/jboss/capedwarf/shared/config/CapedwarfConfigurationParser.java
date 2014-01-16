@@ -75,10 +75,10 @@ public class CapedwarfConfigurationParser {
 
         for (Element inboundMailElem : XmlUtils.getChildren(documentElement, "inbound-mail")) {
             config.addInboundMailAccount(new InboundMailAccount(
-                XmlUtils.getChildElementBody(inboundMailElem, "host"),
-                XmlUtils.getChildElementBody(inboundMailElem, "user"),
-                XmlUtils.getChildElementBody(inboundMailElem, "password"),
-                XmlUtils.getChildElementBody(inboundMailElem, "folder")
+                XmlUtils.getChildElementBody(inboundMailElem, "host", true),
+                XmlUtils.getChildElementBody(inboundMailElem, "user", true),
+                XmlUtils.getChildElementBody(inboundMailElem, "password", true),
+                XmlUtils.getChildElementBody(inboundMailElem, "folder", true)
             ));
         }
 
