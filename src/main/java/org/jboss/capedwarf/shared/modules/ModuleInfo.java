@@ -64,4 +64,18 @@ public class ModuleInfo implements Serializable {
         }
         return instances.get(i);
     }
+
+    public InstanceInfo getInstance(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Null id!");
+        }
+
+        for (InstanceInfo info : instances) {
+            if (id.equals(info.getId())) {
+                return info;
+            }
+        }
+
+        throw new IllegalArgumentException("No such instance: " + id);
+    }
 }

@@ -28,11 +28,20 @@ import java.io.Serializable;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class InstanceInfo implements Serializable {
+    private String id;
     private String host;
     private int port;
 
     public String getHostname() {
         return host + ":" + port;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getHost() {
