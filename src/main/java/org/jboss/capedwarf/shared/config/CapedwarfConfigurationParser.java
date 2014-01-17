@@ -72,6 +72,22 @@ public class CapedwarfConfigurationParser {
             xmppConfig.setPassword(XmlUtils.getChildElementBody(xmppElem, "password"));
         }
 
+        for (Element inboundMailElem : XmlUtils.getChildren(documentElement, "inbound-mail")) {
+            config.addInboundMailAccount(getInboundMailAccount(inboundMailElem));
+        }
+
         return config;
+    }
+
+    private static InboundMailAccount getInboundMailAccount(Element elem) {
+        String pollingInterval = XmlUtils.getChildElementBody(elem, "pollingInterval", false);
+        return new InboundMailAccount(
+            XmlUtils.getChildElementBody(elem, "protocol", true),
+            XmlUtils.getChildElementBody(elem, "host", true),
+            XmlUtils.getChildElementBody(elem, "user", true),
+            XmlUtils.getChildElementBody(elem, "password", true),
+            XmlUtils.getChildElementBody(elem, "folder", true),
+            pollingInterval == null ? null : Long.valueOf(pollingInterval)
+        );
     }
 }

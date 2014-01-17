@@ -25,8 +25,10 @@
 package org.jboss.capedwarf.shared.config;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -38,6 +40,8 @@ public class CapedwarfConfiguration implements Serializable {
     private Set<String> admins = new HashSet<String>();
 
     private XmppConfiguration xmppConfiguration = new XmppConfiguration();
+
+    private List<InboundMailAccount> inboundMailAccounts = new ArrayList<>();
 
     // TODO -- make it not public again?
     public void addAdmin(String email) {
@@ -54,5 +58,13 @@ public class CapedwarfConfiguration implements Serializable {
 
     public XmppConfiguration getXmppConfiguration() {
         return xmppConfiguration;
+    }
+
+    public List<InboundMailAccount> getInboundMailAccounts() {
+        return Collections.unmodifiableList(inboundMailAccounts);
+    }
+
+    public void addInboundMailAccount(InboundMailAccount account) {
+        inboundMailAccounts.add(account);
     }
 }
