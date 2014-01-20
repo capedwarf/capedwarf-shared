@@ -27,9 +27,11 @@ package org.jboss.test.capedwarf.shared.config.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 
 import org.jboss.capedwarf.shared.config.CapedwarfConfiguration;
 import org.jboss.capedwarf.shared.config.CapedwarfConfigurationParser;
+import org.jboss.capedwarf.shared.config.InboundMailAccount;
 import org.jboss.capedwarf.shared.config.XmppConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
@@ -91,5 +93,31 @@ public class CapedwarfConfigurationParserTest {
         Assert.assertEquals(1234, xmppConfig.getPort());
         Assert.assertEquals("xmppUser", xmppConfig.getUsername());
         Assert.assertEquals("xmppPass", xmppConfig.getPassword());
+    }
+
+    @Test
+    public void testParseMailConfiguration() throws Exception {
+        String xml = "<capedwarf-web-app>" +
+                "    <inbound-mail>" +
+                "        <protocol>imaps</protocol>" +
+                "        <host>localhost</host>" +
+                "        <user>MailUser</user>" +
+                "        <password>MailPass</password>" +
+                "        <folder>SomeFolder</folder>" +
+                "    </inbound-mail>" +
+                "</capedwarf-web-app>";
+
+        CapedwarfConfiguration config = parseConfig(xml);
+        List<InboundMailAccount> mailAccounts = config.getInboundMailAccounts();
+        Assert.assertNotNull(mailAccounts);
+        Assert.assertEquals(1, mailAccounts.size());
+
+        InboundMailAccount ima = mailAccounts.get(0);
+        Assert.assertEquals("imaps", ima.getProtocol());
+        Assert.assertEquals("localhost", ima.getHost());
+        Assert.assertEquals("MailUser", ima.getUser());
+        Assert.assertEquals("MailPass", ima.getPassword());
+        Assert.assertEquals("SomeFolder", ima.getFolder());
+        Assert.assertEquals(60000L, ima.getPollingInterval());
     }
 }

@@ -45,9 +45,7 @@ public class CapedwarfConfigurationParser {
         }
         try {
             return tryParse(inputStream);
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        } catch (SAXException e) {
+        } catch (ParserConfigurationException | SAXException e) {
             throw new RuntimeException(e);
         }
     }
@@ -61,7 +59,6 @@ public class CapedwarfConfigurationParser {
         for (Element adminElem : XmlUtils.getChildren(documentElement, "admin")) {
             config.addAdmin(XmlUtils.getBody(adminElem));
         }
-
 
         XmppConfiguration xmppConfig = config.getXmppConfiguration();
         Element xmppElem = XmlUtils.getChildElement(documentElement, "xmpp");
