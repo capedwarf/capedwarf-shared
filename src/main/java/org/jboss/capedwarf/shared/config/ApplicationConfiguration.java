@@ -3,7 +3,7 @@ package org.jboss.capedwarf.shared.config;
 import java.io.Serializable;
 
 import org.jboss.capedwarf.shared.components.ComponentRegistry;
-import org.jboss.capedwarf.shared.components.Keys;
+import org.jboss.capedwarf.shared.components.SimpleKey;
 
 /**
  * @author <a href="mailto:mluksa@redhat.com">Marko Luksa</a>
@@ -46,6 +46,6 @@ public class ApplicationConfiguration implements Serializable {
     }
 
     public static ApplicationConfiguration getInstance() {
-        return ComponentRegistry.getInstance().getComponent(Keys.APPLICATION_CONFIGURATION);
+        return ComponentRegistry.getInstance().getComponent(new SimpleKey<>(ApplicationConfiguration.class));
     }
 }
