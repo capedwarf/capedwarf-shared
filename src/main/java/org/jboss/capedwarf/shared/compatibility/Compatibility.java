@@ -33,7 +33,7 @@ import org.jboss.capedwarf.shared.components.ComponentRegistry;
 import org.jboss.capedwarf.shared.components.Key;
 import org.jboss.capedwarf.shared.components.Keys;
 import org.jboss.capedwarf.shared.components.SimpleKey;
-import org.jboss.capedwarf.shared.util.CountingThreadLocal;
+import org.jboss.capedwarf.shared.util.CountingMapThreadLocal;
 
 /**
  * Allow for custom extensions to GAE API, impl, behavior, etc.
@@ -96,7 +96,7 @@ public class Compatibility {
         }
     }
 
-    private static final CountingThreadLocal<Feature> temps = new CountingThreadLocal<>();
+    private static final CountingMapThreadLocal<Feature> temps = new CountingMapThreadLocal<>();
 
     private final Properties properties;
     private final Map<Feature, Boolean> values = new ConcurrentHashMap<>();

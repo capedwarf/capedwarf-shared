@@ -22,65 +22,64 @@
 
 package org.jboss.capedwarf.shared.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public class CountingThreadLocal<T> {
-    private final ThreadLocal<Pair<T>> counter = new ThreadLocal<>();
+public class CountingMapThreadLocal<T> {
+    private final ThreadLocal<Map<T, Integer>> map = new ThreadLocal<>();
 
     /**
      * Has value.
      *
+     * @param value the value
      * @return true if exists, false otherwise
      */
-    public boolean hasValue() {
-        return (counter.get() != null);
+    public boolean hasValue(T value) {
+        Map<T, Integer> values = map.get();
+        return values != null && values.containsKey(value);
     }
 
     /**
-     * Get value.
-     *
-     * @return value or null
-     */
-    public T get() {
-        Pair<T> pair = counter.get();
-        return (pair != null) ? pair.value : null;
-    }
-
-    /**
-     * Set value.
+     * Add value.
      *
      * @param value the value
      */
-    public void set(T value) {
-        Pair<T> pair = counter.get();
-        if (pair == null) {
-            counter.set(new Pair<>(1, value));
+    public void add(T value) {
+        int count;
+        Map<T, Integer> values = map.get();
+        if (values == null) {
+            values = new HashMap<>();
+            map.set(values);
+            count = 1;
         } else {
-            pair.i++;
+            Integer x = values.get(value);
+            count = (x == null) ? 1 : (x + 1);
         }
+        values.put(value, count);
     }
 
     /**
      * Remove value.
+     *
+     * @param value the value
      */
-    public void remove() {
-        Pair<T> pair = counter.get();
-        if (pair != null) {
-            pair.i--;
-            if (pair.i == 0) {
-                counter.remove();
+    public void remove(T value) {
+        Map<T, Integer> values = map.get();
+        if (values != null) {
+            Integer x = values.get(value);
+            if (x != null) {
+                if (x == 1) {
+                    values.remove(value);
+                    if (values.isEmpty()) {
+                        map.remove();
+                    }
+                } else {
+                    values.put(value, x - 1);
+                }
             }
-        }
-    }
-
-    private static class Pair<V> {
-        private int i;
-        private V value;
-
-        private Pair(int i, V value) {
-            this.i = i;
-            this.value = value;
         }
     }
 }

@@ -22,20 +22,22 @@
 
 package org.jboss.capedwarf.shared.components;
 
+import org.jboss.capedwarf.shared.util.CountingThreadLocal;
+
 /**
  * App id factory.
  *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public abstract class AppIdFactory {
-    private static final ThreadLocal<AppIdFactory> holder = new ThreadLocal<>();
+    private static final CountingThreadLocal<AppIdFactory> holder = new CountingThreadLocal<>();
 
     public static void setCurrentFactory(AppIdFactory factory) {
         holder.set(factory);
     }
 
     public static boolean hasAppId() {
-        return (holder.get() != null);
+        return holder.hasValue();
     }
 
     public static String getAppId() {
