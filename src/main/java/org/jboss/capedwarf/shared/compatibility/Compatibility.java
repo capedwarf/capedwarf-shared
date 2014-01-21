@@ -56,16 +56,17 @@ public class Compatibility {
         ENABLE_GLOBAL_TIME_LIMIT("enable.globalTimeLimit"),
         DISABLE_BLACK_LIST("disable.blacklist"),
         DISABLE_METADATA("disable.metadata"),
-        ENABLED_SUBSYSTEMS("enabled.subsystems", new NotEmpty()),
-        DISABLED_SUBSYSTEMS("disabled.subsystems", new NotEmpty()),
+        ENABLED_SUBSYSTEMS("enabled.subsystems", NotEmpty.INSTANCE),
+        DISABLED_SUBSYSTEMS("disabled.subsystems", NotEmpty.INSTANCE),
         FORCE_ASYNC_DATASTORE("force.async.datastore"),
-        LOG_TO_FILE("log.to.file", new NotEmpty()),  // TODO -- better Value; e.g. FileName
+        LOG_TO_FILE("log.to.file", NotEmpty.INSTANCE),  // TODO -- better Value; e.g. FileName
         ENABLE_SOCKET_OPTIONS("enable.socket.options"),
         IGNORE_CAPEDWARF_SOCKETS("ignore.capedwarf.sockets"),
         IGNORE_CAPEDWARF_URL_STREAM_HANDLER("ignore.capedwarf.url.stream.handler"),
         CHANNEL_DEFAULT_DURATION_MINUTES("channel.default.duration.minutes", new IntegerValue(2 * 60)),
-        DEFAULT_GCS_BUCKET_NAME("default.gcs.bucket.name", new NotEmpty()),
-        DISABLE_WEB_SOCKETS_CHANNEL("disable.websockets.channel");
+        DEFAULT_GCS_BUCKET_NAME("default.gcs.bucket.name", NotEmpty.INSTANCE),
+        DISABLE_WEB_SOCKETS_CHANNEL("disable.websockets.channel"),
+        TASKQUEUE_ROLES("taskqueue.roles", new FallbackValue("admin"));
 
         private String key;
         private Value value;
@@ -253,6 +254,8 @@ public class Compatibility {
     }
 
     private static class NotEmpty extends AbstractValue {
+        private static final Value INSTANCE = new NotEmpty();
+
         public boolean match(String value) {
             return (value != null && value.length() > 0);
         }
@@ -280,6 +283,18 @@ public class Compatibility {
 
         public String toString() {
             return String.valueOf(defaultValue);
+        }
+    }
+
+    private static class FallbackValue extends NotEmpty {
+        private String defaultValue;
+
+        private FallbackValue(String value) {
+            defaultValue = value;
+        }
+
+        public Object transform(String value) {
+            return (value != null) ? value : defaultValue;
         }
     }
 }

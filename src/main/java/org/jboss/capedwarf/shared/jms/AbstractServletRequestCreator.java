@@ -48,6 +48,22 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
     public void finish() {
     }
 
+    protected void addRole(String role) {
+        RolesHolder.addRole(role);
+    }
+
+    protected void removeRole(String role) {
+        RolesHolder.removeRole(role);
+    }
+
+    protected void addAllRoles(Set<String> roles) {
+        RolesHolder.addAll(roles);
+    }
+
+    protected void removeAllRoles() {
+        RolesHolder.removeAll();
+    }
+
     public boolean isValid(HttpServletRequest request, HttpServletResponse response) {
         return isStatus2xx(response);
     }
@@ -73,7 +89,12 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
      * Very simple matching, TODO fix.
      */
     protected String match(String mapping, String path) {
+        boolean star = false;
         while(mapping.endsWith("*")) {
+            star = true;
+            mapping = mapping.substring(0, mapping.length() - 1);
+        }
+        if (star && mapping.endsWith("/")) {
             mapping = mapping.substring(0, mapping.length() - 1);
         }
         return (path.startsWith(mapping) ? mapping : null);
