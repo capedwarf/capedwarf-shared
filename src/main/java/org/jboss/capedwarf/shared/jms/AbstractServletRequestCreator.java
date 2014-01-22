@@ -48,22 +48,6 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
     public void finish() {
     }
 
-    protected void addRole(String role) {
-        RolesHolder.addRole(role);
-    }
-
-    protected void removeRole(String role) {
-        RolesHolder.removeRole(role);
-    }
-
-    protected void addAllRoles(Set<String> roles) {
-        RolesHolder.addAll(roles);
-    }
-
-    protected void removeAllRoles() {
-        RolesHolder.removeAll();
-    }
-
     public boolean isValid(HttpServletRequest request, HttpServletResponse response) {
         return isStatus2xx(response);
     }

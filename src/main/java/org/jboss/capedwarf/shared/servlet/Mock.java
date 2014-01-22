@@ -20,47 +20,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.capedwarf.shared.jms;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+package org.jboss.capedwarf.shared.servlet;
 
 /**
+ * Marker interface.
+ *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public final class RolesHolder {
-    private static final ThreadLocal<Set<String>> roles = new ThreadLocal<>();
-
-    static void addRole(String role) {
-        Set<String> set = roles.get();
-        if (set == null) {
-            set = new HashSet<>();
-            roles.set(set);
-        }
-        set.add(role);
-    }
-
-    static void removeRole(String role) {
-        Set<String> set = roles.get();
-        if (set != null) {
-            set.remove(role);
-            if (set.isEmpty()) {
-                roles.remove();
-            }
-        }
-    }
-
-    static void addAll(Set<String> set) {
-        roles.set(set);
-    }
-
-    static void removeAll() {
-        roles.remove();
-    }
-
-    public static Set<String> getRoles() {
-        final Set<String> set = roles.get();
-        return (set != null) ? Collections.unmodifiableSet(set) : null;
-    }
+public interface Mock {
 }

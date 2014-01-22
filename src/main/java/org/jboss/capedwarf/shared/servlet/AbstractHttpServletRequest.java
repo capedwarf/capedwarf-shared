@@ -39,6 +39,8 @@ public abstract class AbstractHttpServletRequest extends AbstractServletRequest 
     private String servletPath;
     private String pathInfo;
     private String queryString;
+    // security
+    private Set<String> roles = new HashSet<>();
 
     protected AbstractHttpServletRequest(ServletContext context) {
         super(context);
@@ -62,6 +64,10 @@ public abstract class AbstractHttpServletRequest extends AbstractServletRequest 
 
     public void addCookie(Cookie cookie) {
         cookies.add(cookie);
+    }
+
+    protected void addRole(String role) {
+        roles.add(role);
     }
 
     public void addHeader(String name, String value) {
@@ -151,11 +157,15 @@ public abstract class AbstractHttpServletRequest extends AbstractServletRequest 
     }
 
     public boolean isUserInRole(String role) {
-        return true;  // TODO
+        return roles.contains(role);
     }
 
     public Principal getUserPrincipal() {
-        return null;  // TODO
+        return new Principal() {
+            public String getName() {
+                return String.format("[Mock: %s]", getClass().getName());
+            }
+        };
     }
 
     public String getRequestedSessionId() {
@@ -210,6 +220,7 @@ public abstract class AbstractHttpServletRequest extends AbstractServletRequest 
     }
 
     public void logout() throws ServletException {
+        roles.clear();
         // TODO
     }
 

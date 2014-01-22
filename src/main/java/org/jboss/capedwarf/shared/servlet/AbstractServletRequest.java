@@ -22,7 +22,7 @@ import java.util.Set;
  *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public abstract class AbstractServletRequest implements ServletRequest {
+public abstract class AbstractServletRequest implements ServletRequest, Mock {
     private ServletContext context;
     private Map<String, Set<String>> parameters = new HashMap<>();
     private Map<String, Object> attributes = new HashMap<>();
