@@ -30,12 +30,16 @@ import java.util.List;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class ListKey<E> extends AbstractKey<List<E>> {
-    public ListKey(String appId, Object slot) {
-        super(appId, slot);
+    public ListKey(String appId, String module, Object slot) {
+        super(appId, module, slot);
     }
 
     public ListKey(AppIdFactory appIdFactory, Object slot) {
         super(appIdFactory, slot);
+    }
+
+    public ListKey(Object slot) {
+        super(AppIdFactory.getAppId(), AppIdFactory.getModule(), slot);
     }
 
     @SuppressWarnings("unchecked")

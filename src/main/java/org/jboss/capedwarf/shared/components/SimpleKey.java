@@ -28,15 +28,22 @@ package org.jboss.capedwarf.shared.components;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class SimpleKey<T> extends BaseKey<T> {
-    public SimpleKey(Class<T> type) {
-        super(AppIdFactory.getAppId(), type.getName(), type);
+    protected static String toName(Class<?> type) {
+        if (type == null) {
+            throw new IllegalArgumentException("Null type!");
+        }
+        return type.getName();
     }
 
-    public SimpleKey(String appId, Class<T> type) {
-        super(appId, type.getName(), type);
+    public SimpleKey(Class<T> type) {
+        super(AppIdFactory.getAppId(), AppIdFactory.getModule(), toName(type), type);
+    }
+
+    public SimpleKey(String appId, String module, Class<T> type) {
+        super(appId, module, toName(type), type);
     }
 
     public SimpleKey(AppIdFactory appIdFactory, Class<T> type) {
-        super(appIdFactory, type.getName(), type);
+        super(appIdFactory, toName(type), type);
     }
 }

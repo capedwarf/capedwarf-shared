@@ -30,12 +30,16 @@ import java.util.Set;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class SetKey<E> extends AbstractKey<Set<E>> {
-    public SetKey(String appId, Object slot) {
-        super(appId, slot);
+    public SetKey(String appId, String module, Object slot) {
+        super(appId, module, slot);
     }
 
     public SetKey(AppIdFactory appIdFactory, Object slot) {
         super(appIdFactory, slot);
+    }
+
+    public SetKey(Object slot) {
+        super(AppIdFactory.getAppId(), AppIdFactory.getModule(), slot);
     }
 
     @SuppressWarnings("unchecked")

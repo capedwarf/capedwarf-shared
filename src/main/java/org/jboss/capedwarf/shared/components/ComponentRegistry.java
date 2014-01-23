@@ -38,8 +38,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public final class ComponentRegistry {
     private static final ComponentRegistry INSTANCE = new ComponentRegistry();
 
-    private final ConcurrentMap<String, Lock> locks = new ConcurrentHashMap<String, Lock>();
-    private final ConcurrentMap<Object, Object> registry = new ConcurrentHashMap<Object, Object>();
+    private final ConcurrentMap<String, Lock> locks = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Object, Object> registry = new ConcurrentHashMap<>();
 
     public static ComponentRegistry getInstance() {
         return INSTANCE;
@@ -48,10 +48,23 @@ public final class ComponentRegistry {
     private Lock lock(String appId) {
         Lock lock = new ReentrantLock();
         final Lock previous = locks.putIfAbsent(appId, lock);
-        if (previous != null)
+        if (previous != null) {
             lock = previous;
+        }
         lock.lock();
         return lock;
+    }
+
+    static <T> Object toCacheableKey(Key<T> key) {
+        return key.getModule() + "_" + key.getSlot();
+    }
+
+    private static Object toSlot(Key<?> key) {
+        if (key instanceof CacheableKey) {
+            return CacheableKey.class.cast(key).getCacheableKey();
+        } else {
+            return toCacheableKey(key);
+        }
     }
 
     private <T> T getValue(Map<Object, ?> map, Object slot, Class<T> type) {
@@ -64,7 +77,7 @@ public final class ComponentRegistry {
     }
 
     public <T> T getComponent(Key<T> key) {
-        Object slot = key.getSlot();
+        Object slot = toSlot(key);
         Class<T> type = key.getType();
         String appId = key.getAppId();
         if (appId == null) {
@@ -81,7 +94,7 @@ public final class ComponentRegistry {
     }
 
     public <T> T putIfAbsent(Key<T> key, T value) {
-        Object slot = key.getSlot();
+        Object slot = toSlot(key);
         Class<T> type = key.getType();
         String appId = key.getAppId();
         if (appId == null) {
@@ -93,7 +106,7 @@ public final class ComponentRegistry {
                 T previous = null;
                 Map<Object, Object> map = (Map<Object, Object>) registry.get(appId);
                 if (map == null) {
-                    map = new HashMap<Object, Object>();
+                    map = new HashMap<>();
                     registry.put(appId, map);
                     map.put(slot, value);
                 } else {
@@ -110,7 +123,7 @@ public final class ComponentRegistry {
     }
 
     public <T> void setComponent(Key<T> key, T value) {
-        Object slot = key.getSlot();
+        Object slot = toSlot(key);
         String appId = key.getAppId();
         if (appId == null) {
             registry.put(slot, value);
@@ -119,7 +132,7 @@ public final class ComponentRegistry {
             try {
                 Map<Object, Object> map = (Map<Object, Object>) registry.get(appId);
                 if (map == null) {
-                    map = new HashMap<Object, Object>();
+                    map = new HashMap<>();
                     registry.put(appId, map);
                 }
                 map.put(slot, value);
@@ -130,7 +143,7 @@ public final class ComponentRegistry {
     }
 
     public <T> void removeComponent(Key<T> key) {
-        Object slot = key.getSlot();
+        Object slot = toSlot(key);
         String appId = key.getAppId();
         if (appId == null) {
             registry.remove(slot);

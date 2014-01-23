@@ -48,9 +48,19 @@ public abstract class AppIdFactory {
         return factory.appId();
     }
 
+    public static String getModule() {
+        final AppIdFactory factory = holder.get();
+        if (factory == null) {
+            throw new IllegalStateException("Missing current AppIdFactory!");
+        }
+        return factory.module();
+    }
+
     public static void resetCurrentFactory() {
         holder.remove();
     }
 
     public abstract String appId();
+
+    public abstract String module();
 }

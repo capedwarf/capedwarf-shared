@@ -158,16 +158,16 @@ public class Converters implements ShutdownHook {
     }
 
     public static Converters getInstance(ClassLoader cl) {
-        String appId = CapedwarfApiProxy.getAppId(cl);
-        Key<Converters> key = new SimpleKey<>(appId, Converters.class);
+        CapedwarfApiProxy.Info info = CapedwarfApiProxy.getInfo();
+        Key<Converters> key = new SimpleKey<>(info.getAppId(), info.getModule(), Converters.class);
         ComponentRegistry registry = ComponentRegistry.getInstance();
         Converters converters = new Converters(cl);
         Converters previous = registry.putIfAbsent(key, converters);
         return (previous != null) ? previous : converters;
     }
 
-    public static void removeInstance(String appId) {
-        Key<Converters> key = new SimpleKey<>(appId, Converters.class);
+    public static void removeInstance(String appId, String module) {
+        Key<Converters> key = new SimpleKey<>(appId, module, Converters.class);
         ComponentRegistry registry = ComponentRegistry.getInstance();
         registry.removeComponent(key);
     }

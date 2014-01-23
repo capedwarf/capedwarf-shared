@@ -24,18 +24,36 @@ package org.jboss.capedwarf.shared.modules;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.jboss.capedwarf.shared.components.ComponentRegistry;
+import org.jboss.capedwarf.shared.components.Key;
+import org.jboss.capedwarf.shared.components.MapKey;
+import org.jboss.capedwarf.shared.components.Slot;
 import org.jboss.capedwarf.shared.config.AppEngineWebXml;
 
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class ModuleInfo implements Serializable {
+    private static final String PER_APP = "PER_APP";
     public static final String DEFAULT_MODULE_NAME = "default";
 
     private AppEngineWebXml config;
     private List<InstanceInfo> instances;
+
+    public static void putModules(String appId) {
+        ComponentRegistry registry = ComponentRegistry.getInstance();
+        Key<Map<String, ModuleInfo>> key = new MapKey<>(appId, PER_APP, Slot.MODULES);
+        registry.setComponent(key, new ConcurrentHashMap<String, ModuleInfo>());
+    }
+
+    public static Map<String, ModuleInfo> getModules(String appId) {
+        ComponentRegistry registry = ComponentRegistry.getInstance();
+        return registry.getComponent(new MapKey<String, ModuleInfo>(appId, PER_APP, Slot.MODULES));
+    }
 
     public ModuleInfo() {
         // serialization only

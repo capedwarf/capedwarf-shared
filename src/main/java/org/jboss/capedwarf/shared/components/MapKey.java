@@ -30,12 +30,16 @@ import java.util.Map;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class MapKey<K, V> extends AbstractKey<Map<K, V>> {
-    public MapKey(String appId, Object slot) {
-        super(appId, slot);
+    public MapKey(String appId, String module, Object slot) {
+        super(appId, module, slot);
     }
 
     public MapKey(AppIdFactory appIdFactory, Object slot) {
         super(appIdFactory, slot);
+    }
+
+    public MapKey(Object slot) {
+        super(AppIdFactory.getAppId(), AppIdFactory.getModule(), slot);
     }
 
     @SuppressWarnings("unchecked")

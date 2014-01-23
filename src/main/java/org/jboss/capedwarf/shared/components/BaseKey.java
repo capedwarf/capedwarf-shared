@@ -30,8 +30,8 @@ package org.jboss.capedwarf.shared.components;
 public class BaseKey<T> extends AbstractKey<T> {
     private final Class<T> type;
 
-    public BaseKey(final String appId, Object slot, Class<T> type) {
-        super(appId, slot);
+    public BaseKey(final String appId, String module, Object slot, Class<T> type) {
+        super(appId, module, slot);
         this.type = type;
     }
 

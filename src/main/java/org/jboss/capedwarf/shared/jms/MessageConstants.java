@@ -31,6 +31,7 @@ public final class MessageConstants {
     // msg params
     public static final String MODULE = "module";
     public static final String APP_ID = "appId";
+    public static final String MODULE_ID = "moduleId";
     public static final String PATH = "path";
     public static final String FACTORY = "factory";
     public static final String MAX_ATTEMPTS = "max_attempts";

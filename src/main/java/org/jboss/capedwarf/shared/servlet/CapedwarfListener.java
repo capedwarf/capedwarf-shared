@@ -45,15 +45,17 @@ public class CapedwarfListener implements ServletContextListener, ServletRequest
     public void contextInitialized(ServletContextEvent sce) {
         final ServletContext context = sce.getServletContext();
         final String appId = (String) context.getAttribute("org.jboss.capedwarf.appId");
+        final String module = (String) context.getAttribute("org.jboss.capedwarf.module");
 
-        CapedwarfApiProxy.initialize(appId, context);
+        CapedwarfApiProxy.initialize(appId, module, context);
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
         final ServletContext context = sce.getServletContext();
         final String appId = (String) context.getAttribute("org.jboss.capedwarf.appId");
+        final String module = (String) context.getAttribute("org.jboss.capedwarf.module");
 
-        CapedwarfApiProxy.destroy(appId, context);
+        CapedwarfApiProxy.destroy(appId, module, context);
     }
 
     public void requestInitialized(ServletRequestEvent event) {

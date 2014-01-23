@@ -27,14 +27,19 @@ package org.jboss.capedwarf.shared.components;
  *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public abstract class AbstractKey<T> implements Key<T> {
+public abstract class AbstractKey<T> implements CacheableKey<T> {
     private final AppIdFactory appIdFactory;
     private final Object slot;
+    private final Object key;
 
-    public AbstractKey(final String appId, Object slot) {
+    public AbstractKey(final String appId, final String module, Object slot) {
         this(new AppIdFactory() {
             public String appId() {
                 return appId;
+            }
+
+            public String module() {
+                return module;
             }
         }, slot);
     }
@@ -42,13 +47,22 @@ public abstract class AbstractKey<T> implements Key<T> {
     public AbstractKey(AppIdFactory appIdFactory, Object slot) {
         this.appIdFactory = appIdFactory;
         this.slot = slot;
+        this.key = ComponentRegistry.toCacheableKey(this);
     }
 
     public String getAppId() {
         return appIdFactory.appId();
     }
 
+    public String getModule() {
+        return appIdFactory.module();
+    }
+
     public Object getSlot() {
         return slot;
+    }
+
+    public Object getCacheableKey() {
+        return key;
     }
 }

@@ -22,14 +22,13 @@
 
 package org.jboss.capedwarf.shared.components;
 
+import java.util.Objects;
+
 /**
- * Component key.
+ * Cacheable component key.
  *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public interface Key<T> {
-    String getAppId(); // null appId == global component
-    String getModule();
-    Object getSlot();
-    Class<T> getType();
+public interface CacheableKey<T> extends Key<T> {
+    Object getCacheableKey();
 }

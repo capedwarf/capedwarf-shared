@@ -49,8 +49,9 @@ public interface ServletRequestCreator extends ResponseValidator {
      *
      * @param request the request
      * @param appId the app Id
+     * @param module the module
      */
-    void prepare(HttpServletRequest request, String appId);
+    void prepare(HttpServletRequest request, String appId, String module);
 
     /**
      * Finish, after dispatch.

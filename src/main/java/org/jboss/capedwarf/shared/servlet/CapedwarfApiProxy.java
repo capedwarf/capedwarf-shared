@@ -40,8 +40,8 @@ import org.jboss.capedwarf.shared.util.Utils;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public final class CapedwarfApiProxy {
-    private static final Map<ClassLoader, String> classLoaders = new ConcurrentHashMap<ClassLoader, String>();
-    private static final ThreadLocal<ServletRequest> requests = new ThreadLocal<ServletRequest>();
+    private static final Map<ClassLoader, Info> classLoaders = new ConcurrentHashMap<>();
+    private static final ThreadLocal<ServletRequest> requests = new ThreadLocal<>();
 
     public static boolean isCapedwarfApp() {
         return isCapedwarfApp(Utils.getAppClassLoader());
@@ -51,28 +51,32 @@ public final class CapedwarfApiProxy {
         return classLoaders.containsKey(classLoader);
     }
 
-    public static String getAppId() {
-        return getAppId(Utils.getAppClassLoader());
+    public static Info getInfo() {
+        return getInfo(Utils.getAppClassLoader());
     }
 
-    public static String getAppId(ClassLoader cl) {
-        return classLoaders.get(cl);
+    public static Info getInfo(ClassLoader cl) {
+        Info info = classLoaders.get(cl);
+        if (info == null) {
+            throw new IllegalStateException(String.format("No info for classloader %s.", cl));
+        }
+        return info;
     }
 
     public static ServletRequest getRequest() {
         return requests.get();
     }
 
-    public static void initialize(final ClassLoader cl, final String appId) {
-        classLoaders.put(cl, appId);
+    public static void initialize(final ClassLoader cl, final String appId, final String module) {
+        classLoaders.put(cl, new Info(appId, module));
     }
 
-    static void initialize(final String appId, final ServletContext context) {
-        Key<ServletContext> key = new SimpleKey<ServletContext>(appId, ServletContext.class);
+    static void initialize(final String appId, final String module, final ServletContext context) {
+        Key<ServletContext> key = new SimpleKey<>(appId, module, ServletContext.class);
         ComponentRegistry.getInstance().setComponent(key, context);
     }
 
-    static void initialize(final String appId, final EmbeddedCacheManager manager) {
+    static void initialize(final String appId, final String module, final EmbeddedCacheManager manager) {
         // do nothing atm
     }
 
@@ -80,7 +84,7 @@ public final class CapedwarfApiProxy {
         classLoaders.remove(cl);
     }
 
-    static void destroy(final String appId, final ServletContext context) {
+    static void destroy(final String appId, final String module, final ServletContext context) {
         // do nothing atm
     }
 
@@ -90,5 +94,23 @@ public final class CapedwarfApiProxy {
 
     static void removeRequest() {
         requests.remove();
+    }
+
+    public static class Info {
+        private String appId;
+        private String module;
+
+        private Info(String appId, String module) {
+            this.appId = appId;
+            this.module = module;
+        }
+
+        public String getAppId() {
+            return appId;
+        }
+
+        public String getModule() {
+            return module;
+        }
     }
 }

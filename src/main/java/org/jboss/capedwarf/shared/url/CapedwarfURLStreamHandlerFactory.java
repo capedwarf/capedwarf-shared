@@ -85,8 +85,8 @@ public class CapedwarfURLStreamHandlerFactory implements URLStreamHandlerFactory
     }
 
     private static Compatibility getCompatibility() {
-        final String appId = CapedwarfApiProxy.getAppId();
-        final Key<Compatibility> key = new SimpleKey<>(appId, Compatibility.class);
+        final CapedwarfApiProxy.Info info = CapedwarfApiProxy.getInfo();
+        final Key<Compatibility> key = new SimpleKey<>(info.getAppId(), info.getModule(), Compatibility.class);
         return Compatibility.getInstance(key);
     }
 

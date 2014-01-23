@@ -42,7 +42,7 @@ import org.jboss.capedwarf.shared.servlet.AbstractHttpServletRequest;
 public abstract class AbstractServletRequestCreator implements ServletRequestCreator {
     private static final String DEFAULT = "default";
 
-    public void prepare(HttpServletRequest request, String appId) {
+    public void prepare(HttpServletRequest request, String appId, String module) {
     }
 
     public void finish() {
