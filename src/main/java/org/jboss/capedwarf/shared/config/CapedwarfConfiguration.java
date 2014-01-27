@@ -28,6 +28,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -40,6 +41,8 @@ public class CapedwarfConfiguration implements Serializable {
     private Set<String> admins = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
     private XmppConfiguration xmppConfiguration = new XmppConfiguration();
     private List<InboundMailAccount> inboundMailAccounts = new ArrayList<>();
+
+    private Properties mailProperties = new Properties();
 
     private CheckType checkGlobalTimeLimit = CheckType.NO;
 
@@ -73,6 +76,10 @@ public class CapedwarfConfiguration implements Serializable {
 
     void addInboundMailAccount(InboundMailAccount account) {
         inboundMailAccounts.add(account);
+    }
+
+    public Properties getMailProperties() {
+        return mailProperties;
     }
 
     public CheckType getCheckGlobalTimeLimit() {

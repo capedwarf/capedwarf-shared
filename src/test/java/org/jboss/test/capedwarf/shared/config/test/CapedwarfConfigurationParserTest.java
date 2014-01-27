@@ -28,15 +28,17 @@ package org.jboss.test.capedwarf.shared.config.test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 import org.jboss.capedwarf.shared.config.CapedwarfConfiguration;
 import org.jboss.capedwarf.shared.config.CapedwarfConfigurationParser;
 import org.jboss.capedwarf.shared.config.CheckType;
 import org.jboss.capedwarf.shared.config.InboundMailAccount;
 import org.jboss.capedwarf.shared.config.XmppConfiguration;
-import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -52,8 +54,8 @@ public class CapedwarfConfigurationParserTest {
 
         CapedwarfConfiguration config = parseConfig(xml);
 
-        Assert.assertEquals(1, config.getAdmins().size());
-        Assert.assertEquals("admin1@email.com", config.getAdmins().iterator().next());
+        assertEquals(1, config.getAdmins().size());
+        assertEquals("admin1@email.com", config.getAdmins().iterator().next());
     }
 
     private CapedwarfConfiguration parseConfig(String xml) throws IOException {
@@ -70,7 +72,7 @@ public class CapedwarfConfigurationParserTest {
 
         CapedwarfConfiguration config = parseConfig(xml);
 
-        Assert.assertEquals(3, config.getAdmins().size());
+        assertEquals(3, config.getAdmins().size());
         assertTrue(config.getAdmins().contains("admin1@email.com"));
         assertTrue(config.getAdmins().contains("admin2@email.com"));
         assertTrue(config.getAdmins().contains("admin3@email.com"));
@@ -90,14 +92,14 @@ public class CapedwarfConfigurationParserTest {
         CapedwarfConfiguration config = parseConfig(xml);
         XmppConfiguration xmppConfig = config.getXmppConfiguration();
 
-        Assert.assertEquals("xmppHost", xmppConfig.getHost());
-        Assert.assertEquals(1234, xmppConfig.getPort());
-        Assert.assertEquals("xmppUser", xmppConfig.getUsername());
-        Assert.assertEquals("xmppPass", xmppConfig.getPassword());
+        assertEquals("xmppHost", xmppConfig.getHost());
+        assertEquals(1234, xmppConfig.getPort());
+        assertEquals("xmppUser", xmppConfig.getUsername());
+        assertEquals("xmppPass", xmppConfig.getPassword());
     }
 
     @Test
-    public void testParseMailConfiguration() throws Exception {
+    public void testParseInboundMailConfiguration() throws Exception {
         String xml = "<capedwarf-web-app>" +
                 "    <inbound-mail>" +
                 "        <protocol>imaps</protocol>" +
@@ -110,16 +112,43 @@ public class CapedwarfConfigurationParserTest {
 
         CapedwarfConfiguration config = parseConfig(xml);
         List<InboundMailAccount> mailAccounts = config.getInboundMailAccounts();
-        Assert.assertNotNull(mailAccounts);
-        Assert.assertEquals(1, mailAccounts.size());
+        assertNotNull(mailAccounts);
+        assertEquals(1, mailAccounts.size());
 
         InboundMailAccount ima = mailAccounts.get(0);
-        Assert.assertEquals("imaps", ima.getProtocol());
-        Assert.assertEquals("localhost", ima.getHost());
-        Assert.assertEquals("MailUser", ima.getUser());
-        Assert.assertEquals("MailPass", ima.getPassword());
-        Assert.assertEquals("SomeFolder", ima.getFolder());
-        Assert.assertEquals(60000L, ima.getPollingInterval());
+        assertEquals("imaps", ima.getProtocol());
+        assertEquals("localhost", ima.getHost());
+        assertEquals("MailUser", ima.getUser());
+        assertEquals("MailPass", ima.getPassword());
+        assertEquals("SomeFolder", ima.getFolder());
+        assertEquals(60000L, ima.getPollingInterval());
+    }
+
+    @Test
+    public void testParseMailConfiguration() throws Exception {
+        String xml = "<capedwarf-web-app>" +
+                "    <mail>" +
+                "        <property name=\"mail.transport.protocol\">smtp</property>" +
+                "        <property name=\"mail.smtp.auth\">true</property>" +
+                "        <property name=\"mail.smtp.starttls.enable\">true</property>" +
+                "        <property name=\"mail.smtp.host\">smtp.gmail.com</property>" +
+                "        <property name=\"mail.smtp.port\">587</property>" +
+                "        <property name=\"mail.smtp.user\">user</property>" +
+                "        <property name=\"mail.smtp.password\">password</property>" +
+                "    </mail>" +
+                "</capedwarf-web-app>";
+
+        CapedwarfConfiguration config = parseConfig(xml);
+        Properties properties = config.getMailProperties();
+        assertNotNull(properties);
+        assertEquals(7, properties.size());
+
+        assertEquals("smtp", properties.get("mail.transport.protocol"));
+        assertEquals("true", properties.get("mail.smtp.auth"));
+        assertEquals("smtp.gmail.com", properties.get("mail.smtp.host"));
+        assertEquals("587", properties.get("mail.smtp.port"));
+        assertEquals("user", properties.get("mail.smtp.user"));
+        assertEquals("password", properties.get("mail.smtp.password"));
     }
 
     @Test
