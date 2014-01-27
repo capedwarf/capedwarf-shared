@@ -71,6 +71,7 @@ public abstract class AbstractHttpServletRequest extends AbstractServletRequest 
     }
 
     public void addHeader(String name, String value) {
+        name = normalizeHeaderName(name);
         Set<String> set = headers.get(name);
         if (set == null) {
             set = new HashSet<>();
@@ -80,6 +81,7 @@ public abstract class AbstractHttpServletRequest extends AbstractServletRequest 
     }
 
     public void addHeaders(String name, String[] values) {
+        name = normalizeHeaderName(name);
         Set<String> set = headers.get(name);
         if (set == null) {
             set = new HashSet<>();
@@ -89,7 +91,11 @@ public abstract class AbstractHttpServletRequest extends AbstractServletRequest 
     }
 
     public void addHeaders(Map<String, Set<String>> map) {
-        headers.putAll(map);
+        for (Map.Entry<String, Set<String>> entry : map.entrySet()) {
+            String name = normalizeHeaderName(entry.getKey());
+            Set<String> values = entry.getValue();
+            addHeaders(name, values.toArray(new String[values.size()]));
+        }
     }
 
     public void addPart(String name, Part part) {
@@ -110,13 +116,17 @@ public abstract class AbstractHttpServletRequest extends AbstractServletRequest 
     }
 
     public String getHeader(String name) {
-        final Set<String> h = headers.get(name);
+        final Set<String> h = headers.get(normalizeHeaderName(name));
         return (h != null && h.isEmpty() == false) ? h.iterator().next() : null;
     }
 
     public Enumeration<String> getHeaders(String name) {
-        final Set<String> h = headers.get(name);
+        final Set<String> h = headers.get(normalizeHeaderName(name));
         return (h != null && h.isEmpty() == false) ? Collections.enumeration(h) : Collections.enumeration(Collections.<String>emptySet());
+    }
+
+    private String normalizeHeaderName(String name) {
+        return name.toLowerCase();
     }
 
     public Enumeration<String> getHeaderNames() {
