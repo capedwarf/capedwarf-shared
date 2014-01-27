@@ -253,4 +253,9 @@ public abstract class AbstractHttpServletRequest extends AbstractServletRequest 
     public long getContentLengthLong() {
         return (long) getContentLength();
     }
+
+    @Override
+    public String getContentType() {
+        return getHeader("content-type");
+    }
 }
