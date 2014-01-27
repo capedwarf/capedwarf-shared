@@ -78,6 +78,13 @@ public class CapedwarfConfigurationParser {
             config.setCheckGlobalTimeLimit(CheckType.valueOf(XmlUtils.getBody(globalTimeLimit)));
         }
 
+        Element mailElem = XmlUtils.getChildElement(documentElement, "mail");
+        if (mailElem != null) {
+            for (Element propertyElem : XmlUtils.getChildren(mailElem, "property")) {
+                config.getMailProperties().put(propertyElem.getAttribute("name"), XmlUtils.getBody(propertyElem));
+            }
+        }
+
         return config;
     }
 
