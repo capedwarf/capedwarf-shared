@@ -27,9 +27,9 @@ package org.jboss.capedwarf.shared.config;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author <a href="mailto:marko.luksa@gmail.com">Marko Luksa</a>
@@ -37,14 +37,21 @@ import java.util.Set;
 public class CapedwarfConfiguration implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Set<String> admins = new HashSet<String>();
-
+    private Set<String> admins = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
     private XmppConfiguration xmppConfiguration = new XmppConfiguration();
-
     private List<InboundMailAccount> inboundMailAccounts = new ArrayList<>();
 
-    // TODO -- make it not public again?
-    public void addAdmin(String email) {
+    private CheckType checkGlobalTimeLimit = CheckType.NO;
+
+    public CapedwarfConfiguration() {
+    }
+
+    protected CapedwarfConfiguration(Set<String> admins, List<InboundMailAccount> inboundMailAccounts) {
+        this.admins.addAll(admins);
+        this.inboundMailAccounts = inboundMailAccounts;
+    }
+
+    void addAdmin(String email) {
         admins.add(email.toLowerCase());
     }
 
@@ -64,7 +71,15 @@ public class CapedwarfConfiguration implements Serializable {
         return Collections.unmodifiableList(inboundMailAccounts);
     }
 
-    public void addInboundMailAccount(InboundMailAccount account) {
+    void addInboundMailAccount(InboundMailAccount account) {
         inboundMailAccounts.add(account);
+    }
+
+    public CheckType getCheckGlobalTimeLimit() {
+        return checkGlobalTimeLimit;
+    }
+
+    void setCheckGlobalTimeLimit(CheckType checkGlobalTimeLimit) {
+        this.checkGlobalTimeLimit = checkGlobalTimeLimit;
     }
 }

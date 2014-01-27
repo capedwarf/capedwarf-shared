@@ -22,6 +22,7 @@
 
 package org.jboss.capedwarf.shared.reflection;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.jboss.capedwarf.shared.util.Utils;
@@ -49,15 +50,18 @@ public class TargetInvocation<T> {
     @SuppressWarnings("unchecked")
     public T invoke(final Object target) throws Exception {
         final Class<?> clazz = method.getDeclaringClass();
-        if (clazz.isInstance(target) == false)
+        if (clazz.isInstance(target) == false) {
             throw new IllegalArgumentException("Target " + target + " is not assignable to " + clazz);
+        }
 
-        return (T)method.invoke(target, args);
+        return (T) method.invoke(target, args);
     }
 
     public T invokeUnchecked(final Object target) {
         try {
             return invoke(target);
+        } catch (InvocationTargetException e) {
+            throw Utils.toRuntimeException(e.getCause());
         } catch (Exception e) {
             throw Utils.toRuntimeException(e);
         }

@@ -20,41 +20,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.capedwarf.shared.reflection;
-
-import java.lang.reflect.Field;
-
-import org.jboss.capedwarf.shared.util.Utils;
+package org.jboss.capedwarf.shared.config;
 
 /**
- * Cache field invocation.
- *
- * @param <T> exact return type
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public class FieldInvocation<T> {
-    private Object target;
-    private final Field field;
-
-    FieldInvocation(Field field) {
-        this.field = field;
-    }
-
-    FieldInvocation(Object target, Field field) {
-        this(field);
-        this.target = target;
-    }
-
-    public T invoke() {
-        return invoke(target);
-    }
-
-    @SuppressWarnings("unchecked")
-    public T invoke(final Object object) {
-        try {
-            return (T) field.get(object);
-        } catch (Exception e) {
-            throw Utils.toRuntimeException(e);
-        }
-    }
+public enum CheckType {
+    YES, NO, DYNAMIC
 }

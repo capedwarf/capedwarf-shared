@@ -25,9 +25,13 @@
 package org.jboss.test.capedwarf.shared.config.test;
 
 
+import java.util.Collections;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 import org.jboss.capedwarf.shared.config.CapedwarfConfiguration;
+import org.jboss.capedwarf.shared.config.InboundMailAccount;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -35,27 +39,21 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * @author <a href="mailto:marko.luksa@gmail.com">Marko Luksa</a>
+ * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class CapedwarfConfigurationTest {
 
-    private CapedwarfConfiguration config;
-
-    @Before
-    public void setUp() throws Exception {
-        config = new CapedwarfConfiguration();
-    }
-
     @Test
     public void isAdminReturnsTrueForAllAddedAdmins() throws Exception {
-        config.addAdmin("admin@email.com");
-        config.addAdmin("admin2@email.com");
+        Set<String> set = Sets.newHashSet("admin@email.com", "admin2@email.com");
+        TestConfig config = new TestConfig(set);
         assertTrue(config.isAdmin("admin@email.com"));
         assertTrue(config.isAdmin("admin2@email.com"));
     }
 
     @Test
     public void letterCaseIsIgnored() throws Exception {
-        config.addAdmin("ADMIN@email.com");
+        TestConfig config = new TestConfig(Sets.newHashSet("ADMIN@email.com"));
         assertTrue(config.isAdmin("admin@email.com"));
         assertTrue(config.isAdmin("admin@EMAIL.COM"));
         assertTrue(config.isAdmin("AdMiN@EmAiL.CoM"));
@@ -63,16 +61,22 @@ public class CapedwarfConfigurationTest {
 
     @Test
     public void isAdminReturnsFalseForNotAddedAdmins() throws Exception {
-        config.addAdmin("admin@email.com");
+        TestConfig config = new TestConfig(Sets.newHashSet("admin@email.com"));
         assertFalse(config.isAdmin("notadmin@email.com"));
     }
 
     @Test
     public void getAdminsReturnsAllAddedAdmins() throws Exception {
-        config.addAdmin("admin@email.com");
-        config.addAdmin("admin2@email.com");
+        Set<String> set = Sets.newHashSet("admin@email.com", "ADMIN@email.com", "admin2@email.com");
+        TestConfig config = new TestConfig(set);
         Assert.assertEquals(2, config.getAdmins().size());
         assertTrue(config.getAdmins().contains("admin@email.com"));
         assertTrue(config.getAdmins().contains("admin2@email.com"));
+    }
+
+    private static class TestConfig extends CapedwarfConfiguration {
+        private TestConfig(Set<String> admins) {
+            super(admins, Collections.<InboundMailAccount>emptyList());
+        }
     }
 }

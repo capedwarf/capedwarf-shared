@@ -31,6 +31,7 @@ import java.util.List;
 
 import org.jboss.capedwarf.shared.config.CapedwarfConfiguration;
 import org.jboss.capedwarf.shared.config.CapedwarfConfigurationParser;
+import org.jboss.capedwarf.shared.config.CheckType;
 import org.jboss.capedwarf.shared.config.InboundMailAccount;
 import org.jboss.capedwarf.shared.config.XmppConfiguration;
 import org.junit.Assert;
@@ -119,5 +120,15 @@ public class CapedwarfConfigurationParserTest {
         Assert.assertEquals("MailPass", ima.getPassword());
         Assert.assertEquals("SomeFolder", ima.getFolder());
         Assert.assertEquals(60000L, ima.getPollingInterval());
+    }
+
+    @Test
+    public void testGlobaltTimeLimit() throws Exception {
+        String xml = "<capedwarf-web-app>" +
+                "   <global-time-limit>YES</global-time-limit>" +
+                "</capedwarf-web-app>";
+
+        CapedwarfConfiguration config = parseConfig(xml);
+        Assert.assertEquals(CheckType.YES, config.getCheckGlobalTimeLimit());
     }
 }

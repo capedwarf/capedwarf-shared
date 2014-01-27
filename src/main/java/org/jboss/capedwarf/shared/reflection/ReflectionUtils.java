@@ -24,6 +24,7 @@ package org.jboss.capedwarf.shared.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.jboss.capedwarf.shared.util.Utils;
@@ -94,7 +95,7 @@ public final class ReflectionUtils {
             ctor.setAccessible(true);
             return ctor.newInstance(args);
         } catch (Throwable t) {
-            throw new RuntimeException(t);
+            throw Utils.toRuntimeException(t);
         }
     }
 
@@ -307,7 +308,7 @@ public final class ReflectionUtils {
         try {
             return field.get(target);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utils.toRuntimeException(e);
         }
     }
 
@@ -323,7 +324,7 @@ public final class ReflectionUtils {
         try {
             return field.get(null);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utils.toRuntimeException(e);
         }
     }
 
@@ -342,7 +343,7 @@ public final class ReflectionUtils {
         try {
             field.set(target, value);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utils.toRuntimeException(e);
         }
     }
 
@@ -358,7 +359,7 @@ public final class ReflectionUtils {
         try {
             field.set(null, value);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utils.toRuntimeException(e);
         }
     }
 
@@ -413,8 +414,10 @@ public final class ReflectionUtils {
         final Method m = findMethod(clazz, methodName, types);
         try {
             return m.invoke(target, args);
+        } catch (InvocationTargetException e) {
+            throw Utils.toRuntimeException(e.getCause());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utils.toRuntimeException(e);
         }
     }
 
@@ -444,7 +447,7 @@ public final class ReflectionUtils {
                 current = current.getSuperclass();
             }
         } catch (Throwable t) {
-            throw new RuntimeException(t);
+            throw Utils.toRuntimeException(t);
         }
         throw new IllegalStateException("Couldn't find method: " + clazz.getName() + " / " + methodName);
     }
@@ -474,7 +477,7 @@ public final class ReflectionUtils {
                 current = current.getSuperclass();
             }
         } catch (Throwable t) {
-            throw new RuntimeException(t);
+            throw Utils.toRuntimeException(t);
         }
         throw new IllegalStateException("Couldn't find field: " + clazz.getName() + " / " + fieldName);
     }

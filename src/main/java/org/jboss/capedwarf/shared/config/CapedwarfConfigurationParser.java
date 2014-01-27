@@ -73,6 +73,11 @@ public class CapedwarfConfigurationParser {
             config.addInboundMailAccount(getInboundMailAccount(inboundMailElem));
         }
 
+        Element globalTimeLimit = XmlUtils.getChildElement(documentElement, "global-time-limit");
+        if (globalTimeLimit != null) {
+            config.setCheckGlobalTimeLimit(CheckType.valueOf(XmlUtils.getBody(globalTimeLimit)));
+        }
+
         return config;
     }
 

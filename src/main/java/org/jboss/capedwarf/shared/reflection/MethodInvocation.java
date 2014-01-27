@@ -22,7 +22,10 @@
 
 package org.jboss.capedwarf.shared.reflection;
 
-import java.lang.Exception;import java.lang.Object;import java.lang.RuntimeException;import java.lang.SuppressWarnings;import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import org.jboss.capedwarf.shared.util.Utils;
 
 /**
  * Cache method invocation.
@@ -55,12 +58,10 @@ public class MethodInvocation<T> {
     public T invokeWithTarget(final Object target, final Object... args) {
         try {
             return (T) method.invoke(target, args);
+        } catch (InvocationTargetException e) {
+            throw Utils.toRuntimeException(e.getCause());
         } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw RuntimeException.class.cast(e);
-            } else {
-                throw new RuntimeException(e);
-            }
+            throw Utils.toRuntimeException(e);
         }
     }
 }
