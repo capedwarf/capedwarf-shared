@@ -107,6 +107,7 @@ public class CapedwarfConfigurationParserTest {
                 "        <user>MailUser</user>" +
                 "        <password>MailPass</password>" +
                 "        <folder>SomeFolder</folder>" +
+                "        <pollingInterval>5000</pollingInterval>" +
                 "    </inbound-mail>" +
                 "</capedwarf-web-app>";
 
@@ -121,7 +122,7 @@ public class CapedwarfConfigurationParserTest {
         assertEquals("MailUser", ima.getUser());
         assertEquals("MailPass", ima.getPassword());
         assertEquals("SomeFolder", ima.getFolder());
-        assertEquals(60000L, ima.getPollingInterval());
+        assertEquals(5000L, ima.getPollingInterval());
     }
 
     @Test
