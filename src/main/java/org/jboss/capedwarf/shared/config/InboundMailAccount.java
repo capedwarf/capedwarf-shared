@@ -1,10 +1,12 @@
 package org.jboss.capedwarf.shared.config;
 
+import java.io.Serializable;
+
 /**
  * @author <a href="mailto:mluksa@redhat.com">Marko Luksa</a>
  */
-public class InboundMailAccount {
-
+public class InboundMailAccount implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static final long DEFAULT_POLLING_INTERVAL = 60000;
 
     private String protocol;

@@ -108,7 +108,16 @@ public class Compatibility {
     }
 
     /**
-     * Get instance per key.
+     * Get current instance, can be null.
+     *
+     * @return compatibility instance
+     */
+    public static Compatibility getRawInstance() {
+        return getInstance(SimpleKey.withClassloader(Compatibility.class), false);
+    }
+
+    /**
+     * Get current instance, exception if null.
      *
      * @return compatibility instance
      */
@@ -117,19 +126,23 @@ public class Compatibility {
     }
 
     /**
-     * Get instance per key.
+     * Get instance per key, exception if null.
      *
      * @param key the key
      * @return compatibility instance
      */
     public static Compatibility getInstance(Key<Compatibility> key) {
+        return getInstance(key, true);
+    }
+
+    private static Compatibility getInstance(Key<Compatibility> key, boolean check) {
         if (key == null) {
             throw new IllegalArgumentException("Null key!");
         }
 
         ComponentRegistry registry = ComponentRegistry.getInstance();
         Compatibility compatibility = registry.getComponent(key);
-        if (compatibility == null) {
+        if (compatibility == null && check) {
             throw new IllegalStateException(String.format("No Compatibility found, key = [%s], env = [%s], dump:%s", key, AppIdFactory.getAppId() + "," + AppIdFactory.getModule(), registry.dump(key.getAppId())));
         }
         return compatibility;

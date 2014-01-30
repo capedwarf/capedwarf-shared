@@ -26,7 +26,9 @@ package org.jboss.test.capedwarf.shared.config.test;
 
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 
 import org.jboss.capedwarf.shared.config.CapedwarfConfiguration;
@@ -56,8 +58,23 @@ public class CapedwarfConfigurationParserTest {
         Assert.assertEquals("admin1@email.com", config.getAdmins().iterator().next());
     }
 
-    private CapedwarfConfiguration parseConfig(String xml) throws IOException {
-        return CapedwarfConfigurationParser.parse(new ByteArrayInputStream(xml.getBytes()));
+    private CapedwarfConfiguration parseConfig(String xml) throws Exception {
+        CapedwarfConfiguration configuration = CapedwarfConfigurationParser.parse(new ByteArrayInputStream(xml.getBytes()));
+        testSerializable(configuration);
+        return configuration;
+    }
+
+    private void testSerializable(Object object) throws Exception {
+        Assert.assertNotNull(object);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(baos)) {
+            out.writeObject(object);
+        }
+        Object clone;
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()))) {
+            clone = in.readObject();
+        }
+        Assert.assertTrue(object.getClass().isInstance(clone));
     }
 
     @Test
