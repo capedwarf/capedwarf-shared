@@ -67,7 +67,7 @@ public class CapedwarfConfigurationParserTest {
     }
 
     private void testSerializable(Object object) throws Exception {
-        Assert.assertNotNull(object);
+        assertNotNull(object);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ObjectOutputStream out = new ObjectOutputStream(baos)) {
             out.writeObject(object);
@@ -76,7 +76,7 @@ public class CapedwarfConfigurationParserTest {
         try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()))) {
             clone = in.readObject();
         }
-        Assert.assertTrue(object.getClass().isInstance(clone));
+        assertTrue(object.getClass().isInstance(clone));
     }
 
     @Test
@@ -176,6 +176,6 @@ public class CapedwarfConfigurationParserTest {
                 "</capedwarf-web-app>";
 
         CapedwarfConfiguration config = parseConfig(xml);
-        Assert.assertEquals(CheckType.YES, config.getCheckGlobalTimeLimit());
+        assertEquals(CheckType.YES, config.getCheckGlobalTimeLimit());
     }
 }
