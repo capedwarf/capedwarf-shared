@@ -29,6 +29,7 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
+import org.jboss.capedwarf.shared.components.AppIdFactory;
 import org.jboss.capedwarf.shared.components.ComponentRegistry;
 import org.jboss.capedwarf.shared.components.Key;
 import org.jboss.capedwarf.shared.components.Keys;
@@ -112,7 +113,7 @@ public class Compatibility {
      * @return compatibility instance
      */
     public static Compatibility getInstance() {
-        return getInstance(new SimpleKey<>(Compatibility.class));
+        return getInstance(SimpleKey.withClassloader(Compatibility.class));
     }
 
     /**
@@ -127,7 +128,11 @@ public class Compatibility {
         }
 
         ComponentRegistry registry = ComponentRegistry.getInstance();
-        return registry.getComponent(key);
+        Compatibility compatibility = registry.getComponent(key);
+        if (compatibility == null) {
+            throw new IllegalStateException(String.format("No Compatibility found, key = [%s], env = [%s], dump:%s", key, AppIdFactory.getAppId() + "," + AppIdFactory.getModule(), registry.dump(key.getAppId())));
+        }
+        return compatibility;
     }
 
     /**

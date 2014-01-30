@@ -27,36 +27,12 @@ import java.io.Serializable;
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public class InstanceInfo implements Serializable {
-    private String id;
-    private String host;
-    private int port;
+public interface InstanceInfo extends Serializable {
+    String getHostname();
 
-    public String getHostname() {
-        return host + ":" + port;
-    }
+    String getId();
 
-    public String getId() {
-        return id;
-    }
+    String getHost();
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
+    int getPort();
 }

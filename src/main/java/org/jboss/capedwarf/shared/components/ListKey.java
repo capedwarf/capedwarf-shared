@@ -39,7 +39,7 @@ public class ListKey<E> extends AbstractKey<List<E>> {
     }
 
     public ListKey(Object slot) {
-        super(AppIdFactory.getAppId(), AppIdFactory.getModule(), slot);
+        super(ClassloaderAppIdFactory.INSTANCE, slot);
     }
 
     @SuppressWarnings("unchecked")

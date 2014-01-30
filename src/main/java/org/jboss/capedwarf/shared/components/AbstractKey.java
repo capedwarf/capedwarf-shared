@@ -65,4 +65,9 @@ public abstract class AbstractKey<T> implements CacheableKey<T> {
     public Object getCacheableKey() {
         return key;
     }
+
+    @Override
+    public String toString() {
+        return String.format("appId:%s, module:%s, slot:%s", getAppId(), getModule(), getSlot());
+    }
 }

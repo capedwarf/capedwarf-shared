@@ -183,4 +183,13 @@ public final class ComponentRegistry {
             }
         }
     }
+
+    public String dump(String appId) {
+        if (appId != null) {
+            Object map = registry.get(appId);
+            return (map != null) ? String.valueOf(map) : String.format("[Emtpty:%s]", appId);
+        } else {
+            return "[Cannot dump global components]";
+        }
+    }
 }

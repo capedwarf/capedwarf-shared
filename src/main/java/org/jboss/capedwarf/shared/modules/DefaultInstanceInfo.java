@@ -20,30 +20,52 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.capedwarf.shared.components;
-
-import java.util.Map;
+package org.jboss.capedwarf.shared.modules;
 
 /**
- * Simple component key.
- *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public class MapKey<K, V> extends AbstractKey<Map<K, V>> {
-    public MapKey(String appId, String module, Object slot) {
-        super(appId, module, slot);
+public class DefaultInstanceInfo implements InstanceInfo {
+    public static final String LOCALHOST = "localhost";
+
+    private String id;
+    private String host;
+    private int port;
+
+    public DefaultInstanceInfo() {
     }
 
-    public MapKey(AppIdFactory appIdFactory, Object slot) {
-        super(appIdFactory, slot);
+    public DefaultInstanceInfo(String id, String host, int port) {
+        this.id = id;
+        this.host = host;
+        this.port = port;
     }
 
-    public MapKey(Object slot) {
-        super(ClassloaderAppIdFactory.INSTANCE, slot);
+    public String getHostname() {
+        return host + ":" + port;
     }
 
-    @SuppressWarnings("unchecked")
-    public Class getType() {
-        return Map.class;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 }

@@ -39,7 +39,7 @@ public class SetKey<E> extends AbstractKey<Set<E>> {
     }
 
     public SetKey(Object slot) {
-        super(AppIdFactory.getAppId(), AppIdFactory.getModule(), slot);
+        super(ClassloaderAppIdFactory.INSTANCE, slot);
     }
 
     @SuppressWarnings("unchecked")

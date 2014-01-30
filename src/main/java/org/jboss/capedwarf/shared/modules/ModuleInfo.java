@@ -23,6 +23,7 @@
 package org.jboss.capedwarf.shared.modules;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,6 +56,18 @@ public class ModuleInfo implements Serializable {
         return registry.getComponent(new MapKey<String, ModuleInfo>(appId, PER_APP, Slot.MODULES));
     }
 
+    public static ModuleInfo getModuleInfo(String appId, String module) {
+        Map<String, ModuleInfo> map = getModules(appId);
+        if (map == null) {
+            throw new IllegalStateException(String.format("No such modules map, appId: %s", appId));
+        }
+        ModuleInfo info = map.get(module);
+        if (info == null) {
+            throw new IllegalArgumentException(String.format("No such module info, module: %s", module));
+        }
+        return info;
+    }
+
     public ModuleInfo() {
         // serialization only
     }
@@ -69,7 +82,13 @@ public class ModuleInfo implements Serializable {
     }
 
     public void removeInstance(InstanceInfo instance) {
-        instances.remove(instance);
+        Iterator<InstanceInfo> iter = instances.iterator();
+        while (iter.hasNext()) {
+            if (instance.getId().equals(iter.next().getId())) {
+                iter.remove();
+                return;
+            }
+        }
     }
 
     public AppEngineWebXml getConfig() {

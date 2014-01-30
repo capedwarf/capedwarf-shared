@@ -35,8 +35,12 @@ public class SimpleKey<T> extends BaseKey<T> {
         return type.getName();
     }
 
+    public static <T> Key<T> withClassloader(Class<T> type) {
+        return new SimpleKey<>(ClassloaderAppIdFactory.INSTANCE, type);
+    }
+
     public SimpleKey(Class<T> type) {
-        super(AppIdFactory.getAppId(), AppIdFactory.getModule(), toName(type), type);
+        super(ClassloaderAppIdFactory.INSTANCE, toName(type), type);
     }
 
     public SimpleKey(String appId, String module, Class<T> type) {

@@ -22,28 +22,22 @@
 
 package org.jboss.capedwarf.shared.components;
 
-import java.util.Map;
+import org.jboss.capedwarf.shared.servlet.CapedwarfApiProxy;
 
 /**
- * Simple component key.
- *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public class MapKey<K, V> extends AbstractKey<Map<K, V>> {
-    public MapKey(String appId, String module, Object slot) {
-        super(appId, module, slot);
+public class ClassloaderAppIdFactory extends AppIdFactory {
+    public static final AppIdFactory INSTANCE = new ClassloaderAppIdFactory();
+
+    private ClassloaderAppIdFactory() {
     }
 
-    public MapKey(AppIdFactory appIdFactory, Object slot) {
-        super(appIdFactory, slot);
+    public String appId() {
+        return CapedwarfApiProxy.getInfo().getAppId();
     }
 
-    public MapKey(Object slot) {
-        super(ClassloaderAppIdFactory.INSTANCE, slot);
-    }
-
-    @SuppressWarnings("unchecked")
-    public Class getType() {
-        return Map.class;
+    public String module() {
+        return CapedwarfApiProxy.getInfo().getModule();
     }
 }
