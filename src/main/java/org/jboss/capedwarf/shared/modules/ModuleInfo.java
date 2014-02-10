@@ -77,6 +77,10 @@ public class ModuleInfo implements Serializable {
         this.instances = new CopyOnWriteArrayList<>();
     }
 
+    public int getInstancesSize() {
+        return instances.size();
+    }
+
     public void addInstance(InstanceInfo instance) {
         instances.add(instance);
     }
