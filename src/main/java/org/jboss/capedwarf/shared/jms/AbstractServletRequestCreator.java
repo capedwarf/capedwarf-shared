@@ -53,20 +53,25 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
     }
 
     protected void applyPaths(ServletContext context, AbstractHttpServletRequest request, String path) {
+        final int p = path.indexOf("?");
+
+        String queryString = ((p < 0) || (p == path.length() - 1)) ? null : path.substring(p + 1);
+        request.setQueryString(queryString);
+
+        if (p >= 0) {
+            path = path.substring(0, p);
+        }
+
         request.setPath(path);
 
         String servletPath = getServletPath(context, path);
         request.setServletPath(servletPath);
 
-        final int p = path.indexOf("?");
-
-        String pathInfo = (p < 0) ? path.substring(servletPath.length()) : path.substring(servletPath.length(), p);
+        String pathInfo = path.substring(servletPath.length());
         if ((pathInfo.length() == 0 || (pathInfo.length() == 1 && pathInfo.charAt(0) == '/')) == false) {
             request.setPathInfo(addStartSlash(pathInfo));
         }
 
-        String queryString = ((p < 0) || (p == path.length() - 1)) ? null : path.substring(p + 1);
-        request.setQueryString(queryString);
     }
 
     /**
