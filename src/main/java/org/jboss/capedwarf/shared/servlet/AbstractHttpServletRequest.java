@@ -183,7 +183,7 @@ public abstract class AbstractHttpServletRequest extends AbstractServletRequest 
     }
 
     public String getRequestURI() {
-        return path; // OK?
+        return getContextPath() + path;
     }
 
     public StringBuffer getRequestURL() {
