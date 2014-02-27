@@ -48,6 +48,7 @@ public class Compatibility {
 
     public static enum Feature {
         ENABLE_ALL("enable.all"),
+        DISABLE_INDEX_CHECK_IN_PRODUCTION("disable.production.index.check"),
         DISABLE_ENTITY_GROUPS("disable.entity.groups"),
         DISABLE_QUERY_INEQUALITY_FILTER_CHECK("disable.query.inequality.filter.check"),
         IGNORE_ENTITY_PROPERTY_CONVERSION("ignore.entity.property.conversion"),
