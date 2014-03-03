@@ -12,43 +12,102 @@ import static junit.framework.Assert.assertTrue;
 public class FilePatternTest {
 
     @Test
-    public void testEmptyPath() {
-        FilePattern pattern = new FilePattern("/*.html");
-        assertFalse(pattern.matches(""));
+    public void testShallowExtensionPattern() {
+        FilePattern pattern = new FilePattern("*.html");
+        assertPatternMatches(pattern, "/foo.html", "/bar.html");
+        assertPatternDoesNotMatch(pattern, "", "/", "/foo.txt", "/foo/bar.html", "/foo_html");
     }
 
     @Test
-    public void testSimplePath() {
+    public void testShallowExtensionPatternWithLeadingSlash() {
         FilePattern pattern = new FilePattern("/*.html");
-        assertTrue(pattern.matches("/foo.html"));
-        assertFalse(pattern.matches("/foo/bar.html"));
-        assertFalse(pattern.matches("/foo_html"));
+        assertPatternMatches(pattern, "/foo.html", "/bar.html");
+        assertPatternDoesNotMatch(pattern, "", "/", "/foo.txt", "/foo/bar.html", "/foo_html");
     }
 
     @Test
-    public void testDirectoryPath() {
+    public void testShallowExtensionPatternInSubdir() {
+        FilePattern pattern = new FilePattern("foo/*.html");
+        assertPatternMatches(pattern, "/foo/bar.html");
+        assertPatternDoesNotMatch(pattern, "", "/", "/foo.txt", "/foo.html", "/foo/bar/baz.html");
+    }
+
+    @Test
+    public void testShallowExtensionPatternInSubdirWithLeadingSlash() {
+        FilePattern pattern = new FilePattern("/foo/*.html");
+        assertPatternMatches(pattern, "/foo/bar.html");
+        assertPatternDoesNotMatch(pattern, "", "/", "/foo.txt", "/foo.html", "/foo/bar/baz.html");
+    }
+
+    @Test
+    public void testDeepExtensionPattern() {
+        FilePattern pattern = new FilePattern("**.html");
+        assertPatternMatches(pattern, "/foo.html", "/foo/bar.html", "/foo/bar/baz.html");
+        assertPatternDoesNotMatch(pattern, "", "/", "/foo.txt", "/foo/bar/baz.txt", "/foo/bar/baz_html");
+    }
+
+    @Test
+    public void testDeepExtensionPatternWithLeadingSlash() {
         FilePattern pattern = new FilePattern("/**.html");
-        assertTrue(pattern.matches("/foo.html"));
-        assertTrue(pattern.matches("/foo/bar.html"));
-        assertTrue(pattern.matches("/foo/bar/baz.html"));
-        assertFalse(pattern.matches("/foo/bar/baz.txt"));
-        assertFalse(pattern.matches("/foo/bar/baz_html"));
+        assertPatternMatches(pattern, "/foo.html", "/foo/bar.html", "/foo/bar/baz.html");
+        assertPatternDoesNotMatch(pattern, "", "/", "/foo.txt", "/foo/bar/baz.txt", "/foo/bar/baz_html");
     }
 
     @Test
-    public void testDirectoryPathWithAnyExtension() {
+    public void testDeepPath() {
+        FilePattern pattern = new FilePattern("**");
+        assertPatternMatches(pattern, "/", "/foo.html", "/foo/bar.png", "/foo/bar.html", "/foo/bar/baz.html");
+    }
+
+    @Test
+    public void testDeepPathWithLeadingSlash() {
+        FilePattern pattern = new FilePattern("/**");
+        assertPatternMatches(pattern, "/", "/foo.html", "/foo/bar.png", "/foo/bar.html", "/foo/bar/baz.html");
+    }
+
+    @Test
+    public void testDeepPathInSubdir() {
+        FilePattern pattern = new FilePattern("foo/**");
+        assertPatternMatches(pattern, "/foo/bar.png", "/foo/bar.html", "/foo/bar/baz.html");
+        assertPatternDoesNotMatch(pattern, "/", "/foo.html", "/baz/foo.html", "/baz/foo/bar.html");
+    }
+
+    @Test
+    public void testDeepPathInSubdirWithLeadingSlash() {
+        FilePattern pattern = new FilePattern("/foo/**");
+        assertPatternMatches(pattern, "/foo/bar.png", "/foo/bar.html", "/foo/bar/baz.html");
+        assertPatternDoesNotMatch(pattern, "/", "/foo.html", "/baz/foo.html", "/baz/foo/bar.html");
+    }
+
+    @Test
+    public void testDeepPathAndAnyExtension() {
+        FilePattern pattern = new FilePattern("**.*");
+        assertPatternMatches(pattern, "/foo.html", "/foo/bar.png", "/foo/bar.html", "/foo/bar/baz.html");
+    }
+
+    @Test
+    public void testDeepPathAndAnyExtensionWithLeadingSlash() {
         FilePattern pattern = new FilePattern("/**.*");
-        assertTrue(pattern.matches("/foo/bar.png"));
-        assertTrue(pattern.matches("/foo.html"));
-        assertTrue(pattern.matches("/foo/bar.html"));
-        assertTrue(pattern.matches("/foo/bar/baz.html"));
+        assertPatternMatches(pattern, "/foo.html", "/foo/bar.png", "/foo/bar.html", "/foo/bar/baz.html");
     }
 
     @Test
     public void testFixedPath() {
         FilePattern pattern = new FilePattern("/favicon.ico");
-        assertTrue(pattern.matches("/favicon.ico"));
-        assertFalse(pattern.matches("/favicon_ico"));
-        assertFalse(pattern.matches("/something.other"));
+        assertPatternMatches(pattern, "/favicon.ico");
+        assertPatternDoesNotMatch(pattern, "/favicon_ico", "/something.other");
+    }
+
+
+    private void assertPatternMatches(FilePattern pattern, String... paths) {
+        for (String path : paths) {
+            assertTrue("Expected pattern " + pattern + " to match path " + path + ", but it did not", pattern.matches(path));
+        }
+    }
+
+    private void assertPatternDoesNotMatch(FilePattern pattern, String... paths) {
+        for (String path : paths) {
+            assertFalse("Expected pattern " + pattern + " not to match path " + path + ", but it did", pattern.matches(path));
+        }
     }
 }
