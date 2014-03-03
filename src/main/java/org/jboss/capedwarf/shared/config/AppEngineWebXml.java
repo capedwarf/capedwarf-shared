@@ -45,6 +45,7 @@ public class AppEngineWebXml implements Serializable {
     private InboundServices inboundServices;
     private String instanceClass;
     private Scaling scaling;
+    private String publicRoot;
 
     private List<StaticFileInclude> staticFileIncludes;
     private List<FilePattern> staticFileExcludes;
@@ -135,5 +136,13 @@ public class AppEngineWebXml implements Serializable {
 
     void addStaticFileExclude(FilePattern exclude) {
         staticFileExcludes.add(exclude);
+    }
+
+    public String getPublicRoot() {
+        return publicRoot;
+    }
+
+    public void setPublicRoot(String publicRoot) {
+        this.publicRoot = publicRoot;
     }
 }

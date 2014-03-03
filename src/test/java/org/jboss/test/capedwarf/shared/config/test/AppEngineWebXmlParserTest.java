@@ -192,6 +192,18 @@ public class AppEngineWebXmlParserTest {
         assertFalse(aewx.isInboundServiceEnabled(InboundServices.Service.channel_presence));
     }
 
+    @Test
+    public void testPublicRoot() throws Exception {
+        String xml = "<appengine-web-app>" +
+            "    <application>appName</application>" +
+            "    <version>2</version>" +
+            "    <public-root>/static</public-root>" +
+            "</appengine-web-app>";
+
+        AppEngineWebXml aewx = parse(xml);
+        assertEquals("/static", aewx.getPublicRoot());
+    }
+
     private static AppEngineWebXml parse(String xml) throws Exception {
         return AppEngineWebXmlParser.parse(new ByteArrayInputStream(xml.getBytes()));
     }
