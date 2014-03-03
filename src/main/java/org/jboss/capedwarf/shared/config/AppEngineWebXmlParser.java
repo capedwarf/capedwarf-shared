@@ -118,7 +118,7 @@ public class AppEngineWebXmlParser {
         Element staticFilesElement = XmlUtils.getChildElement(documentElement, "static-files", false);
         if (staticFilesElement != null) {
             for (Element includeElement : XmlUtils.getChildren(staticFilesElement, "include")) {
-                StaticFileInclude staticFileInclude = new StaticFileInclude(includeElement.getAttribute("path"));
+                StaticFileInclude staticFileInclude = new StaticFileInclude(includeElement.getAttribute("path"), includeElement.getAttribute("expiration"));
                 for (Element headerElement : XmlUtils.getChildren(includeElement, "http-header")) {
                     staticFileInclude.addHeader(new StaticFileHttpHeader(headerElement.getAttribute("name"), headerElement.getAttribute("value")));
                 }

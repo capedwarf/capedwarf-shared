@@ -145,7 +145,7 @@ public class AppEngineWebXmlParserTest {
             "    <threadsafe>true</threadsafe>\n" +
             "    <static-files>\n" +
             "        <include path=\"/**.png\" />\n" +
-            "        <include path=\"/**.jpg\" />\n" +
+            "        <include path=\"/**.jpg\" expiration=\"1d 2h 3m 4s\"/>\n" +
             "        <exclude path=\"/**.jpg\" />\n" +
             "    </static-files>\n" +
             "</appengine-web-app>\n";
@@ -153,6 +153,8 @@ public class AppEngineWebXmlParserTest {
 
         List<StaticFileInclude> includes = appEngineWebXml.getStaticFileIncludes();
         Assert.assertEquals(2, includes.size());
+        Assert.assertEquals("1d 2h 3m 4s", includes.get(1).getExpiration());
+        Assert.assertEquals(Long.valueOf(93784), includes.get(1).getExpirationSeconds());
         List<FilePattern> excludes = appEngineWebXml.getStaticFileExcludes();
         Assert.assertEquals(1, excludes.size());
     }

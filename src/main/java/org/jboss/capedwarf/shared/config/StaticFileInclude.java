@@ -8,10 +8,14 @@ import java.util.List;
  */
 public class StaticFileInclude extends FilePattern {
 
+    private String expiration;
+    private Long expirationSeconds;
     private List<StaticFileHttpHeader> headers = new ArrayList<StaticFileHttpHeader>();
 
-    public StaticFileInclude(String pattern) {
+    public StaticFileInclude(String pattern, String expiration) {
         super(pattern);
+        this.expiration = expiration;
+        this.expirationSeconds = new ExpirationParser().parse(expiration);
     }
 
     public void addHeader(StaticFileHttpHeader header) {
@@ -20,5 +24,13 @@ public class StaticFileInclude extends FilePattern {
 
     public List<StaticFileHttpHeader> getHeaders() {
         return headers;
+    }
+
+    public String getExpiration() {
+        return expiration;
+    }
+
+    public Long getExpirationSeconds() {
+        return expirationSeconds;
     }
 }
