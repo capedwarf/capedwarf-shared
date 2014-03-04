@@ -4,12 +4,11 @@ package org.jboss.capedwarf.shared.config;
  * @author <a href="mailto:mluksa@redhat.com">Marko Luksa</a>
  */
 public class ExpirationParser {
-
     public static final int MINUTES = 60;
     public static final int HOURS = 3600;
     public static final int DAYS = 24 * 3600;
 
-    public Long parse(String expiration) {
+    public static Long parse(String expiration) {
         if (expiration == null || expiration.isEmpty()) {
             return null;
         }
@@ -21,9 +20,9 @@ public class ExpirationParser {
         return seconds;
     }
 
-    private Long toSeconds(String expiration) {
+    private static long toSeconds(String expiration) {
         long number = (long) Integer.parseInt(expiration.substring(0, expiration.length() - 1));
-        char unit = expiration.charAt(expiration.length()-1);
+        char unit = expiration.charAt(expiration.length() - 1);
         switch (unit) {
             case 's':
                 return number;
@@ -34,7 +33,7 @@ public class ExpirationParser {
             case 'd':
                 return number * DAYS;
             default:
-                return null;
+                throw new IllegalStateException(String.format("Invalid time unit: %s", unit));
         }
     }
 }

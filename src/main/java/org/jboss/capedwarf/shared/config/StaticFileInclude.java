@@ -15,7 +15,7 @@ public class StaticFileInclude extends FilePattern {
     public StaticFileInclude(String pattern, String expiration) {
         super(pattern);
         this.expiration = expiration;
-        this.expirationSeconds = new ExpirationParser().parse(expiration);
+        this.expirationSeconds = ExpirationParser.parse(expiration);
     }
 
     public void addHeader(StaticFileHttpHeader header) {

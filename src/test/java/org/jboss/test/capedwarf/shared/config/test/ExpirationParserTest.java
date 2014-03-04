@@ -66,6 +66,6 @@ public class ExpirationParserTest {
     }
 
     private Long parse(String expiration) {
-        return new ExpirationParser().parse(expiration);
+        return ExpirationParser.parse(expiration);
     }
 }
