@@ -131,6 +131,13 @@ public class AppEngineWebXmlParser {
             }
         }
 
+        Element adminConsoleElement = XmlUtils.getChildElement(documentElement, "admin-console");
+        if (adminConsoleElement != null) {
+            for (Element pageElement : XmlUtils.getChildren(adminConsoleElement, "page")) {
+                appEngineWebXml.addAdminConsolePage(pageElement.getAttribute("name"), pageElement.getAttribute("url"));
+            }
+        }
+
         return appEngineWebXml;
     }
 
