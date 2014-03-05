@@ -36,6 +36,12 @@ public class AdminConsolePage implements Serializable {
     private String url;
 
     public AdminConsolePage(String name, String url) {
+        if (name == null) {
+            throw new IllegalArgumentException("Null name.");
+        }
+        if (url == null) {
+            throw new IllegalArgumentException("Null url.");
+        }
         this.name = name;
         this.url = url;
     }
