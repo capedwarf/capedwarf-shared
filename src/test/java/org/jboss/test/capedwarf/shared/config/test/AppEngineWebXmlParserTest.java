@@ -28,6 +28,7 @@ package org.jboss.test.capedwarf.shared.config.test;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
+import org.jboss.capedwarf.shared.config.AdminConsolePage;
 import org.jboss.capedwarf.shared.config.AppEngineWebXml;
 import org.jboss.capedwarf.shared.config.AppEngineWebXmlParser;
 import org.jboss.capedwarf.shared.config.AutomaticScaling;
@@ -204,6 +205,28 @@ public class AppEngineWebXmlParserTest {
 
         AppEngineWebXml aewx = parse(xml);
         assertEquals("/static", aewx.getPublicRoot());
+    }
+
+    @Test
+    public void testAdminConsolePages() throws Exception {
+        String xml = "<appengine-web-app>" +
+            "    <application>appName</application>" +
+            "    <version>2</version>" +
+            "    <admin-console>\n" +
+            "        <page name=\"Custom Admin Page 1\" url=\"/admin/page1.html\"/>\n" +
+            "        <page name=\"Custom Admin Page 2\" url=\"/admin/page2.html\"/>\n" +
+            "    </admin-console>\n" +
+            "</appengine-web-app>";
+
+        AppEngineWebXml aewx = parse(xml);
+        List<AdminConsolePage> pages = aewx.getAdminConsolePages();
+        assertEquals(2, pages.size());
+        AdminConsolePage page1 = pages.get(0);
+        assertEquals("Custom Admin Page 1", page1.getName());
+        assertEquals("/admin/page1.html", page1.getUrl());
+        AdminConsolePage page2 = pages.get(1);
+        assertEquals("Custom Admin Page 2", page2.getName());
+        assertEquals("/admin/page2.html", page2.getUrl());
     }
 
     private static AppEngineWebXml parse(String xml) throws Exception {

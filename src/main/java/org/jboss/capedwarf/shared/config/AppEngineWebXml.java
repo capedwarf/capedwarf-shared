@@ -49,10 +49,12 @@ public class AppEngineWebXml implements Serializable {
 
     private List<StaticFileInclude> staticFileIncludes;
     private List<FilePattern> staticFileExcludes;
+    private List<AdminConsolePage> adminConsolePages;
 
     public AppEngineWebXml() {
         this.staticFileIncludes = new ArrayList<>();
         this.staticFileExcludes = new ArrayList<>();
+        this.adminConsolePages = new ArrayList<>();
     }
 
     public static AppEngineWebXml override(AppEngineWebXml original, String application) {
@@ -144,5 +146,13 @@ public class AppEngineWebXml implements Serializable {
 
     public void setPublicRoot(String publicRoot) {
         this.publicRoot = publicRoot;
+    }
+
+    void addAdminConsolePage(String name, String url) {
+        adminConsolePages.add(new AdminConsolePage(name, url));
+    }
+
+    public List<AdminConsolePage> getAdminConsolePages() {
+        return Collections.unmodifiableList(adminConsolePages);
     }
 }
