@@ -24,6 +24,7 @@
 
 package org.jboss.capedwarf.shared.xml;
 
+import org.jboss.util.StringPropertyReplacer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -76,6 +77,15 @@ public class XmlUtils {
         return (Element) nodes.item(0);
     }
 
+    public static String replace(String value) {
+        return StringPropertyReplacer.replaceProperties(value);
+    }
+
+    public static String getAttribute(Element element, String name) {
+        String value = element.getAttribute(name);
+        return replace(value);
+    }
+
     public static String getBody(Element element) {
         NodeList nodes = element.getChildNodes();
         if (nodes == null || nodes.getLength() == 0)
@@ -85,7 +95,8 @@ public class XmlUtils {
         if (firstNode == null)
             return null;
 
-        return firstNode.getNodeValue();
+        String nodeValue = firstNode.getNodeValue();
+        return replace(nodeValue);
     }
 
     public static List<Element> getChildren(Element element, String tagName) {

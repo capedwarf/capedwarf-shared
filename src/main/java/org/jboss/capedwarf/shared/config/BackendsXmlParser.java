@@ -83,7 +83,7 @@ public class BackendsXmlParser {
 
     private static void parseBackendTag(BackendsXml backends, Element backend) {
         BackendsXml.Backend bb = new BackendsXml.Backend();
-        String name = backend.getAttribute(NAME_ATTRIBUTE);
+        String name = XmlUtils.getAttribute(backend, NAME_ATTRIBUTE);
         if (name == null) {
             throw new CapedwarfConfigException("Null backend name!");
         }

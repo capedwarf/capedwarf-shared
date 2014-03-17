@@ -178,4 +178,22 @@ public class CapedwarfConfigurationParserTest {
         CapedwarfConfiguration config = parseConfig(xml);
         assertEquals(CheckType.YES, config.getCheckGlobalTimeLimit());
     }
+
+    @Test
+    public void testSystemPropertyReplacement() throws Exception {
+        String xml = "<capedwarf-web-app>" +
+                "   <global-time-limit>${cd.gtl:DYNAMIC}</global-time-limit>" +
+                "</capedwarf-web-app>";
+
+        CapedwarfConfiguration config = parseConfig(xml);
+        assertEquals(CheckType.DYNAMIC, config.getCheckGlobalTimeLimit());
+
+        System.setProperty("cd.gtl", "YES");
+        try {
+            config = parseConfig(xml);
+            assertEquals(CheckType.YES, config.getCheckGlobalTimeLimit());
+        } finally {
+            System.clearProperty("cd.gtl");
+        }
+    }
 }

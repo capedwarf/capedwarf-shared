@@ -81,7 +81,7 @@ public class CapedwarfConfigurationParser {
         Element mailElem = XmlUtils.getChildElement(documentElement, "mail");
         if (mailElem != null) {
             for (Element propertyElem : XmlUtils.getChildren(mailElem, "property")) {
-                config.getMailProperties().put(propertyElem.getAttribute("name"), XmlUtils.getBody(propertyElem));
+                config.getMailProperties().put(XmlUtils.getAttribute(propertyElem, "name"), XmlUtils.getBody(propertyElem));
             }
         }
 

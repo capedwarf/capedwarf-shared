@@ -60,8 +60,8 @@ public class AppEngineWebXmlParser {
         if (systemPropertiesElement != null) {
             List<Element> propertyElements = XmlUtils.getChildren(systemPropertiesElement, "property");
             for (Element propertyElement : propertyElements) {
-                String name = propertyElement.getAttribute("name");
-                String value = propertyElement.getAttribute("value");
+                String name = XmlUtils.getAttribute(propertyElement, "name");
+                String value = XmlUtils.getAttribute(propertyElement, "value");
                 System.setProperty(name, value);
             }
         }
@@ -118,15 +118,15 @@ public class AppEngineWebXmlParser {
         Element staticFilesElement = XmlUtils.getChildElement(documentElement, "static-files", false);
         if (staticFilesElement != null) {
             for (Element includeElement : XmlUtils.getChildren(staticFilesElement, "include")) {
-                StaticFileInclude staticFileInclude = new StaticFileInclude(includeElement.getAttribute("path"), includeElement.getAttribute("expiration"));
+                StaticFileInclude staticFileInclude = new StaticFileInclude(XmlUtils.getAttribute(includeElement, "path"), XmlUtils.getAttribute(includeElement, "expiration"));
                 for (Element headerElement : XmlUtils.getChildren(includeElement, "http-header")) {
-                    staticFileInclude.addHeader(new StaticFileHttpHeader(headerElement.getAttribute("name"), headerElement.getAttribute("value")));
+                    staticFileInclude.addHeader(new StaticFileHttpHeader(XmlUtils.getAttribute(headerElement, "name"), XmlUtils.getAttribute(headerElement, "value")));
                 }
                 appEngineWebXml.addStaticFileInclude(staticFileInclude);
             }
 
             for (Element excludeElement : XmlUtils.getChildren(staticFilesElement, "exclude")) {
-                FilePattern exclude = new FilePattern(excludeElement.getAttribute("path"));
+                FilePattern exclude = new FilePattern(XmlUtils.getAttribute(excludeElement, "path"));
                 appEngineWebXml.addStaticFileExclude(exclude);
             }
         }
@@ -134,7 +134,7 @@ public class AppEngineWebXmlParser {
         Element adminConsoleElement = XmlUtils.getChildElement(documentElement, "admin-console");
         if (adminConsoleElement != null) {
             for (Element pageElement : XmlUtils.getChildren(adminConsoleElement, "page")) {
-                appEngineWebXml.addAdminConsolePage(pageElement.getAttribute("name"), pageElement.getAttribute("url"));
+                appEngineWebXml.addAdminConsolePage(XmlUtils.getAttribute(pageElement, "name"), XmlUtils.getAttribute(pageElement, "url"));
             }
         }
 

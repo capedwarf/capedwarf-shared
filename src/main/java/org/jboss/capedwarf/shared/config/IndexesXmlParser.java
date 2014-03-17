@@ -64,7 +64,7 @@ public class IndexesXmlParser {
                 throw new CapedwarfConfigException("datastore-indexes.xml does not contain <datastore-indexes>");
             }
 
-            String autoGenerate = root.getAttribute("autoGenerate");
+            String autoGenerate = XmlUtils.getAttribute(root, "autoGenerate");
             if (autoGenerate != null) {
                 indexesXml.setAutoGenerate(Boolean.parseBoolean(autoGenerate));
             }
@@ -99,7 +99,7 @@ public class IndexesXmlParser {
     }
 
     private static String getAttribute(Element elt, String name) {
-        String atttribute = elt.getAttribute(name);
+        String atttribute = XmlUtils.getAttribute(elt, name);
         if (atttribute == null) {
             throw new IllegalArgumentException("Attribute is null: " + name);
         }
