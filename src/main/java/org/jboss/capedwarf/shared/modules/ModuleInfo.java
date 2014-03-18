@@ -51,16 +51,32 @@ public class ModuleInfo implements Serializable {
         registry.setComponent(key, new ConcurrentHashMap<String, ModuleInfo>());
     }
 
+    /**
+     * Get modules map, per appId.
+     *
+     * @param appId the app id
+     * @return modules map
+     * @throws java.lang.IllegalStateException if no such modules map
+     */
     public static Map<String, ModuleInfo> getModules(String appId) {
         ComponentRegistry registry = ComponentRegistry.getInstance();
-        return registry.getComponent(new MapKey<String, ModuleInfo>(appId, PER_APP, Slot.MODULES));
-    }
-
-    public static ModuleInfo getModuleInfo(String appId, String module) {
-        Map<String, ModuleInfo> map = getModules(appId);
+        Map<String, ModuleInfo> map = registry.getComponent(new MapKey<String, ModuleInfo>(appId, PER_APP, Slot.MODULES));
         if (map == null) {
             throw new IllegalStateException(String.format("No such modules map, appId: %s", appId));
         }
+        return map;
+    }
+
+    /**
+     * Module info per app and module name.
+     *
+     * @param appId the app id
+     * @param module the module name
+     * @return module info
+     * @throws java.lang.IllegalArgumentException if no such module info
+     */
+    public static ModuleInfo getModuleInfo(String appId, String module) {
+        Map<String, ModuleInfo> map = getModules(appId);
         ModuleInfo info = map.get(module);
         if (info == null) {
             throw new IllegalArgumentException(String.format("No such module info, module: %s", module));
