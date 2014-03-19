@@ -163,6 +163,34 @@ public final class ComponentRegistry {
         }
     }
 
+    /**
+     * Stop components, while the CL resources are still available.
+     *
+     * @param appId the app id
+     */
+    public void shutdownComponents(String appId) {
+        final Map<Object, Object> map;
+        final Lock lock = lock(appId);
+        try {
+            map = (Map<Object, Object>) registry.get(appId);
+        } finally {
+            lock.unlock();
+        }
+        // stop components
+        if (map != null) {
+            for (Object value : map.values()) {
+                if (value instanceof ShutdownHook) {
+                    ShutdownHook.class.cast(value).shutdown();
+                }
+            }
+        }
+    }
+
+    /**
+     * Clear components completely.
+     *
+     * @param appId the app id
+     */
     public void clearComponents(String appId) {
         // clear registry
         final Map<Object, Object> map;
@@ -178,7 +206,7 @@ public final class ComponentRegistry {
         if (map != null) {
             for (Object value : map.values()) {
                 if (value instanceof ShutdownHook) {
-                    ShutdownHook.class.cast(value).shutdown();
+                    ShutdownHook.class.cast(value).clear();
                 }
             }
         }

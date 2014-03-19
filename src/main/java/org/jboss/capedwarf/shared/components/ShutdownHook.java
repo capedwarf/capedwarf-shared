@@ -5,4 +5,6 @@ package org.jboss.capedwarf.shared.components;
  */
 public interface ShutdownHook {
     void shutdown();
+
+    void clear();
 }

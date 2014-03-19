@@ -153,6 +153,9 @@ public class Converters implements ShutdownHook {
         pool = null;
     }
 
+    public void clear() {
+    }
+
     public static Converters getInstance() {
         return getInstance(Utils.getAppClassLoader());
     }
