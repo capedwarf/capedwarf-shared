@@ -69,10 +69,11 @@ public class QueueXmlParser {
         try {
             Document doc = XmlUtils.parseXml(is);
 
-            if (QUEUEENTRIES_TAG.equals(doc.getDocumentElement().getTagName()) == false) {
+            final Element documentElement = doc.getDocumentElement();
+            if (QUEUEENTRIES_TAG.equals(documentElement.getTagName()) == false) {
                 throw new CapedwarfConfigException("queue.xml does not contain <queue-entries>");
             }
-            NodeList list = doc.getDocumentElement().getChildNodes();
+            NodeList list = documentElement.getChildNodes();
             for (int i=0; i<list.getLength(); i++) {
                 Node node = list.item(i);
                 if (node instanceof Element) {
@@ -83,11 +84,7 @@ public class QueueXmlParser {
                 }
             }
             return queueXml;
-        } catch (ParserConfigurationException e) {
-            throw new CapedwarfConfigException("Could not parse WEB-INF/queue.xml", e);
-        } catch (SAXException e) {
-            throw new CapedwarfConfigException("Could not parse WEB-INF/queue.xml", e);
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new CapedwarfConfigException("Could not parse WEB-INF/queue.xml", e);
         }
     }
