@@ -11,18 +11,20 @@ import org.jboss.capedwarf.shared.components.SimpleKey;
 public class ApplicationConfiguration implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private AppEngineWebXml appEngineWebXml;
-    private CapedwarfConfiguration capedwarfConfiguration;
-    private QueueXml queueXml;
-    private BackendsXml backendsXml;
-    private IndexesXml indexesXml;
+    private final AppEngineWebXml appEngineWebXml;
+    private final CapedwarfConfiguration capedwarfConfiguration;
+    private final QueueXml queueXml;
+    private final BackendsXml backendsXml;
+    private final IndexesXml indexesXml;
+    private final CronXml cronXml;
 
-    public ApplicationConfiguration(AppEngineWebXml appEngineWebXml, CapedwarfConfiguration capedwarfConfiguration, QueueXml queueXml, BackendsXml backendsXml, IndexesXml indexesXml) {
+    public ApplicationConfiguration(AppEngineWebXml appEngineWebXml, CapedwarfConfiguration capedwarfConfiguration, QueueXml queueXml, BackendsXml backendsXml, IndexesXml indexesXml, CronXml cronXml) {
         this.appEngineWebXml = appEngineWebXml;
         this.capedwarfConfiguration = capedwarfConfiguration;
         this.queueXml = queueXml;
         this.backendsXml = backendsXml;
         this.indexesXml = indexesXml;
+        this.cronXml = cronXml;
     }
 
     public AppEngineWebXml getAppEngineWebXml() {
@@ -43,6 +45,10 @@ public class ApplicationConfiguration implements Serializable {
 
     public IndexesXml getIndexesXml() {
         return indexesXml;
+    }
+
+    public CronXml getCronXml() {
+        return cronXml;
     }
 
     public static ApplicationConfiguration getInstance() {

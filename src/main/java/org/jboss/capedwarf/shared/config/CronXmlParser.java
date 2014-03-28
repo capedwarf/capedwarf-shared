@@ -72,10 +72,10 @@ public class CronXmlParser {
 
     private static void parseCronTag(CronXml cronXml, Element element) {
         String url = XmlUtils.getChildElementBody(element, "url");
-        String description = XmlUtils.getChildElementBody(element, "description");
+        String description = XmlUtils.getChildElementBody(element, "description", false);
         String schedule = XmlUtils.getChildElementBody(element, "schedule");
-        String timezone = XmlUtils.getChildElementBody(element, "timezone");
-        String target = XmlUtils.getChildElementBody(element, "target");
+        String timezone = XmlUtils.getChildElementBody(element, "timezone", false);
+        String target = XmlUtils.getChildElementBody(element, "target", false);
         CronEntry entry = new CronEntry(url, description, schedule, timezone, target);
         cronXml.addEntry(entry);
     }
