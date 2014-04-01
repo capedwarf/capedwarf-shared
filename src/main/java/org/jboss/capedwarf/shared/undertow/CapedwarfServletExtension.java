@@ -34,6 +34,7 @@ import org.kohsuke.MetaInfServices;
 @MetaInfServices
 public class CapedwarfServletExtension implements ServletExtension {
     public void handleDeployment(DeploymentInfo deploymentInfo, ServletContext servletContext) {
+        // allow for proxy wrappers
         deploymentInfo.setAllowNonStandardWrappers(true);
     }
 }
