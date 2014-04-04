@@ -41,6 +41,7 @@ public class CapedwarfConfiguration implements Serializable {
     private Set<String> admins = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
     private XmppConfiguration xmppConfiguration = new XmppConfiguration();
     private List<InboundMailAccount> inboundMailAccounts = new ArrayList<>();
+    private OAuthConfiguration oAuthConfiguration = new OAuthConfiguration();
 
     private Properties mailProperties = new Properties();
 
@@ -88,5 +89,9 @@ public class CapedwarfConfiguration implements Serializable {
 
     void setCheckGlobalTimeLimit(CheckType checkGlobalTimeLimit) {
         this.checkGlobalTimeLimit = checkGlobalTimeLimit;
+    }
+
+    public OAuthConfiguration getOAuthConfiguration() {
+        return oAuthConfiguration;
     }
 }

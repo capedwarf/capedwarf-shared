@@ -36,6 +36,7 @@ import org.jboss.capedwarf.shared.config.CapedwarfConfiguration;
 import org.jboss.capedwarf.shared.config.CapedwarfConfigurationParser;
 import org.jboss.capedwarf.shared.config.CheckType;
 import org.jboss.capedwarf.shared.config.InboundMailAccount;
+import org.jboss.capedwarf.shared.config.OAuthConfiguration;
 import org.jboss.capedwarf.shared.config.XmppConfiguration;
 import org.junit.Test;
 
@@ -170,7 +171,7 @@ public class CapedwarfConfigurationParserTest {
     }
 
     @Test
-    public void testGlobaltTimeLimit() throws Exception {
+    public void testGlobalTimeLimit() throws Exception {
         String xml = "<capedwarf-web-app>" +
                 "   <global-time-limit>YES</global-time-limit>" +
                 "</capedwarf-web-app>";
@@ -182,8 +183,8 @@ public class CapedwarfConfigurationParserTest {
     @Test
     public void testSystemPropertyReplacement() throws Exception {
         String xml = "<capedwarf-web-app>" +
-                "   <global-time-limit>${cd.gtl:DYNAMIC}</global-time-limit>" +
-                "</capedwarf-web-app>";
+            "   <global-time-limit>${cd.gtl:DYNAMIC}</global-time-limit>" +
+            "</capedwarf-web-app>";
 
         CapedwarfConfiguration config = parseConfig(xml);
         assertEquals(CheckType.DYNAMIC, config.getCheckGlobalTimeLimit());
@@ -195,5 +196,21 @@ public class CapedwarfConfigurationParserTest {
         } finally {
             System.clearProperty("cd.gtl");
         }
+    }
+
+    @Test
+    public void testParseOAuth() throws Exception {
+        String xml = "<capedwarf-web-app>" +
+            "    <oauth>" +
+            "        <clientId>clientId123</clientId>" +
+            "        <clientSecret>clientSecret123</clientSecret>" +
+            "    </oauth>" +
+            "</capedwarf-web-app>";
+
+        CapedwarfConfiguration config = parseConfig(xml);
+        OAuthConfiguration oauth = config.getOAuthConfiguration();
+        assertNotNull(oauth);
+        assertEquals("clientId123", oauth.getClientId());
+        assertEquals("clientSecret123", oauth.getClientSecret());
     }
 }

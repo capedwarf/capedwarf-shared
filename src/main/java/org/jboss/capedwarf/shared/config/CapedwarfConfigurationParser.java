@@ -56,10 +56,23 @@ public class CapedwarfConfigurationParser {
 
         CapedwarfConfiguration config = new CapedwarfConfiguration();
 
+        parseAdmins(documentElement, config);
+        parseXmppConfig(documentElement, config);
+        parseInboundMail(documentElement, config);
+        parseGlobalTimeLimit(documentElement, config);
+        parseMail(documentElement, config);
+        parseOAuth(documentElement, config);
+
+        return config;
+    }
+
+    private static void parseAdmins(Element documentElement, CapedwarfConfiguration config) {
         for (Element adminElem : XmlUtils.getChildren(documentElement, "admin")) {
             config.addAdmin(XmlUtils.getBody(adminElem));
         }
+    }
 
+    private static void parseXmppConfig(Element documentElement, CapedwarfConfiguration config) {
         XmppConfiguration xmppConfig = config.getXmppConfiguration();
         Element xmppElem = XmlUtils.getChildElement(documentElement, "xmpp");
         if (xmppElem != null) {
@@ -68,24 +81,12 @@ public class CapedwarfConfigurationParser {
             xmppConfig.setUsername(XmlUtils.getChildElementBody(xmppElem, "username"));
             xmppConfig.setPassword(XmlUtils.getChildElementBody(xmppElem, "password"));
         }
+    }
 
+    private static void parseInboundMail(Element documentElement, CapedwarfConfiguration config) {
         for (Element inboundMailElem : XmlUtils.getChildren(documentElement, "inbound-mail")) {
             config.addInboundMailAccount(getInboundMailAccount(inboundMailElem));
         }
-
-        Element globalTimeLimit = XmlUtils.getChildElement(documentElement, "global-time-limit");
-        if (globalTimeLimit != null) {
-            config.setCheckGlobalTimeLimit(CheckType.valueOf(XmlUtils.getBody(globalTimeLimit)));
-        }
-
-        Element mailElem = XmlUtils.getChildElement(documentElement, "mail");
-        if (mailElem != null) {
-            for (Element propertyElem : XmlUtils.getChildren(mailElem, "property")) {
-                config.getMailProperties().put(XmlUtils.getAttribute(propertyElem, "name"), XmlUtils.getBody(propertyElem));
-            }
-        }
-
-        return config;
     }
 
     private static InboundMailAccount getInboundMailAccount(Element elem) {
@@ -98,5 +99,29 @@ public class CapedwarfConfigurationParser {
             XmlUtils.getChildElementBody(elem, "folder", true),
             pollingInterval == null ? null : Long.valueOf(pollingInterval)
         );
+    }
+
+    private static void parseGlobalTimeLimit(Element documentElement, CapedwarfConfiguration config) {
+        Element globalTimeLimit = XmlUtils.getChildElement(documentElement, "global-time-limit");
+        if (globalTimeLimit != null) {
+            config.setCheckGlobalTimeLimit(CheckType.valueOf(XmlUtils.getBody(globalTimeLimit)));
+        }
+    }
+
+    private static void parseMail(Element documentElement, CapedwarfConfiguration config) {
+        Element mailElem = XmlUtils.getChildElement(documentElement, "mail");
+        if (mailElem != null) {
+            for (Element propertyElem : XmlUtils.getChildren(mailElem, "property")) {
+                config.getMailProperties().put(XmlUtils.getAttribute(propertyElem, "name"), XmlUtils.getBody(propertyElem));
+            }
+        }
+    }
+
+    private static void parseOAuth(Element documentElement, CapedwarfConfiguration config) {
+        Element oauthElem = XmlUtils.getChildElement(documentElement, "oauth");
+        if (oauthElem != null) {
+            config.getOAuthConfiguration().setClientId(XmlUtils.getChildElementBody(oauthElem, "clientId", true));
+            config.getOAuthConfiguration().setClientSecret(XmlUtils.getChildElementBody(oauthElem, "clientSecret", true));
+        }
     }
 }
