@@ -110,6 +110,15 @@ public class Compatibility {
     }
 
     /**
+     * Dump properties copy.
+     *
+     * @return properties copy
+     */
+    public Properties asProperties() {
+        return new Properties(properties);
+    }
+
+    /**
      * Get current instance, can be null.
      *
      * @return compatibility instance
