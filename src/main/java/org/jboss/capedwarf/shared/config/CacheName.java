@@ -38,8 +38,7 @@ public enum CacheName {
     SEARCH("search"),
     PROSPECTIVE_SEARCH("prospective_search"),
     DATASTORE_VERSIONS("datastore_versions"),
-    CHANNEL("channel"),
-    CRON("cron");
+    CHANNEL("channel");
 
     private String name;
 
