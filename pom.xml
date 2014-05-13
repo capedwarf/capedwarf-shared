@@ -55,7 +55,7 @@
 
     <properties>
         <!-- JBoss AS -->
-        <version.io.undertow>1.0.6.Final</version.io.undertow>
+        <version.io.undertow>1.0.10.Final</version.io.undertow>
         <version.org.jboss.modules.jboss-modules>1.3.3.Final</version.org.jboss.modules.jboss-modules>
         <version.org.infinispan>6.0.2.Final</version.org.infinispan>
         <version.com.google.guava>15.0</version.com.google.guava>
