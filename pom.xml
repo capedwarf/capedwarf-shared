@@ -60,7 +60,7 @@
         <version.org.infinispan>6.0.2.Final</version.org.infinispan>
         <version.com.google.guava>15.0</version.com.google.guava>
         <!-- GAE tools -->
-        <version.com.google.gae.tools>1.9.8</version.com.google.gae.tools>
+        <version.com.google.gae.tools>1.9.9</version.com.google.gae.tools>
         <!-- Hibernate Search -->
         <version.org.hibernate.search>4.5.1.Final</version.org.hibernate.search>
         <version.org.apache.lucene>3.6.2</version.org.apache.lucene>
