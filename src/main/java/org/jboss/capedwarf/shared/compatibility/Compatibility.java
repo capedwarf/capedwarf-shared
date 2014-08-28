@@ -69,7 +69,8 @@ public class Compatibility {
         CHANNEL_DEFAULT_DURATION_MINUTES("channel.default.duration.minutes", new IntegerValue(2 * 60)),
         DEFAULT_GCS_BUCKET_NAME("default.gcs.bucket.name", NotEmpty.INSTANCE),
         DISABLE_WEB_SOCKETS_CHANNEL("disable.websockets.channel"),
-        TASKQUEUE_ROLES("taskqueue.roles", new FallbackValue("admin"));
+        TASKQUEUE_ROLES("taskqueue.roles", new FallbackValue("admin")),
+        FORCE_STANDALONE_TX_TRACKER("force.standalone.tx.tracker");
 
         private String key;
         private Value value;
