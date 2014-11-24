@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -34,12 +35,25 @@ public abstract class AbstractServletRequest implements ServletRequest, Mock {
         this.context = context;
     }
 
+    public void addParameter(String key, String value) {
+        Set<String> values = new HashSet<>();
+        values.add(value);
+        setParameters(key, values);
+    }
+
     public void setParameters(String key, Set<String> values) {
-        parameters.put(key, values);
+        Set<String> previous = parameters.get(key);
+        if (previous == null) {
+            parameters.put(key, values);
+        } else {
+            previous.addAll(values);
+        }
     }
 
     public void addParameters(Map<String, Set<String>> map) {
-        parameters.putAll(map);
+        for (Map.Entry<String, Set<String>> entry : map.entrySet()) {
+            setParameters(entry.getKey(), entry.getValue());
+        }
     }
 
     public Object getAttribute(String name) {

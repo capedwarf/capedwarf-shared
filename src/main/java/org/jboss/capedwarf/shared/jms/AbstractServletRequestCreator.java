@@ -57,6 +57,14 @@ public abstract class AbstractServletRequestCreator implements ServletRequestCre
 
         String queryString = ((p < 0) || (p == path.length() - 1)) ? null : path.substring(p + 1);
         request.setQueryString(queryString);
+        // add params from query string
+        if (queryString != null) {
+            String[] split = queryString.split("&");
+            for (String s : split) {
+                String[] kv = s.split("=");
+                request.addParameter(kv[0], (kv.length == 2) ? kv[1] : "");
+            }
+        }
 
         if (p >= 0) {
             path = path.substring(0, p);
