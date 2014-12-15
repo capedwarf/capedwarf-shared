@@ -98,14 +98,6 @@
     <dependencyManagement>
         <dependencies>
 
-            <!-- Project -->
-
-            <dependency>
-                <groupId>org.jboss.capedwarf.shared</groupId>
-                <artifactId>capedwarf-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <!-- GAE -->
 
             <dependency>
