@@ -136,6 +136,28 @@ public class AppEngineWebXmlParser {
             }
         }
 
+        Element sessionsEnabled = XmlUtils.getChildElement(documentElement, "sessions-enabled", false);
+        if (sessionsEnabled != null) {
+            String sev = XmlUtils.getBody(sessionsEnabled);
+            if ("true".equalsIgnoreCase(sev)) {
+                appEngineWebXml.setSessionType(SessionType.APPENGINE);
+                Element asyncSessionPersistence = XmlUtils.getChildElement(documentElement, "async-session-persistence", false);
+                if (asyncSessionPersistence != null) {
+                    boolean enabledASP = Boolean.parseBoolean(XmlUtils.getAttribute(asyncSessionPersistence, "enabled"));
+                    if (enabledASP) {
+                        String aspQueueName = XmlUtils.getAttribute(asyncSessionPersistence, "queue-name");
+                        if (aspQueueName != null && aspQueueName.length() > 0) {
+                            appEngineWebXml.setSessionPersistenceQueueName(aspQueueName);
+                        }
+                    }
+                }
+            } else if ("false".equalsIgnoreCase(sev)) {
+                appEngineWebXml.setSessionType(SessionType.STUB);
+            } else {
+                appEngineWebXml.setSessionType(SessionType.WILDFLY);
+            }
+        }
+
         return appEngineWebXml;
     }
 

@@ -40,6 +40,7 @@ import org.jboss.capedwarf.shared.config.FilePattern;
 import org.jboss.capedwarf.shared.config.InboundServices;
 import org.jboss.capedwarf.shared.config.ManualScaling;
 import org.jboss.capedwarf.shared.config.Scaling;
+import org.jboss.capedwarf.shared.config.SessionType;
 import org.jboss.capedwarf.shared.config.StaticFileInclude;
 import org.junit.Assert;
 import org.junit.Test;
@@ -225,6 +226,20 @@ public class AppEngineWebXmlParserTest {
         AdminConsolePage page2 = pages.get(1);
         assertEquals("Custom Admin Page 2", page2.getName());
         assertEquals("/admin/page2.html", page2.getUrl());
+    }
+
+    @Test
+    public void testSessionsEnabled() throws Exception {
+        String xml = "<appengine-web-app>" +
+            "    <application>appName</application>" +
+            "    <version>2</version>" +
+            "    <sessions-enabled>true</sessions-enabled>" +
+            "    <async-session-persistence enabled=\"true\" queue-name=\"HttpSessionQueue\" />" +
+            "</appengine-web-app>";
+
+        AppEngineWebXml aewx = parse(xml);
+        Assert.assertEquals(SessionType.APPENGINE, aewx.getSessionType());
+        Assert.assertEquals("HttpSessionQueue", aewx.getSessionPersistenceQueueName());
     }
 
     private static AppEngineWebXml parse(String xml) throws Exception {

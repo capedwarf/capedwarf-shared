@@ -45,6 +45,9 @@ public class AppEngineWebXml implements Serializable {
     private Scaling scaling;
     private String publicRoot;
 
+    private SessionType sessionType = SessionType.WILDFLY;
+    private String sessionPersistenceQueueName = QueueXml.DEFAULT;
+
     private List<StaticFileInclude> staticFileIncludes;
     private List<FilePattern> staticFileExcludes;
     private List<AdminConsolePage> adminConsolePages;
@@ -144,6 +147,22 @@ public class AppEngineWebXml implements Serializable {
 
     public void setPublicRoot(String publicRoot) {
         this.publicRoot = publicRoot;
+    }
+
+    public SessionType getSessionType() {
+        return sessionType;
+    }
+
+    void setSessionType(SessionType sessionType) {
+        this.sessionType = sessionType;
+    }
+
+    public String getSessionPersistenceQueueName() {
+        return sessionPersistenceQueueName;
+    }
+
+    void setSessionPersistenceQueueName(String sessionPersistenceQueueName) {
+        this.sessionPersistenceQueueName = sessionPersistenceQueueName;
     }
 
     void addAdminConsolePage(String name, String url) {
