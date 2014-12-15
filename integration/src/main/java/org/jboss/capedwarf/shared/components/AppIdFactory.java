@@ -32,8 +32,16 @@ import org.jboss.capedwarf.shared.util.CountingThreadLocal;
 public abstract class AppIdFactory {
     private static final CountingThreadLocal<AppIdFactory> holder = new CountingThreadLocal<>();
 
+    public static AppIdFactory getCurrentFactory() {
+        return holder.get();
+    }
+
     public static void setCurrentFactory(AppIdFactory factory) {
-        holder.set(factory);
+        if (factory == null) {
+            resetCurrentFactory();
+        } else {
+            holder.set(factory);
+        }
     }
 
     public static boolean hasAppId() {
@@ -41,7 +49,7 @@ public abstract class AppIdFactory {
     }
 
     public static String getAppId() {
-        final AppIdFactory factory = holder.get();
+        final AppIdFactory factory = getCurrentFactory();
         if (factory == null) {
             throw new IllegalStateException("Missing current AppIdFactory!");
         }
@@ -49,7 +57,7 @@ public abstract class AppIdFactory {
     }
 
     public static String getModule() {
-        final AppIdFactory factory = holder.get();
+        final AppIdFactory factory = getCurrentFactory();
         if (factory == null) {
             throw new IllegalStateException("Missing current AppIdFactory!");
         }
