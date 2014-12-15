@@ -46,6 +46,7 @@ public class AppEngineWebXml implements Serializable {
     private String publicRoot;
 
     private SessionType sessionType = SessionType.WILDFLY;
+    private boolean asyncSessionPersistence = false;
     private String sessionPersistenceQueueName = QueueXml.DEFAULT;
 
     private List<StaticFileInclude> staticFileIncludes;
@@ -155,6 +156,14 @@ public class AppEngineWebXml implements Serializable {
 
     void setSessionType(SessionType sessionType) {
         this.sessionType = sessionType;
+    }
+
+    public boolean isAsyncSessionPersistence() {
+        return asyncSessionPersistence;
+    }
+
+    void setAsyncSessionPersistence(boolean asyncSessionPersistence) {
+        this.asyncSessionPersistence = asyncSessionPersistence;
     }
 
     public String getSessionPersistenceQueueName() {

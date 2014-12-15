@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ JBoss, Home of Professional Open Source.
   ~ Copyright 2013, Red Hat, Inc., and individual contributors
@@ -40,6 +41,11 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jboss.capedwarf.shared</groupId>
+            <artifactId>capedwarf-common</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-tools-sdk</artifactId>

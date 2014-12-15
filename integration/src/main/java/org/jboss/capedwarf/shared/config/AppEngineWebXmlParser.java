@@ -144,6 +144,7 @@ public class AppEngineWebXmlParser {
                 Element asyncSessionPersistence = XmlUtils.getChildElement(documentElement, "async-session-persistence", false);
                 if (asyncSessionPersistence != null) {
                     boolean enabledASP = Boolean.parseBoolean(XmlUtils.getAttribute(asyncSessionPersistence, "enabled"));
+                    appEngineWebXml.setAsyncSessionPersistence(enabledASP);
                     if (enabledASP) {
                         String aspQueueName = XmlUtils.getAttribute(asyncSessionPersistence, "queue-name");
                         if (aspQueueName != null && aspQueueName.length() > 0) {

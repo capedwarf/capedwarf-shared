@@ -239,6 +239,7 @@ public class AppEngineWebXmlParserTest {
 
         AppEngineWebXml aewx = parse(xml);
         Assert.assertEquals(SessionType.APPENGINE, aewx.getSessionType());
+        Assert.assertTrue(aewx.isAsyncSessionPersistence());
         Assert.assertEquals("HttpSessionQueue", aewx.getSessionPersistenceQueueName());
     }
 

@@ -22,10 +22,16 @@
 
 package org.jboss.capedwarf.shared.undertow;
 
+import java.util.logging.Logger;
+
 import javax.servlet.ServletContext;
 
 import io.undertow.servlet.ServletExtension;
 import io.undertow.servlet.api.DeploymentInfo;
+import org.jboss.capedwarf.shared.common.http.StubSessionManagerFactory;
+import org.jboss.capedwarf.shared.config.AppEngineWebXml;
+import org.jboss.capedwarf.shared.config.ApplicationConfiguration;
+import org.jboss.capedwarf.shared.config.SessionType;
 import org.kohsuke.MetaInfServices;
 
 /**
@@ -33,8 +39,25 @@ import org.kohsuke.MetaInfServices;
  */
 @MetaInfServices
 public class CapedwarfServletExtension implements ServletExtension {
+    private static final Logger log = Logger.getLogger(CapedwarfServletExtension.class.getName());
+
     public void handleDeployment(DeploymentInfo deploymentInfo, ServletContext servletContext) {
         // allow for proxy wrappers
         deploymentInfo.setAllowNonStandardWrappers(true);
+
+        ApplicationConfiguration configuration = ApplicationConfiguration.getInstance();
+        AppEngineWebXml appEngineWebXml = configuration.getAppEngineWebXml();
+        final SessionType sessionType = appEngineWebXml.getSessionType();
+        switch (sessionType) {
+            case APPENGINE:
+                deploymentInfo.setSessionManagerFactory(new CapedwarfSessionManagerFactory(appEngineWebXml.isAsyncSessionPersistence(), appEngineWebXml.getSessionPersistenceQueueName()));
+                break;
+            case STUB:
+                deploymentInfo.setSessionManagerFactory(new StubSessionManagerFactory());
+                break;
+            case WILDFLY:
+                log.info("Using default WildFly http session configuration / handling.");
+                break;
+        }
     }
 }
