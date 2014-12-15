@@ -55,9 +55,9 @@ public class AppEngineSessionManager extends AbstractSessionManager {
 
     private static List<IterableSessionStore> createSessionStores(boolean asyncSessionPersistence, String queueName) {
         IterableSessionStore datastoreSessionStore = asyncSessionPersistence ?
-            new IterableDeferredDatastoreSessionStore(queueName) :
-            new IterableDatastoreSessionStore();
-        return Arrays.asList(datastoreSessionStore, new IterableMemcacheSessionStore());
+            new DeferredLazySessionStore(queueName) :
+            new DatastoreLazySessionStore();
+        return Arrays.asList(datastoreSessionStore, new MemcacheLazySessionStore());
     }
 
     public AppEngineSessionManager(Deployment deployment, boolean asyncSessionPersistence, String queueName) {

@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -42,6 +43,8 @@ import org.xml.sax.SAXException;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class AppEngineWebXmlParser {
+    private static final Logger log = Logger.getLogger(AppEngineWebXmlParser.class.getName());
+
     public static AppEngineWebXml parse(InputStream inputStream) throws IOException {
         try {
             return tryParse(inputStream);
@@ -155,6 +158,7 @@ public class AppEngineWebXmlParser {
             } else if ("false".equalsIgnoreCase(sev)) {
                 appEngineWebXml.setSessionType(SessionType.STUB);
             } else {
+                log.info("<sessions-enabled> value equals " + sev);
                 appEngineWebXml.setSessionType(SessionType.WILDFLY);
             }
         }
