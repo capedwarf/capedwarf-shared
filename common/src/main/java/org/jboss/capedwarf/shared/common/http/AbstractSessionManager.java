@@ -63,6 +63,7 @@ public abstract class AbstractSessionManager implements SessionManager {
                 throw new IllegalStateException("Cannot generate session id!");
             }
         }
+        config.setSessionId(exchange, sessionId);
         return sessionId;
     }
 

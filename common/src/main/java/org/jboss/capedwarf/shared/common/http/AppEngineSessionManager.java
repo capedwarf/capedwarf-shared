@@ -40,6 +40,7 @@ import com.google.apphosting.runtime.SessionStore;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.session.Session;
 import io.undertow.server.session.SessionConfig;
+import io.undertow.server.session.SessionListener;
 import io.undertow.servlet.api.Deployment;
 
 /**
@@ -65,6 +66,16 @@ public class AppEngineSessionManager extends AbstractSessionManager {
         sessionStoresInWriteOrder = createSessionStores(asyncSessionPersistence, queueName);
         sessionStoresInReadOrder = new ArrayList<>(sessionStoresInWriteOrder);
         Collections.reverse(sessionStoresInReadOrder);
+    }
+
+    public void stop() {
+        for (String key : getActiveSessions()) {
+            Session session = getSession(key);
+            if (session != null) {
+                getSessionListeners().sessionDestroyed(session, null, SessionListener.SessionDestroyedReason.UNDEPLOY);
+                deleteSession(key);
+            }
+        }
     }
 
     protected boolean sessionExists(String sessionId) {
