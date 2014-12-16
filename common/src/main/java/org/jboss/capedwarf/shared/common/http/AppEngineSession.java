@@ -79,7 +79,10 @@ public class AppEngineSession implements Session {
     }
 
     public void requestDone(HttpServerExchange serverExchange) {
-        // TODO
+        if (isDirty()) {
+            save();
+        }
+        accessed = System.currentTimeMillis();
     }
 
     public long getCreationTime() {

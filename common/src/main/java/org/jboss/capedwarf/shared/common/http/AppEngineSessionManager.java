@@ -49,8 +49,6 @@ import io.undertow.servlet.api.Deployment;
 public class AppEngineSessionManager extends AbstractSessionManager {
     private static final Logger logger = Logger.getLogger(AppEngineSessionManager.class.getName());
 
-    static final String SESSION_PREFIX = "_ahs";
-
     private final List<IterableSessionStore> sessionStoresInWriteOrder;
     private final List<IterableSessionStore> sessionStoresInReadOrder;
 
@@ -126,11 +124,9 @@ public class AppEngineSessionManager extends AbstractSessionManager {
     }
 
     void saveSession(String sessionId, SessionData data) {
-        String key = SESSION_PREFIX + sessionId;
-
         for (SessionStore sessionStore : sessionStoresInWriteOrder) {
             try {
-                sessionStore.saveSession(key, data);
+                sessionStore.saveSession(sessionId, data);
             } catch (SessionStore.Retryable retryable) {
                 throw retryable.getCause();
             }
@@ -138,12 +134,10 @@ public class AppEngineSessionManager extends AbstractSessionManager {
     }
 
     SessionData loadSession(String sessionId) {
-        String key = SESSION_PREFIX + sessionId;
-
         SessionData data = null;
         for (SessionStore sessionStore : sessionStoresInReadOrder) {
             try {
-                data = sessionStore.getSession(key);
+                data = sessionStore.getSession(sessionId);
                 if (data != null) {
                     break;
                 }
@@ -166,10 +160,8 @@ public class AppEngineSessionManager extends AbstractSessionManager {
     }
 
     void deleteSession(String sessionId) {
-        String key = SESSION_PREFIX + sessionId;
-
         for (SessionStore sessionStore : sessionStoresInWriteOrder) {
-            sessionStore.deleteSession(key);
+            sessionStore.deleteSession(sessionId);
         }
     }
 
