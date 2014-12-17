@@ -163,6 +163,11 @@ public class AppEngineWebXmlParser {
             }
         }
 
+        Element warmupElt = XmlUtils.getChildElement(documentElement, "warmup-requests-enabled");
+        if (warmupElt != null) {
+            appEngineWebXml.setWarmupRequests(Boolean.parseBoolean(XmlUtils.getBody(warmupElt)));
+        }
+
         return appEngineWebXml;
     }
 

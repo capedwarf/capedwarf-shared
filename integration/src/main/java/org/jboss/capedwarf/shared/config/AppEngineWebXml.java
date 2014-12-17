@@ -49,6 +49,8 @@ public class AppEngineWebXml implements Serializable {
     private boolean asyncSessionPersistence = false;
     private String sessionPersistenceQueueName = QueueXml.DEFAULT;
 
+    private boolean warmupRequests = true;
+
     private List<StaticFileInclude> staticFileIncludes;
     private List<FilePattern> staticFileExcludes;
     private List<AdminConsolePage> adminConsolePages;
@@ -172,6 +174,14 @@ public class AppEngineWebXml implements Serializable {
 
     void setSessionPersistenceQueueName(String sessionPersistenceQueueName) {
         this.sessionPersistenceQueueName = sessionPersistenceQueueName;
+    }
+
+    public boolean isWarmupRequests() {
+        return warmupRequests;
+    }
+
+    void setWarmupRequests(boolean warmupRequests) {
+        this.warmupRequests = warmupRequests;
     }
 
     void addAdminConsolePage(String name, String url) {

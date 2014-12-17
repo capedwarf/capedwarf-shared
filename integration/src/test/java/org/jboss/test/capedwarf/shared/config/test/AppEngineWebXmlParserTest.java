@@ -243,6 +243,18 @@ public class AppEngineWebXmlParserTest {
         Assert.assertEquals("HttpSessionQueue", aewx.getSessionPersistenceQueueName());
     }
 
+    @Test
+    public void testWarmup() throws Exception {
+        String xml = "<appengine-web-app>" +
+            "    <application>appName</application>" +
+            "    <version>2</version>" +
+            "    <warmup-requests-enabled>false</warmup-requests-enabled>" +
+            "</appengine-web-app>";
+
+        AppEngineWebXml aewx = parse(xml);
+        Assert.assertFalse(aewx.isWarmupRequests());
+    }
+
     private static AppEngineWebXml parse(String xml) throws Exception {
         return AppEngineWebXmlParser.parse(new ByteArrayInputStream(xml.getBytes()));
     }
