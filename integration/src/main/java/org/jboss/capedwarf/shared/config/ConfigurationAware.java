@@ -43,6 +43,10 @@ public abstract class ConfigurationAware {
         applicationConfiguration = applicationConfigurationTL.get();
     }
 
+    public static ApplicationConfiguration getApplicationConfiguration() {
+        return applicationConfigurationTL.get();
+    }
+
     public static void setApplicationConfiguration(ApplicationConfiguration applicationConfiguration) {
         if (applicationConfiguration != null)
             applicationConfigurationTL.set(applicationConfiguration);

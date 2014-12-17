@@ -26,6 +26,11 @@ import javax.servlet.ServletContext;
 
 import io.undertow.servlet.ServletExtension;
 import io.undertow.servlet.api.DeploymentInfo;
+import org.jboss.capedwarf.shared.components.ComponentRegistry;
+import org.jboss.capedwarf.shared.components.Key;
+import org.jboss.capedwarf.shared.components.SimpleKey;
+import org.jboss.capedwarf.shared.config.ApplicationConfiguration;
+import org.jboss.capedwarf.shared.config.ConfigurationAware;
 import org.kohsuke.MetaInfServices;
 
 /**
@@ -33,7 +38,16 @@ import org.kohsuke.MetaInfServices;
  */
 @MetaInfServices
 public class CapedwarfServletExtension implements ServletExtension {
-    public void handleDeployment(DeploymentInfo deploymentInfo, ServletContext servletContext) {
+    public void handleDeployment(DeploymentInfo deploymentInfo, ServletContext context) {
+        // grab configuration
+        ApplicationConfiguration configuration = ConfigurationAware.getApplicationConfiguration();
+        String appId = configuration.getAppEngineWebXml().getApplication();
+        String module = configuration.getAppEngineWebXml().getModule();
+
+        // register servlet context as early as possible
+        Key<ServletContext> key = new SimpleKey<>(appId, module, ServletContext.class);
+        ComponentRegistry.getInstance().setComponent(key, context);
+
         // allow for proxy wrappers
         deploymentInfo.setAllowNonStandardWrappers(true);
     }

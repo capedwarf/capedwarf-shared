@@ -29,9 +29,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 
 import org.infinispan.manager.EmbeddedCacheManager;
-import org.jboss.capedwarf.shared.components.ComponentRegistry;
-import org.jboss.capedwarf.shared.components.Key;
-import org.jboss.capedwarf.shared.components.SimpleKey;
 import org.jboss.capedwarf.shared.util.Utils;
 
 /**
@@ -72,8 +69,6 @@ public final class CapedwarfApiProxy {
     }
 
     static void initialize(final String appId, final String module, final ServletContext context) {
-        Key<ServletContext> key = new SimpleKey<>(appId, module, ServletContext.class);
-        ComponentRegistry.getInstance().setComponent(key, context);
     }
 
     static void initialize(final String appId, final String module, final EmbeddedCacheManager manager) {
