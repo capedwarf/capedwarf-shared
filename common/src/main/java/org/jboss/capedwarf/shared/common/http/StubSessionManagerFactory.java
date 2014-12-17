@@ -30,6 +30,8 @@ import io.undertow.servlet.api.SessionManagerFactory;
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class StubSessionManagerFactory implements SessionManagerFactory {
+    public static final SessionManagerFactory INSTANCE = new StubSessionManagerFactory();
+
     public SessionManager createSessionManager(Deployment deployment) {
         return new StubSessionManager(deployment);
     }

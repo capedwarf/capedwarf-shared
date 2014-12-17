@@ -35,26 +35,46 @@ import io.undertow.server.session.SessionConfig;
 import io.undertow.server.session.SessionListener;
 import io.undertow.server.session.SessionManager;
 import io.undertow.servlet.api.Deployment;
-import sun.reflect.Reflection;
 
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 public class StubSessionManager extends AbstractSessionManager {
+    private static final Set<String> ignoredPackages;
+
     private final ConcurrentMap<String, StubSession> sessions = new ConcurrentHashMap<>();
+
+    static {
+        ignoredPackages = new HashSet<>();
+        ignoredPackages.add("org.apache.jasper.");
+        ignoredPackages.add("org.jboss.weld.");
+    }
 
     public StubSessionManager(Deployment deployment) {
         super(deployment);
     }
 
+    private static boolean isIgnored() {
+        StackTraceElement[] elts = Thread.currentThread().getStackTrace();
+        for (StackTraceElement elt : elts) {
+            String className = elt.getClassName();
+            for (String ip : ignoredPackages) {
+                if (className.startsWith(ip)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static void throwException() {
-        if (Reflection.getCallerClass(3).getName().startsWith("org.apache.jasper")) {
+        if (isIgnored()) {
             return;
         }
         throw new RuntimeException("Session support is not enabled in appengine-web.xml.  "
             + "To enable sessions, put <sessions-enabled>true</sessions-enabled> in that "
             + "file.  Without it, getSession() is allowed, but manipulation of session"
-            + "attributes is not.");
+            + " attributes is not.");
     }
 
     protected boolean sessionExists(String sessionId) {
