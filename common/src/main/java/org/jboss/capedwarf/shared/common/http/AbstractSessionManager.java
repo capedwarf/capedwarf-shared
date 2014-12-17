@@ -74,9 +74,6 @@ public abstract class AbstractSessionManager implements SessionManager {
     public void start() {
     }
 
-    public void stop() {
-    }
-
     protected abstract Session createSessionInternal(HttpServerExchange serverExchange, SessionConfig sessionCookieConfig, long time);
 
     public Session createSession(HttpServerExchange serverExchange, SessionConfig sessionCookieConfig) {

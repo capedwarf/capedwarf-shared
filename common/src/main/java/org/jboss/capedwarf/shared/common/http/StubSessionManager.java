@@ -77,6 +77,13 @@ public class StubSessionManager extends AbstractSessionManager {
             + " attributes is not.");
     }
 
+    public void stop() {
+        for (StubSession session : sessions.values()) {
+            getSessionListeners().sessionDestroyed(session, null, SessionListener.SessionDestroyedReason.UNDEPLOY);
+        }
+        sessions.clear();
+    }
+
     protected boolean sessionExists(String sessionId) {
         return sessions.containsKey(sessionId);
     }
@@ -122,6 +129,7 @@ public class StubSessionManager extends AbstractSessionManager {
         }
 
         public void requestDone(HttpServerExchange serverExchange) {
+            accessed = System.currentTimeMillis();
         }
 
         public long getCreationTime() {
