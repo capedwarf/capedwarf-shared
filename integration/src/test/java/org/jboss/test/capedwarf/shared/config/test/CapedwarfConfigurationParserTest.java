@@ -47,18 +47,6 @@ import org.junit.Test;
  */
 public class CapedwarfConfigurationParserTest {
 
-    @Test
-    public void testParseSingleAdmin() throws Exception {
-        String xml = "<capedwarf-web-app>" +
-                "    <admin>admin1@email.com</admin>" +
-                "</capedwarf-web-app>";
-
-        CapedwarfConfiguration config = parseConfig(xml);
-
-        assertEquals(1, config.getAdmins().size());
-        assertEquals("admin1@email.com", config.getAdmins().iterator().next());
-    }
-
     private CapedwarfConfiguration parseConfig(String xml) throws Exception {
         CapedwarfConfiguration configuration = CapedwarfConfigurationParser.parse(new ByteArrayInputStream(xml.getBytes()));
         testSerializable(configuration);
@@ -76,6 +64,18 @@ public class CapedwarfConfigurationParserTest {
             clone = in.readObject();
         }
         assertTrue(object.getClass().isInstance(clone));
+    }
+
+    @Test
+    public void testParseSingleAdmin() throws Exception {
+        String xml = "<capedwarf-web-app>" +
+            "    <admin>admin1@email.com</admin>" +
+            "</capedwarf-web-app>";
+
+        CapedwarfConfiguration config = parseConfig(xml);
+
+        assertEquals(1, config.getAdmins().size());
+        assertEquals("admin1@email.com", config.getAdmins().iterator().next());
     }
 
     @Test
@@ -210,5 +210,18 @@ public class CapedwarfConfigurationParserTest {
         assertNotNull(oauth);
         assertEquals("clientId123", oauth.getClientId());
         assertEquals("clientSecret123", oauth.getClientSecret());
+
+        assertEquals("CAPEDWARF", config.getAuthenticationMechanism());
     }
+
+    @Test
+    public void testAuthMechanism() throws Exception {
+        String xml = "<capedwarf-web-app>" +
+            "   <authentication-mechanism>BASIC</authentication-mechanism>" +
+            "</capedwarf-web-app>";
+
+        CapedwarfConfiguration config = parseConfig(xml);
+        assertEquals("BASIC", config.getAuthenticationMechanism());
+    }
+
 }

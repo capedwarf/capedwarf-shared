@@ -61,6 +61,11 @@ public class CapedwarfConfigurationParser {
         parseMail(documentElement, config);
         parseOAuth(documentElement, config);
 
+        String authMechanism = XmlUtils.getChildElementBody(documentElement, "authentication-mechanism", false);
+        if (authMechanism != null) {
+            config.setAuthenticationMechanism(authMechanism);
+        }
+
         return config;
     }
 
