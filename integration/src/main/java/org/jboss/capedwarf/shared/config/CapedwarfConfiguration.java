@@ -40,7 +40,9 @@ public class CapedwarfConfiguration implements Serializable {
     private XmppConfiguration xmppConfiguration = new XmppConfiguration();
     private List<InboundMailAccount> inboundMailAccounts = new ArrayList<>();
     private OAuthConfiguration oAuthConfiguration = new OAuthConfiguration();
+
     private String authenticationMechanism = "CAPEDWARF";
+    private String transportGuarantee; // admin transport guarantee
 
     private Properties mailProperties = new Properties();
 
@@ -100,5 +102,13 @@ public class CapedwarfConfiguration implements Serializable {
 
     void setAuthenticationMechanism(String authenticationMechanism) {
         this.authenticationMechanism = authenticationMechanism;
+    }
+
+    public String getTransportGuarantee() {
+        return transportGuarantee;
+    }
+
+    void setTransportGuarantee(String transportGuarantee) {
+        this.transportGuarantee = transportGuarantee;
     }
 }

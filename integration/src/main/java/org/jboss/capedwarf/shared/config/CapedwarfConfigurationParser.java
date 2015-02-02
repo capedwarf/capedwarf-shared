@@ -65,6 +65,10 @@ public class CapedwarfConfigurationParser {
         if (authMechanism != null) {
             config.setAuthenticationMechanism(authMechanism);
         }
+        String transportGuarantee = XmlUtils.getChildElementBody(documentElement, "transport-guarantee", false);
+        if (transportGuarantee != null) {
+            config.setTransportGuarantee(transportGuarantee);
+        }
 
         return config;
     }

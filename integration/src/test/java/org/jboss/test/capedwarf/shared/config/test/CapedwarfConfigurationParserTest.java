@@ -224,4 +224,14 @@ public class CapedwarfConfigurationParserTest {
         assertEquals("BASIC", config.getAuthenticationMechanism());
     }
 
+    @Test
+    public void testTransportGuarantee() throws Exception {
+        String xml = "<capedwarf-web-app>" +
+            "   <transport-guarantee>CONFIDENTIAL</transport-guarantee>" +
+            "</capedwarf-web-app>";
+
+        CapedwarfConfiguration config = parseConfig(xml);
+        assertEquals("CONFIDENTIAL", config.getTransportGuarantee());
+    }
+
 }
