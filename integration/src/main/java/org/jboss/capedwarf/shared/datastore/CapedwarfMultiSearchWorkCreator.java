@@ -49,11 +49,11 @@ public class CapedwarfMultiSearchWorkCreator implements SearchWorkCreator<Object
         return delegate;
     }
 
-    public Collection<Work<Object>> createPerEntityTypeWorks(Class<Object> entityType, WorkType workType) {
+    public Collection<Work> createPerEntityTypeWorks(Class<Object> entityType, WorkType workType) {
         return getDelegate().createPerEntityTypeWorks(entityType, workType);
     }
 
-    public Collection<Work<Object>> createPerEntityWorks(Object entity, Serializable id, WorkType workType) {
+    public Collection<Work> createPerEntityWorks(Object entity, Serializable id, WorkType workType) {
         return getDelegate().createPerEntityWorks(entity, id, workType);
     }
 }

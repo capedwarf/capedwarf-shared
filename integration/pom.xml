@@ -29,12 +29,12 @@
     <parent>
         <groupId>org.jboss.capedwarf.shared</groupId>
         <artifactId>capedwarf-shared-parent</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>capedwarf-integration</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
 
     <name>Capedwarf Shared -- Integration</name>
     <description>Capedwarf Shared -- Integration</description>
