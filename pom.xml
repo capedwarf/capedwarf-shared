@@ -59,13 +59,13 @@
         <!-- JBoss AS -->
         <version.io.undertow>1.2.0.Beta10</version.io.undertow>
         <version.org.jboss.modules.jboss-modules>1.4.2.Final</version.org.jboss.modules.jboss-modules>
-        <version.org.infinispan>7.2.0.Beta1</version.org.infinispan>
+        <version.org.infinispan>7.1.1.Final</version.org.infinispan>
         <version.com.google.guava>18.0</version.com.google.guava>
         <!-- GAE -->
         <version.com.google.gae>1.9.18</version.com.google.gae>
         <version.com.google.gae.managed>1.9.17</version.com.google.gae.managed>
         <!-- Hibernate Search -->
-        <version.org.hibernate.search>5.1.1.Final</version.org.hibernate.search>
+        <version.org.hibernate.search>5.1.2-SNAPSHOT</version.org.hibernate.search>
         <version.org.apache.lucene>4.10.4</version.org.apache.lucene>
         <!-- Utils -->
         <version.javassist>3.18.1-GA</version.javassist>
