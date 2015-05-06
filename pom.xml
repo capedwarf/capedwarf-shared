@@ -65,7 +65,7 @@
         <version.com.google.gae>1.9.18</version.com.google.gae>
         <version.com.google.gae.managed>1.9.17</version.com.google.gae.managed>
         <!-- Hibernate Search -->
-        <version.org.hibernate.search>5.1.2-SNAPSHOT</version.org.hibernate.search>
+        <version.org.hibernate.search>5.1.2.Final</version.org.hibernate.search>
         <version.org.apache.lucene>4.10.4</version.org.apache.lucene>
         <!-- Utils -->
         <version.javassist>3.18.1-GA</version.javassist>
