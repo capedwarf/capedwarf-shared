@@ -22,11 +22,14 @@
 
 package org.jboss.capedwarf.shared.common.http;
 
+import com.google.apphosting.runtime.DatastoreSessionStore;
+import com.google.apphosting.runtime.SessionStore;
+
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 class DatastoreLazySessionStore extends AbstractLazySessionStore {
-    protected IterableSessionStore createDelegate() {
-        return new IterableDatastoreSessionStore();
+    protected SessionStore createDelegate() {
+        return new DatastoreSessionStore();
     }
 }

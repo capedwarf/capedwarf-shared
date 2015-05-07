@@ -49,11 +49,11 @@ import io.undertow.servlet.api.Deployment;
 public class AppEngineSessionManager extends AbstractSessionManager {
     private static final Logger logger = Logger.getLogger(AppEngineSessionManager.class.getName());
 
-    private final List<IterableSessionStore> sessionStoresInWriteOrder;
-    private final List<IterableSessionStore> sessionStoresInReadOrder;
+    private final List<SessionStore> sessionStoresInWriteOrder;
+    private final List<SessionStore> sessionStoresInReadOrder;
 
-    private static List<IterableSessionStore> createSessionStores(boolean asyncSessionPersistence, String queueName) {
-        IterableSessionStore datastoreSessionStore = asyncSessionPersistence ?
+    private static List<SessionStore> createSessionStores(boolean asyncSessionPersistence, String queueName) {
+        SessionStore datastoreSessionStore = asyncSessionPersistence ?
             new DeferredLazySessionStore(queueName) :
             new DatastoreLazySessionStore();
         return Arrays.asList(datastoreSessionStore, new MemcacheLazySessionStore());
@@ -103,7 +103,7 @@ public class AppEngineSessionManager extends AbstractSessionManager {
     }
 
     public Set<String> getAllSessions() {
-        for (IterableSessionStore sessionStore : sessionStoresInReadOrder) {
+        for (SessionStore sessionStore : sessionStoresInReadOrder) {
             Map<String, SessionData> sessions = sessionStore.getAllSessions();
             if (sessions != null) {
                 Set<String> set = new HashSet<>();

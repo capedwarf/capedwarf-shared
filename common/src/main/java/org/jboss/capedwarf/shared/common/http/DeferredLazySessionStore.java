@@ -22,6 +22,9 @@
 
 package org.jboss.capedwarf.shared.common.http;
 
+import com.google.apphosting.runtime.DeferredDatastoreSessionStore;
+import com.google.apphosting.runtime.SessionStore;
+
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
@@ -32,7 +35,7 @@ class DeferredLazySessionStore extends AbstractLazySessionStore {
         this.queueName = queueName;
     }
 
-    protected IterableSessionStore createDelegate() {
-        return new IterableDeferredDatastoreSessionStore(queueName);
+    protected SessionStore createDelegate() {
+        return new DeferredDatastoreSessionStore(queueName);
     }
 }

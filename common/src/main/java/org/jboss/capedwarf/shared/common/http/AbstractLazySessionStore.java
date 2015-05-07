@@ -25,16 +25,17 @@ package org.jboss.capedwarf.shared.common.http;
 import java.util.Map;
 
 import com.google.apphosting.runtime.SessionData;
+import com.google.apphosting.runtime.SessionStore;
 
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public abstract class AbstractLazySessionStore implements IterableSessionStore {
-    private volatile IterableSessionStore delegate;
+public abstract class AbstractLazySessionStore implements SessionStore {
+    private volatile SessionStore delegate;
 
-    protected abstract IterableSessionStore createDelegate();
+    protected abstract SessionStore createDelegate();
 
-    private IterableSessionStore getDelegate() {
+    private SessionStore getDelegate() {
         if (delegate == null) {
             synchronized (this) {
                 if (delegate == null) {
@@ -53,7 +54,7 @@ public abstract class AbstractLazySessionStore implements IterableSessionStore {
         return getDelegate().getSession(key);
     }
 
-    public void saveSession(String key, SessionData sessionData) throws Retryable {
+    public void saveSession(String key, SessionData sessionData) throws SessionStore.Retryable {
         getDelegate().saveSession(key, sessionData);
     }
 
