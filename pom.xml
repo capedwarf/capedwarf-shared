@@ -57,15 +57,15 @@
 
     <properties>
         <!-- JBoss AS -->
-        <version.io.undertow>1.2.0.Beta10</version.io.undertow>
-        <version.org.jboss.modules.jboss-modules>1.4.2.Final</version.org.jboss.modules.jboss-modules>
-        <version.org.infinispan>7.1.1.Final</version.org.infinispan>
+        <version.io.undertow>1.2.7.Final</version.io.undertow>
+        <version.org.jboss.modules.jboss-modules>1.4.3.Final</version.org.jboss.modules.jboss-modules>
+        <version.org.infinispan>7.2.2.Final</version.org.infinispan>
         <version.com.google.guava>18.0</version.com.google.guava>
         <!-- GAE -->
-        <version.com.google.gae>1.9.20</version.com.google.gae>
-        <version.com.google.gae.managed>1.9.19</version.com.google.gae.managed>
+        <version.com.google.gae>1.9.21</version.com.google.gae>
+        <version.com.google.gae.managed>1.9.21</version.com.google.gae.managed>
         <!-- Hibernate Search -->
-        <version.org.hibernate.search>5.1.2.Final</version.org.hibernate.search>
+        <version.org.hibernate.search>5.2.0.Final</version.org.hibernate.search>
         <version.org.apache.lucene>4.10.4</version.org.apache.lucene>
         <!-- Utils -->
         <version.javassist>3.18.1-GA</version.javassist>
@@ -75,7 +75,7 @@
         <version.org.jboss.common>2.5.0.Beta1</version.org.jboss.common>
 
         <!-- Spec -->
-        <version.javax.mail>1.5.2</version.javax.mail>
+        <version.javax.mail>1.5.3</version.javax.mail>
         <version.javax.enterprise>1.2</version.javax.enterprise>
         <version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>1.0.0.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>
         <version.org.jboss.spec.javax.servlet.jboss-servlet-api_3.1_spec>1.0.0.Final</version.org.jboss.spec.javax.servlet.jboss-servlet-api_3.1_spec>
