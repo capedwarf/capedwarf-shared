@@ -62,8 +62,8 @@
         <version.org.infinispan>6.0.2.Final</version.org.infinispan>
         <version.com.google.guava>15.0</version.com.google.guava>
         <!-- GAE -->
-        <version.com.google.gae>1.9.18</version.com.google.gae>
-        <version.com.google.gae.managed>1.9.17</version.com.google.gae.managed>
+        <version.com.google.gae>1.9.23</version.com.google.gae>
+        <version.com.google.gae.managed>1.9.23</version.com.google.gae.managed>
         <!-- Hibernate Search -->
         <version.org.hibernate.search>4.5.1.Final</version.org.hibernate.search>
         <version.org.apache.lucene>3.6.2</version.org.apache.lucene>
@@ -103,15 +103,6 @@
             <dependency>
                 <groupId>com.google.appengine</groupId>
                 <artifactId>appengine-managed-runtime</artifactId>
-                <version>${version.com.google.gae.managed}</version>
-                <optional>true</optional>
-            </dependency>
-
-            <!-- TODO - remove this -->
-
-            <dependency>
-                <groupId>com.google.appengine</groupId>
-                <artifactId>appengine-jetty-managed-runtime</artifactId>
                 <version>${version.com.google.gae.managed}</version>
                 <optional>true</optional>
             </dependency>

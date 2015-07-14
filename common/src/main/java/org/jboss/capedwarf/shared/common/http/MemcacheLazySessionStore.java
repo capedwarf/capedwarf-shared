@@ -22,11 +22,14 @@
 
 package org.jboss.capedwarf.shared.common.http;
 
+import com.google.apphosting.runtime.MemcacheSessionStore;
+import com.google.apphosting.runtime.SessionStore;
+
 /**
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
 class MemcacheLazySessionStore extends AbstractLazySessionStore {
-    protected IterableSessionStore createDelegate() {
-        return new IterableMemcacheSessionStore();
+    protected SessionStore createDelegate() {
+        return new MemcacheSessionStore();
     }
 }
