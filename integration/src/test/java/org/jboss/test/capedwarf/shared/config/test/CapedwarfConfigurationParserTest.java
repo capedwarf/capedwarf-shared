@@ -234,4 +234,16 @@ public class CapedwarfConfigurationParserTest {
         assertEquals("CONFIDENTIAL", config.getTransportGuarantee());
     }
 
+    @Test
+    public void testProperties() throws Exception {
+        String xml = "<capedwarf-web-app>" +
+            "   <properties>" +
+            "       <base.url.production>http://api.lw.com/server</base.url.production>" +
+            "   </properties>" +
+            "</capedwarf-web-app>";
+
+        CapedwarfConfiguration config = parseConfig(xml);
+        assertEquals("http://api.lw.com/server", config.getProperties().getProperty("base.url.production"));
+    }
+
 }

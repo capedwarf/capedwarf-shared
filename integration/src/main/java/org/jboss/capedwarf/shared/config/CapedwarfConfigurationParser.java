@@ -24,6 +24,7 @@ package org.jboss.capedwarf.shared.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -69,6 +70,8 @@ public class CapedwarfConfigurationParser {
         if (transportGuarantee != null) {
             config.setTransportGuarantee(transportGuarantee);
         }
+
+        parseProperties(documentElement, config);
 
         return config;
     }
@@ -129,6 +132,17 @@ public class CapedwarfConfigurationParser {
         if (oauthElem != null) {
             config.getOAuthConfiguration().setClientId(XmlUtils.getChildElementBody(oauthElem, "clientId", true));
             config.getOAuthConfiguration().setClientSecret(XmlUtils.getChildElementBody(oauthElem, "clientSecret", true));
+        }
+    }
+
+    private static void parseProperties(Element documentElement, CapedwarfConfiguration config) {
+        Element propElem = XmlUtils.getChildElement(documentElement, "properties");
+        if (propElem != null) {
+            Properties properties = new Properties();
+            for (Element child : XmlUtils.getAllChildren(propElem)) {
+                properties.put(child.getTagName(), XmlUtils.getBody(child));
+            }
+            config.setProperties(properties);
         }
     }
 }

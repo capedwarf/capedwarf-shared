@@ -48,6 +48,9 @@ public class CapedwarfConfiguration implements Serializable {
 
     private CheckType checkGlobalTimeLimit = CheckType.NO;
 
+    // general set of properites
+    private Properties properties = new Properties();
+
     public CapedwarfConfiguration() {
     }
 
@@ -110,5 +113,13 @@ public class CapedwarfConfiguration implements Serializable {
 
     void setTransportGuarantee(String transportGuarantee) {
         this.transportGuarantee = transportGuarantee;
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    void setProperties(Properties properties) {
+        this.properties = properties;
     }
 }

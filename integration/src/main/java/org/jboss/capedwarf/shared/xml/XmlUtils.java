@@ -107,4 +107,17 @@ public class XmlUtils {
         }
         return elements;
     }
+
+    public static List<Element> getAllChildren(Element element) {
+        NodeList nodes = element.getChildNodes();
+
+        List<Element> elements = new ArrayList<>();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            if (node instanceof Element) {
+                elements.add((Element) node);
+            }
+        }
+        return elements;
+    }
 }
