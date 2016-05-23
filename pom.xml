@@ -62,7 +62,7 @@
         <version.org.infinispan>6.0.2.Final</version.org.infinispan>
         <version.com.google.guava>15.0</version.com.google.guava>
         <!-- GAE -->
-        <version.com.google.gae>1.9.34</version.com.google.gae>
+        <version.com.google.gae>1.9.37</version.com.google.gae>
         <version.com.google.gae.managed>1.9.31</version.com.google.gae.managed>
         <!-- Hibernate Search -->
         <version.org.hibernate.search>4.5.1.Final</version.org.hibernate.search>
