@@ -80,7 +80,7 @@
         <version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>1.0.0.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>
         <version.org.jboss.spec.javax.servlet.jboss-servlet-api_3.1_spec>1.0.0.Final</version.org.jboss.spec.javax.servlet.jboss-servlet-api_3.1_spec>
         <!-- Ext modules -->
-        <version.org.apache.httpcomponents>4.3.1</version.org.apache.httpcomponents>
+        <version.org.apache.httpcomponents>4.5.1</version.org.apache.httpcomponents>
         <version.metainf>1.1</version.metainf>
         <!-- Testing -->
         <version.junit>4.11</version.junit>
